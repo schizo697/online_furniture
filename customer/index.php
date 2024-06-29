@@ -3,38 +3,38 @@
 <?php include('includes/topbar.php'); ?>
 <?php include('includes/header.php'); ?>
 <style>
-  .fruite-item {
+  .product-item {
         position: relative;
         border: 1px solid #ced4da;
         border-radius: 10px;
         overflow: hidden;
     }
 
-    .fruite-item .fruite-img img {
+    .product-item .product-img img {
         width: 100%;
         height: 200px; /* Adjust height as needed */
         object-fit: cover;
         border-radius: 10px 10px 0 0;
     }
 
-    .fruite-item .fruite-content {
+    .product-item .product-content {
         padding: 15px;
         height: 100%;
         display: flex;
         flex-direction: column;
     }
 
-    .fruite-item h4 {
+    .product-item h4 {
         font-size: 1.2rem;
         margin-bottom: 10px;
     }
 
-    .fruite-item p {
+    .product-item p {
         font-size: 1rem;
         margin-bottom: 15px;
     }
 
-    .fruite-item .btn {
+    .product-item .btn {
         align-self: center;
         
       
@@ -104,7 +104,7 @@
 
 
       <!-- Products Shop Start -->
-<div class="container-fluid fruite py-5">
+<div class="container-fluid product py-5">
     <div class="container py-5">
         <div class="tab-class text-center">
             <div class="row g-4">
@@ -145,8 +145,8 @@
                 <div id="tab-1" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
                         <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative fruite-item text-center">
-                                <div class="fruite-img">
+                            <div class="rounded border border-secondary position-relative product-item text-center">
+                                <div class="product-img">
                                     <img src="img/couch.jpg" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Couch</div>
@@ -161,8 +161,8 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative fruite-item text-center">
-                                <div class="fruite-img">
+                            <div class="rounded border border-secondary position-relative product-item text-center">
+                                <div class="product-img">
                                     <img src="img/couch.jpg" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Couch</div>
@@ -177,8 +177,8 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative fruite-item text-center">
-                                <div class="fruite-img">
+                            <div class="rounded border border-secondary position-relative product-item text-center">
+                                <div class="product-img">
                                     <img src="img/bed.jpg" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Bed</div>
@@ -193,8 +193,8 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative fruite-item text-center">
-                                <div class="fruite-img">
+                            <div class="rounded border border-secondary position-relative product-item text-center">
+                                <div class="product-img">
                                     <img src="img/bed.jpg" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Bed</div>
@@ -209,8 +209,8 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative fruite-item text-center">
-                                <div class="fruite-img">
+                            <div class="rounded border border-secondary position-relative product-item text-center">
+                                <div class="product-img">
                                     <img src="img/chair.jpg" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Chair</div>
@@ -225,8 +225,8 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative fruite-item text-center">
-                                <div class="fruite-img">
+                            <div class="rounded border border-secondary position-relative product-item text-center">
+                                <div class="product-img">
                                     <img src="img/table.png" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Table</div>
@@ -241,8 +241,8 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative fruite-item text-center">
-                                <div class="fruite-img">
+                            <div class="rounded border border-secondary position-relative product-item text-center">
+                                <div class="product-img">
                                     <img src="img/chair.jpg" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Chair</div>
@@ -257,8 +257,8 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative fruite-item text-center">
-                                <div class="fruite-img">
+                            <div class="rounded border border-secondary position-relative product-item text-center">
+                                <div class="product-img">
                                     <img src="img/table.png" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Table</div>

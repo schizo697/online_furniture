@@ -277,45 +277,45 @@
 
 
 /*** Fruits Start ***/
-.fruite .tab-class .nav-item a.active {
+.product .tab-class .nav-item a.active {
     background: var(--bs-secondary) !important;
 }
 
-.fruite .tab-class .nav-item a.active span {
+.product .tab-class .nav-item a.active span {
     color: var(--bs-white) !important; 
 }
 
-.fruite .fruite-categorie .fruite-name {
+.product .product-categorie .product-name {
     line-height: 40px;
 }
 
-.fruite .fruite-categorie .fruite-name a {
+.product .product-categorie .product-name a {
     transition: 0.5s;
 }
 
-.fruite .fruite-categorie .fruite-name a:hover {
+.product .product-categorie .product-name a:hover {
     color: var(--bs-secondary);
 }
 
-.fruite .fruite-item {
+.product .product-item {
     height: 100%;
     transition: 0.5s;
 }
-.fruite .fruite-item:hover {
+.product .product-item:hover {
     box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
 }
 
-.fruite .fruite-item .fruite-img {
+.product .product-item .product-img {
     overflow: hidden;
     transition: 0.5s;
     border-radius: 10px 10px 0 0;
 }
 
-.fruite .fruite-item .fruite-img img {
+.product .product-item .product-img img {
     transition: 0.5s;
 }
 
-.fruite .fruite-item .fruite-img img:hover {
+.product .product-item .product-img img:hover {
     transform: scale(1.3);
 }
 /*** Fruits End ***/
