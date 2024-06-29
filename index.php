@@ -2,6 +2,42 @@
 <html lang="en">
 <?php include('includes/topbar.php'); ?>
 <?php include('includes/header.php'); ?>
+<style>
+  .fruite-item {
+        position: relative;
+        border: 1px solid #ced4da;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .fruite-item .fruite-img img {
+        width: 100%;
+        height: 200px; /* Adjust height as needed */
+        object-fit: cover;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .fruite-item .fruite-content {
+        padding: 15px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .fruite-item h4 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .fruite-item p {
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+
+    .fruite-item .btn {
+        align-self: center;
+    }
+</style>
     </head>
 
     <body>
