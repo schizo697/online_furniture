@@ -128,7 +128,7 @@
                 <div class="collapse" id="customization">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="registered_user.php">
+                      <a href="furniture_type.php">
                         <span class="sub-item">Furniture Type</span>
                       </a>
                     </li>
