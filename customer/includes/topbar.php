@@ -26,6 +26,7 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+    <link rel="icon" href="img/Logo1.png" type="image/x-icon" />
 </head>
 
 <body>
@@ -45,7 +46,7 @@
                     <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">Email@Example.com</a></small>
                 </div>
                 <div class="top-link pe-2">
-                    <!-- Logo -->
+                   
                 </div>
             </div>
         </div>
@@ -61,12 +62,12 @@
                         <a href="shop.php" class="nav-item nav-link active">Shop</a>
                     </div>
                     <div class="d-flex m-3 me-0">
-                        <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
+                       
                         <a href="cart.php" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
                             <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;"></span>
                         </a>
-                        <a href="#" class="my-auto me-4">
+                        <a href="profile.php" class="my-auto me-4">
                             <i class="fas fa-user fa-2x"></i>
                         </a>
                         <a href="login.php" class="btn btn-outline-primary me-4">Login</a> <!-- Adjust styling as needed -->

@@ -36,6 +36,12 @@
 
     .fruite-item .btn {
         align-self: center;
+        
+      
+    }
+    .button-group {
+        display: flex;
+        justify-content: center;
     }
 </style>
     </head>
@@ -147,10 +153,10 @@
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4>Customize Couch 1</h4>
                                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <div class="d-flex justify-content-center align-items-center flex-column">
-                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                    </div>
+                                    <div class="button-group">
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -163,10 +169,10 @@
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4>Customize Couch 2</h4>
                                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <div class="d-flex justify-content-center align-items-center flex-column">
-                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                    </div>
+                                    <div class="button-group">
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -179,10 +185,10 @@
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4>Customize Bed 1</h4>
                                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <div class="d-flex justify-content-center align-items-center flex-column">
-                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                    </div>
+                                    <div class="button-group">
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -195,10 +201,10 @@
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4>Customize Bed 2</h4>
                                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <div class="d-flex justify-content-center align-items-center flex-column">
-                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                    </div>
+                                    <div class="button-group">
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -211,10 +217,10 @@
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4>Customize Chair</h4>
                                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <div class="d-flex justify-content-center align-items-center flex-column">
-                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                    </div>
+                                    <div class="button-group">
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -227,10 +233,10 @@
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4>Customize Table</h4>
                                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <div class="d-flex justify-content-center align-items-center flex-column">
-                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                    </div>
+                                    <div class="button-group">
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -243,10 +249,10 @@
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4>Customize Chair</h4>
                                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <div class="d-flex justify-content-center align-items-center flex-column">
-                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                    </div>
+                                    <div class="button-group">
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -259,10 +265,10 @@
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4>Customize Table</h4>
                                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <div class="d-flex justify-content-center align-items-center flex-column">
-                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99 </p>
-                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                    </div>
+                                    <div class="button-group">
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                        </div>
                                 </div>
                             </div>
                         </div>
