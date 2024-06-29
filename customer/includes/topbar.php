@@ -70,7 +70,7 @@
                         <a href="profile.php" class="my-auto me-4">
                             <i class="fas fa-user fa-2x"></i>
                         </a>
-                        <a href="login.php" class="btn btn-outline-primary me-4">Login</a> <!-- Adjust styling as needed -->
+                        <a href="../login.php" class="btn btn-outline-primary me-4">Login</a> <!-- Adjust styling as needed -->
                     </div>
                 </div>
             </nav>
