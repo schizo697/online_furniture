@@ -40,6 +40,44 @@
             }
         }
     }
+?>
+
+<!-- handle edit user -->
+    <?php
+      if(isset($_POST['btnSave'])){
+        $user_id = $_POST['userid'];
+        $firstname = $_POST['firstname'];
+        $lastname = $_POST['lastname'];
+        $contact = $_POST['contact'];
+        $address = $_POST['address'];
+        $password = $_POST['password'];
+        $cpassword = $_POST['cpassword'];
+        $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
+
+        if ($password != $cpassword) {
+            $url = 'user_management.php?errorpassword=true';
+            echo '<script>window.location.href="' . $url . '"</script>';
+            exit();
+        } else {
+            $infoupdate = "UPDATE userinfo SET firstname = '$firstname', lastname = '$lastname', contact = '$contact', address = '$address' WHERE infoid = '$user_id'";
+            $inforesult = mysqli_query($conn, $infoupdate);
+    
+            if($inforesult) {
+                $passwordupdate = "UPDATE useraccount SET password = '$encrypted_password' WHERE uid = '$user_id'";
+                $passwordresult = mysqli_query($conn, $passwordupdate);
+    
+                if($passwordresult){
+                    $url = 'user_management.php?update=true';
+                    echo '<script>window.location.href= "' . $url . '"</script>';
+                    exit();
+                } else {
+                    $url = "user_management.php?error=true";
+                    echo '<script>window.location.href="' . $url . '";</script';
+                    exit();
+                }
+            }
+        }
+      }
     ?>
 
 <!DOCTYPE html>
@@ -74,8 +112,139 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form action="" method="POST" id="createAccountForm">
+
+                        <!-- archive modal -->
+                        <div class="modal fade" id="archivemodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Archive</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                                <?php 
+                                if(isset($_POST['btnArchive'])){
+                                    $user_id = $_POST['userid'];
+
+                                    $statusupdate = "UPDATE useraccount SET status = 0 WHERE uid = '$user_id'";
+                                    $statusresult = mysqli_query($conn, $statusupdate);
+
+                                    if($statusresult){
+                                        $url = "user_management.php?archive=true";
+                                        echo '<script>window.location.href="' . $url . '"</script>';
+                                        exit();
+                                    } else {
+                                        $url = "user_management.php?error=true";
+                                        echo '<script>window.location.href="' . $url . '";</script';
+                                        exit();
+                                    }
+                                }
+                                ?>
+                                <form action="" method="POST">
+                                    <div class="modal-body">
+                                        Are you sure you want to archive this account?
+                                    </div>
+                                    <div class="form-group" style="display: none;">
+                                        <label for="userid">User ID</label>
+                                        <input type="text" class="form-control" id="userid" name="userid" required readonly>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" name="btnArchive" class="btn btn-primary">Archive</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        </div>
+                    
+                        <!--Edit User Modal -->
+                        <form action="" method="POST">
+                        <div class="modal fade" id="editmodal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title">
+                                            <span class="fw-mediumbold"> Edit</span>
+                                            <span class="fw-light"> User Information </span>
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="small">Fill all the necessary information</p>
+                                        <form>
+                                            <div class="row">
+                                            <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>User ID</label>
+                                                        <input name="userid" id="userID" type="text" class="form-control" placeholder="" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                    <label>User Type</label>
+                                                        <select name="usertype" class="form-control" required>
+                                                            <option selected disabled>Select...</option>
+                                                            <option value="1">Admin</option>
+                                                            <option value="2">Staff</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>First Name</label>
+                                                        <input name="firstname" id="editFirstName" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Last Name</label>
+                                                        <input name="lastname" id="editLastName" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Address</label>
+                                                        <input name="address" id="editAddress" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Contact</label>
+                                                        <input name="contact" id="editContact" type="text" class="form-control" placeholder="09*********" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>User Name</label>
+                                                        <input name="username" id="editUserName" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Password</label>
+                                                        <input name="password" id="editPassword" type="text" class="form-control" placeholder="********" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Confirm Password</label>
+                                                        <input name="cpassword" id="confirmPassword" type="text" class="form-control" placeholder="********" />
+                                                    </div>
+                                                </div>
+                                                <div id="passwordError" style="color: red;"></div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" name="btnSave" id="validateButton" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+
                         <!--Add User Modal -->
+                        <form action="" method="POST" id="createAccountForm">
                         <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -162,7 +331,6 @@
                             <table id="add-row" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Full Name</th>
                                         <th>Address</th>
                                         <th>Phone Number</th>
@@ -171,34 +339,62 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <?php 
+                                    $sql = "SELECT uid, username, firstname, lastname, gender, contact, address, levelid, status
+                                    FROM useraccount 
+                                    JOIN userinfo ON useraccount.infoid = userinfo.infoid WHERE useraccount.status = 1";
+                                    $result = mysqli_query($conn, $sql);
+
+                                    if ($result && mysqli_num_rows($result) > 0) {
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            $uid = $row['uid'];
+                                            $firstname = $row['firstname'];
+                                            $lastname = $row['lastname'];
+                                            $name = $firstname . ' ' . $lastname;
+                                            $username = $row['username'];
+                                            $gender = $row['gender'];
+                                            $contact = $row['contact'];
+                                            $address = $row['address'];
+                                            $level = $row['levelid'];
+                                            $type = '';
+                                            switch ($level) {
+                                                case 1:
+                                                    $type = 'Admin';
+                                                    break;
+                                                case 2:
+                                                    $type = 'Staff';
+                                                    break;
+                                                case 3:
+                                                    $type = 'Customer';
+                                                    break;
+                                                default:
+                                                    $type = 'Unknown';
+                                                    break;
+                                            }
+                                        ?> 
                                     <tr>                                     
-                                        <td>1</td>
-                                        <td>Mary Loi Yves Ricalde</td>
-                                        <td>STI Gensan</td>                              
-                                        <td>09486711308</td>
-                                        <td>Staff</td>
+                                        <td><?php echo $name ?></td>
+                                        <td><?php echo $address ?></td>                              
+                                        <td><?php echo $contact ?></td>
+                                        <td><?php echo $type ?></td>
                                         <td>
                                             <div class="form-button-action">
-                                                <button type="button" data-bs-toggle="tooltip" title="View Details" class="btn btn-link btn-primary btn-lg">
-                                                    <i class="fa fa-eye"></i>
-                                                </button>
+                                                <a href="#" class="btn btn-link btn-success edit-button" data-bs-toggle="modal" data-bs-target="#editmodal" data-account-id="<?php echo $uid?>" data-account-fname="<?php echo $firstname?>" data-account-lname="<?php echo $lastname?>"
+                                                    data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-link btn-primary archive-button" data-bs-toggle="modal" data-bs-target="#archivemodal" data-account-id="<?php echo $uid?>">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>                                     
-                                        <td>2</td>
-                                        <td>Mikhaela Janna Lim</td>
-                                        <td>Lagao</td>                              
-                                        <td>0948816564</td>
-                                        <td>Customer</td>
-                                        <td>
-                                            <div class="form-button-action">
-                                                <button type="button" data-bs-toggle="tooltip" title="View Details" class="btn btn-link btn-primary btn-lg">
-                                                    <i class="fa fa-eye"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <?php
+                                        }
+                                    } else {
+                                        echo "No records found";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -212,6 +408,34 @@
     <!-- <?php include('includes/footer.php'); ?> -->
     <?php include ('includes/tables.php');?>
 </body>
+
+<script>
+$(document).ready(function() {
+    $('.archive-button').click(function() {
+        var userid = $(this).data('account-id');
+        $('#userid').val(userid);
+    });
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    $('.edit-button').click(function() {
+        var userID = $(this).data('account-id');
+        var fname = $(this).data('account-fname');
+        var lname = $(this).data('account-lname'); 
+        var gender = $(this).data('account-gender');
+        var contact = $(this).data('account-contact');
+        var address = $(this).data('account-address');
+
+        $('#userID').val(userID);
+        $('#editFirstName').val(fname);
+        $('#editLastName').val(lname);
+        $('#editContact').val(contact);
+        $('#editAddress').val(address);
+    });
+});
+</script>
 
 <script>
     function showAlert(type, message) {
