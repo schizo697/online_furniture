@@ -1,5 +1,28 @@
+<?php
+include('../conn.php'); // Include database connection
+
+// Fetch username from database
+if (isset($_SESSION['uid'])) {
+    $user_id = $_SESSION['uid'];
+
+    // Fetch username from the database based on user ID
+    $sql_username = "SELECT useraccount.username FROM useraccount WHERE useraccount.infoid = '$user_id'";
+    $result_username = mysqli_query($conn, $sql_username);
+
+    if ($result_username && mysqli_num_rows($result_username) > 0) {
+        $row_username = mysqli_fetch_assoc($result_username);
+        $username = $row_username['username'];
+    } else {
+        // Default username if not found (you can handle this case accordingly)
+        $username = "Guest";
+    }
+} else {
+    // Handle case where session uid is not set (should ideally not reach here if your session management is correct)
+    $username = "Guest";
+}
+?> 
     
-      <div class="main-panel">
+    <div class="main-panel">
         <div class="main-header">
           <div class="main-header-logo">
             <!-- Logo Header -->
@@ -167,7 +190,8 @@
                     </div>
                     <span class="profile-username">
                       <span class="op-7">Hi,</span>
-                      <span class="fw-bold">Adrianne</span>
+                      <!-- fetch in the database the username -->
+                      <span class="fw-bold"><?php echo htmlspecialchars($username); ?></span>
                     </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
