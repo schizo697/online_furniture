@@ -20,31 +20,31 @@ session_start();
 
     <!----------------------- Main Container -------------------------->
 
-     <div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
 
-    <!----------------------- Login Container -------------------------->
+        <!----------------------- Login Container -------------------------->
 
-       <div class="row border rounded-5 p-3 bg-white shadow box-area">
+        <div class="row border rounded-5 p-3 bg-white shadow box-area">
 
-    <!--------------------------- Left Box ----------------------------->
+            <!--------------------------- Left Box ----------------------------->
 
-       <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background-image: url('main/img/imglogin.jpg'); background-size:cover;">
-           <div class="featured-image mb-3">
-            <!-- <img src="img/heyho.jpg" class="img-fluid" style="width: 250px;"> -->
-           </div>
-           <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">MPM Furniture</p>
-           <small class="text-white text-wrap text-center" style="width: 17rem;font-family: 'Courier New', Courier, monospace;">Find the best furniture in this platform.</small>
-       </div> 
-
-    <!-------------------- ------ Right Box ---------------------------->
-        
-       <div class="col-md-6 right-box">
-          <div class="row align-items-center">
-                <div class="header-text mb-4">
-                     <h2>Hello!</h2>
-                     <p>We are happy to have you back.</p>
+            <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background-image: url('main/img/imglogin.jpg'); background-size:cover;">
+                <div class="featured-image mb-3">
+                    <!-- <img src="img/heyho.jpg" class="img-fluid" style="width: 250px;"> -->
                 </div>
-                <?php
+                <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">MPM Furniture</p>
+                <small class="text-white text-wrap text-center" style="width: 17rem; font-family: 'Courier New', Courier, monospace;">Find the best furniture on this platform.</small>
+            </div>
+
+            <!-------------------- ------ Right Box ---------------------------->
+
+            <div class="col-md-6 right-box">
+                <div class="row align-items-center">
+                    <div class="header-text mb-4">
+                        <h2>Hello!</h2>
+                        <p>We are happy to have you back.</p>
+                    </div>
+                    <?php
                     include 'conn.php'; // Include database connection
 
                     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -63,75 +63,63 @@ session_start();
 
                                 if (password_verify($password, $hashed_password)) {
                                     $_SESSION['username'] = $username;
-                                    $_SESSION['uid'] = $row['uid']; 
-                                    
-                                    $level_id = $row['levelid'];
-                                    $sql = "SELECT levelid FROM useraccount WHERE levelid = '$level_id'";
-                                    $level_result = mysqli_query($conn, $sql);
+                                    $_SESSION['uid'] = $row['uid'];
 
-                                    if ($level_result && mysqli_num_rows($level_result) == 1) {
-                                        $level_row = mysqli_fetch_assoc($level_result);
-                                        $user_level = $level_row['levelid'];
-                                        
-                                        if ($user_level == 1) {
-                                            header("location: admin/index.php");
-                                            exit();
-                                        } elseif ($user_level == 2) {
-                                            header("location: staff/dashboard.php");
-                                            exit();
-                                        }elseif ($user_level == 3) {
-                                            header("location: customer/shop.php");
-                                            exit();
-                                        }
-                                    } else {
-                                        $error = "Error fetching user level";
+                                    $user_level = $row['levelid'];
+
+                                    if ($user_level == 1) {
+                                        header("Location: admin/index.php");
+                                    } elseif ($user_level == 2) {
+                                        header("Location: staff/dashboard.php");
+                                    } elseif ($user_level == 3) {
+                                        header("Location: customer/shop.php");
                                     }
+                                    exit();
                                 } else {
                                     $error = "Username or password is incorrect";
                                 }
                             } else {
-                                echo '<script>
-                                Swal.fire({
-                                    icon: "error",
-                                    text: "Incorrect Username or Password"
-                                });
-                                </script>';            
+                                $error = "Incorrect Username or Password";
                             }
                         }
                     }
+                    if (isset($error)) {
+                        echo "<script>Swal.fire({ icon: 'error', text: '$error' });</script>";
+                    }
                     ?>
-                <form action="" method="POST">
-                <div class="input-group mb-3">
-                    <input name="username" type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Email address">
+                    <form action="" method="POST">
+                        <div class="input-group mb-3">
+                            <input name="username" type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Email address">
+                        </div>
+                        <div class="input-group mb-1">
+                            <input name="password" type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password">
+                        </div>
+                        <div class="input-group mb-5 d-flex justify-content-between">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="formCheck">
+                                <label for="formCheck" class="form-check-label text-secondary"><small>Remember Me</small></label>
+                            </div>
+                            <div class="forgot">
+                                <small><a href="#">Forgot Password?</a></small>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <button type="submit" name="submit" class="btn btn-lg btn-primary w-100 fs-6">
+                                Login
+                                <span class="loading-text" style="display: none;">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Loading...
+                                </span>
+                            </button>
+                        </div>
+                        <div class="row">
+                            <small>Don't have an account? <a href="signup.php">Sign Up</a></small>
+                        </div>
+                    </form>
                 </div>
-                <div class="input-group mb-1">
-                    <input name="password" type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password">
-                </div>
-                <div class="input-group mb-5 d-flex justify-content-between">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="formCheck">
-                        <label for="formCheck" class="form-check-label text-secondary"><small>Remember Me</small></label>
-                    </div>
-                    <div class="forgot">
-                        <small><a href="#">Forgot Password?</a></small>
-                    </div>
-                </div>
-                <div class="input-group mb-3">
-                    <button type="submit" name="submit" class="btn btn-lg btn-primary w-100 fs-6">Login
-                    <span class="loading-text" style="display: none;">
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            Loading...
-                        </span>
-                    </button>
-                </div>
-                <div class="row">
-                    <small>Don't have an account? <a href="signup.php">Sign Up</a></small>
-                </div>
-            </form>
-          </div>
-       </div> 
+            </div> 
 
-      </div>
+        </div>
     </div>
 
 </body>
