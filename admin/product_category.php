@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <?php include('includes/topbar.php'); ?>
-
 </head>
 <body>
     <?php include('includes/sidebar.php')?>
@@ -37,30 +36,50 @@
                                     <div class="modal-header border-0">
                                         <h5 class="modal-title">
                                             <span class="fw-mediumbold"> New</span>
-                                            <span class="fw-light"> Row </span>
+                                            <span class="fw-light"> Product </span>
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p class="small">Create a new row using this form, make sure you fill them all</p>
+                                        <p class="small">Create a new product using this form, make sure you fill them all</p>
                                         <form>
                                             <div class="row">
+                                             
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
-                                                        <label>Name</label>
-                                                        <input id="addName" type="text" class="form-control" placeholder="fill name" />
+                                                        <label>Image</label>
+                                                        <input id="addImage" type="file" class="form-control" />
+                                                        <img id="imagePreview" src="#" alt="Image Preview" style="display: none; margin-top: 10px; max-width: 100%; height: auto;" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Product Name</label>
+                                                        <input id="addProductName" type="text" class="form-control" placeholder="Product Name" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Description</label>
+                                                        <input id="addDescription" type="text" class="form-control" placeholder="Product Description" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 pe-0">
                                                     <div class="form-group form-group-default">
-                                                        <label>Position</label>
-                                                        <input id="addPosition" type="text" class="form-control" placeholder="fill position" />
+                                                        <label>Quantity</label>
+                                                        <input id="addQuantity" type="number" class="form-control" placeholder="Quantity" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
-                                                        <label>Office</label>
-                                                        <input id="addOffice" type="text" class="form-control" placeholder="fill office" />
+                                                        <label>Price</label>
+                                                        <input id="addPrice" type="number" class="form-control" placeholder="Price" step="0.01" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Status</label>
+                                                        <input id="addStatus" type="text" class="form-control" placeholder="Status" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -95,7 +114,7 @@
                                         <td>Single Couch Chair</td>
                                         <td>Single Couch Chair description</td>
                                         <td>3</td>
-                                        <td>₱5,990.00s</td>
+                                        <td>₱5,990.00</td>
                                         <td>Active</td>
                                         <td>
                                             <div class="form-button-action">
@@ -175,6 +194,22 @@
                 pageLength: 5,
             });
 
+            // Image preview functionality
+            $("#addImage").change(function() {
+                readURL(this);
+            });
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#imagePreview').attr('src', e.target.result);
+                        $('#imagePreview').show();
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
             var action = 
                 '<td><div class="form-button-action">' +
                 '<button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">' +
@@ -183,10 +218,22 @@
                 '<i class="fa fa-times"></i></button></div></td>';
 
             $("#addRowButton").click(function () {
+                var id = $("#addID").val();
+                var image = $("#imagePreview").attr('src');
+                var productName = $("#addProductName").val();
+                var description = $("#addDescription").val();
+                var quantity = $("#addQuantity").val();
+                var price = $("#addPrice").val();
+                var status = $("#addStatus").val();
+
                 $("#add-row").dataTable().fnAddData([
-                    $("#addName").val(),
-                    $("#addPosition").val(),
-                    $("#addOffice").val(),
+                    id,
+                    '<img src="' + image + '" alt="Product Image" style="max-width: 100px; height: auto;" />',
+                    productName,
+                    description,
+                    quantity,
+                    price,
+                    status,
                     action,
                 ]);
                 $("#addRowModal").modal("hide");

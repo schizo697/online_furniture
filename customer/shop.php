@@ -125,9 +125,10 @@
                                     <div class="p-4 border-top-0 rounded-bottom">
                                         <h4>Customize Couch 1</h4>
                                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
                                         <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -142,9 +143,10 @@
                                     <div class="p-4 border-top-0 rounded-bottom">
                                         <h4>Customize Couch 2</h4>
                                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
                                         <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -159,9 +161,10 @@
                                     <div class="p-4 border-top-0 rounded-bottom">
                                         <h4>Customize Bed 1</h4>
                                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
                                         <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -176,9 +179,10 @@
                                     <div class="p-4 border-top-0 rounded-bottom">
                                         <h4>Customize Bed 2</h4>
                                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
                                         <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -193,9 +197,10 @@
                                     <div class="p-4 border-top-0 rounded-bottom">
                                         <h4>Customize Chair 1</h4>
                                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
                                         <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -210,9 +215,10 @@
                                     <div class="p-4 border-top-0 rounded-bottom">
                                         <h4>Customize Table 1</h4>
                                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
                                         <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -227,9 +233,10 @@
                                     <div class="p-4 border-top-0 rounded-bottom">
                                         <h4>Customize Chair 2</h4>
                                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
                                         <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -243,9 +250,10 @@
                                     <div class="p-4 border-top-0 rounded-bottom">
                                         <h4>Customize Table 1</h4>
                                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                        <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
                                         <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                     </div>
                                 </div>
