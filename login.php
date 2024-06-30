@@ -10,6 +10,7 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>MPM: Furniture Shop</title>
     <style>
         <?php include 'main/css/login.css'; ?>
@@ -62,7 +63,7 @@ session_start();
 
                                 if (password_verify($password, $hashed_password)) {
                                     $_SESSION['username'] = $username;
-                                    $_SESSION['user_id'] = $row['user_id']; 
+                                    $_SESSION['uid'] = $row['uid']; 
                                     
                                     $level_id = $row['levelid'];
                                     $sql = "SELECT levelid FROM useraccount WHERE levelid = '$level_id'";
@@ -77,6 +78,9 @@ session_start();
                                             exit();
                                         } elseif ($user_level == 2) {
                                             header("location: staff/dashboard.php");
+                                            exit();
+                                        }elseif ($user_level == 3) {
+                                            header("location: customer/shop.php");
                                             exit();
                                         }
                                     } else {
@@ -131,4 +135,5 @@ session_start();
     </div>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </html>

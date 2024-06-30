@@ -28,7 +28,7 @@
           <div class="row align-items-center">
                 <div class="header-text mb-4">
                      <h2>Register</h2>
-                     <p>Some text here</p>
+                     <p>Find the perfect furniture today!</p>
                 </div>
                 <?php
                     include 'conn.php';
@@ -142,6 +142,9 @@
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row">
+                                <small>Already have an account? <a href="login.php">Login</a></small>
                             </div>
                         </form>
                     </div>
