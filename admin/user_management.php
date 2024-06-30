@@ -405,7 +405,7 @@
     </div>
 
     <!-- Footer -->
-    <!-- <?php include('includes/footer.php'); ?> -->
+    <?php include('includes/footer.php'); ?>
     <?php include ('includes/tables.php');?>
 </body>
 

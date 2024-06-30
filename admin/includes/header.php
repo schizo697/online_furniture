@@ -185,7 +185,7 @@
                             <h4>Adrianne</h4>
                             <p class="text-muted">Adrianne@example.com</p>
                             <a
-                              href="profile.html"
+                              href="profile.php"
                               class="btn btn-xs btn-secondary btn-sm"
                               >View Profile</a
                             >
@@ -194,7 +194,7 @@
                       </li>
                       <li>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">My Profile</a>
+                        <a class="dropdown-item" href="profile.php">My Profile</a>
                         <a class="dropdown-item" href="#">Logout</a>
                       </li>
                     </div>
