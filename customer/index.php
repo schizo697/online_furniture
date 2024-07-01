@@ -49,7 +49,7 @@
     <body>
 
 
-        <!-- Featurs Section Start -->
+        <!-- Featurs Section Start 
         <div class="container-fluid featurs py-5">
             <div class="container py-5">
                 <div class="row g-4">
@@ -100,7 +100,7 @@
                 </div>
             </div>
         </div>
-        <!-- Featurs Section End -->
+         Featurs Section End -->
 
 
       <!-- Products Shop Start -->
@@ -144,16 +144,27 @@
             <div class="tab-content">
                 <div id="tab-1" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <div class="col-md-6 col-lg-4 col-xl-3">
+                    <?php 
+                                include "../conn.php";
+                                
+                                $getlisting = "SELECT * FROM product 
+                                                JOIN furniture_type ON furniture_type.fid = product.fid 
+                                                WHERE product.status = 'Active'";
+                                $fetch = $conn->query($getlisting);
+                            ?>               
+                            <?php 
+                                while($row = mysqli_fetch_assoc($fetch)){ 
+                            ?>
+                        <div class="col-md-6 col-lg-4 col-xl-3">  
                             <div class="rounded border border-secondary position-relative product-item text-center">
                                 <div class="product-img">
-                                    <img src="img/couch.jpg" class="img-fluid w-100 rounded-top" alt="">
+                                    <img src="<?php echo "../admin/assets/img/".$row['image']; ?>" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Couch</div>
                                 <div class="p-4 border-top-0 rounded-bottom">
-                                    <h4>Customize Couch 1</h4>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
+                                    <h4><?php echo $row['pname']; ?></h4>
+                                    <p><?php echo $row['description']; ?></p>
+                                    <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $row['price']; ?></p>
                                     <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
                                             <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
@@ -161,125 +172,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative product-item text-center">
-                                <div class="product-img">
-                                    <img src="img/couch.jpg" class="img-fluid w-100 rounded-top" alt="">
-                                </div>
-                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Couch</div>
-                                <div class="p-4 border-top-0 rounded-bottom">
-                                    <h4>Customize Couch 2</h4>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                    <div class="button-group">
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative product-item text-center">
-                                <div class="product-img">
-                                    <img src="img/bed.jpg" class="img-fluid w-100 rounded-top" alt="">
-                                </div>
-                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Bed</div>
-                                <div class="p-4 border-top-0 rounded-bottom">
-                                    <h4>Customize Bed 1</h4>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                    <div class="button-group">
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative product-item text-center">
-                                <div class="product-img">
-                                    <img src="img/bed.jpg" class="img-fluid w-100 rounded-top" alt="">
-                                </div>
-                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Bed</div>
-                                <div class="p-4 border-top-0 rounded-bottom">
-                                    <h4>Customize Bed 2</h4>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                    <div class="button-group">
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative product-item text-center">
-                                <div class="product-img">
-                                    <img src="img/chair.jpg" class="img-fluid w-100 rounded-top" alt="">
-                                </div>
-                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Chair</div>
-                                <div class="p-4 border-top-0 rounded-bottom">
-                                    <h4>Customize Chair</h4>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                    <div class="button-group">
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative product-item text-center">
-                                <div class="product-img">
-                                    <img src="img/table.png" class="img-fluid w-100 rounded-top" alt="">
-                                </div>
-                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Table</div>
-                                <div class="p-4 border-top-0 rounded-bottom">
-                                    <h4>Customize Table</h4>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                    <div class="button-group">
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative product-item text-center">
-                                <div class="product-img">
-                                    <img src="img/chair.jpg" class="img-fluid w-100 rounded-top" alt="">
-                                </div>
-                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Chair</div>
-                                <div class="p-4 border-top-0 rounded-bottom">
-                                    <h4>Customize Chair</h4>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                    <div class="button-group">
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3">
-                            <div class="rounded border border-secondary position-relative product-item text-center">
-                                <div class="product-img">
-                                    <img src="img/table.png" class="img-fluid w-100 rounded-top" alt="">
-                                </div>
-                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Table</div>
-                                <div class="p-4 border-top-0 rounded-bottom">
-                                    <h4>Customize Table</h4>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
-                                    <p class="text-dark fs-5 fw-bold mb-2">₱4.99</p>
-                                    <div class="button-group">
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
+                         <?php } ?>
                     </div>
                 </div>
                 <!-- Additional tabs (e.g., tab-2, tab-3) would follow the same structure -->
