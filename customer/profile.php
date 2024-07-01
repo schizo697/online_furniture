@@ -132,31 +132,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="small mb-1" for="editFirstName">First name</label>
-                            <input class="form-control" name="firstname" type="text" placeholder="Enter your first name" value="<?php echo $row['firstname'] ?>">
+                    <div class="mb-3">
+                                        <label class="small mb-1" for="inputUsername">Username:</label>
+                                        <input class="form-control" name="username" type="text" placeholder="Enter your username" value="<?php echo $row['username'] ?>" >
+                                    </div>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="inputFirstName">First name</label>
+                                            <input class="form-control" name="firstname" type="text" placeholder="Enter your first name" value="<?php echo $row['firstname'] ?>" >
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="inputLastName">Last name</label>
+                                            <input class="form-control" name="lastname" type="text" placeholder="Enter your last name" value="<?php echo $row['lastname'] ?>" >
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="inputGender">Gender</label>
+                                            <input class="form-control" name="gender" type="text" placeholder="Enter your gender" value="<?php echo $row['gender'] ?>" >
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="inputPhone">Phone number</label>
+                                            <input class="form-control" name="contact" type="tel" placeholder="Enter your phone number" value="<?php echo $row['contact'] ?>" >
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="small mb-1" for="inputAddress">Address</label>
+                                        <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>" >
+                                    </div>
+                                    <h6> Account Details </h6>
+                                        <div class="row gx-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="small mb-1" for="password">Password</label>
+                                                <input class="form-control" name="password" type="password" placeholder="Enter your password" pattern=".{8,16}" title="Password must be 8-16 characters" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="small mb-1" for="cpassword">Comfirm Password</label>
+                                                <input class="form-control" name="cpassword" type="password" placeholder="Confirm password" required>
+                                            </div>
+                                        </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" name="update_profile" class="btn btn-primary">Save changes</button>
                         </div>
-                        <div class="mb-3">
-                            <label class="small mb-1" for="editLastName">Last name</label>
-                            <input class="form-control" name="lastname" type="text" placeholder="Enter your last name" value="<?php echo $row['lastname'] ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label class="small mb-1" for="editGender">Gender</label>
-                            <input class="form-control" name="gender" type="text" placeholder="Enter your gender" value="<?php echo $row['gender'] ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label class="small mb-1" for="editPhone">Phone number</label>
-                            <input class="form-control" name="contact" type="tel" placeholder="Enter your phone number" value="<?php echo $row['contact'] ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label class="small mb-1" for="editAddress">Address</label>
-                            <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" name="update_profile" class="btn btn-primary">Save changes</button>
-                    </div>
                 </form>
             </div>
         </div>
