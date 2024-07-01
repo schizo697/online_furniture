@@ -1,4 +1,4 @@
-<!-- handle add user -->
+<!-- handle add product -->
 <?php
     include '../conn.php';
 
@@ -11,17 +11,51 @@
         $size = $_POST['size'];
         $fid = $_POST['fid'];
 
-        $sql = "INSERT INTO product (pname, price, description, quantity, color, size, fid, status) VALUES ('$pname', '$price', '$description', '$quantity', '$color', '$size', '$fid', 'Active')";
+        if (isset($_FILES['image'])) {
+            $img_name = $_FILES['image']['name'];
+            $img_size = $_FILES['image']['size'];
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $error = $_FILES['image']['error'];
             
-        if(mysqli_query($conn, $sql)) {
-            $url = "product_listing.php?success=true";
-            echo '<script>window.location.href= "' . $url . '";</script>';
-            exit(); 
-        } else {
-            $url = "product_listing.php?error=true";
-            echo '<script>window.location.href="' . $url . '";</script';
-            exit();
-        }   
+            if ($error === 0) {
+                if ($img_size > 125000000) {
+                        $message = "Sorry, your file is too large";
+                        header("Location: product_listing.php?error=$message");
+                } else {
+                    $img_ex = pathinfo($img_name, PATHINFO_EXTENSION);
+                    $img_ex_loc = strtolower($img_ex);
+            
+                    $allowed_ex = array ("jpg", "jpeg", "png", "pdf");
+            
+                    if (in_array($img_ex_loc, $allowed_ex)) {
+                        $new_img_name = uniqid("FR-", true).'.'.$img_ex_loc;
+                        $img_upload_path = 'assets/img/'.$new_img_name;
+                        move_uploaded_file($tmp_name, $img_upload_path);
+            
+                        //into the database
+                        $sql = "INSERT INTO product (pname, price, description, quantity, color, size, fid, image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Active')";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("ssssssss", $pname, $price, $description, $quantity, $color, $size, $fid, $new_img_name);
+                        if($stmt->execute()) {
+                            $url = "product_listing.php?success=true";
+                            echo '<script>window.location.href= "' . $url . '";</script>'; 
+                        } else {
+                            echo "<script>Swal.fire({
+                                    icon: 'error',
+                                    text: 'Something went wrong!',
+                                    });
+                                </script>";
+                        }
+                    } else {
+                        $message = "You cannot upload files of this type";
+                        header("Location: product_listing.php?error=$message");
+                    }
+                }
+            } else {
+                $message = "Please upload the required images";
+                header("Location: product_listing.php?error=$message");
+            }
+        }  
     }
 ?>
 
@@ -58,7 +92,7 @@
                     </div>
                     <div class="card-body">
                         <!-- Modal -->
-                        <form action="" method="POST">
+                        <form action="" method="POST" enctype = "multipart/form-data">
                         <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -119,6 +153,12 @@
                                                         <input name="quantity" type="text" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
+                                                <div class="col-md-12 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Image</label>
+                                                        <input type = "file" name="image" id="image' style="border: solid gray 1px; padding: 6px; width: 80%; border-radius: 4px">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
@@ -135,7 +175,6 @@
                             <table id="add-row" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Image</th>
                                         <th>Product Name</th>
                                         <th>Description</th>
@@ -146,14 +185,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <?php 
+                                    $sql = "SELECT * FROM product 
+                                            JOIN furniture_type ON product.fid = furniture_type.fid WHERE product.status = 'Active'";
+                                    $result = mysqli_query($conn, $sql);
+
+                                    if ($result && mysqli_num_rows($result) > 0) {
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            $pid = $row['pid'];
+                                            $image = $row['image'];
+                                            $pname = $row['pname'];
+                                            $description = $row['description'];
+                                            $quantity = $row['quantity'];
+                                            $price = $row['price'];
+                                            $status = $row['status'];
+                                ?>
                                     <tr>
-                                        <td>1</td>
-                                        <td></td>
-                                        <td>Single Couch Chair</td>
-                                        <td>Single Couch Chair description</td>
-                                        <td>3</td>
-                                        <td>₱5,990.00s</td>
-                                        <td>Active</td>
+                                        <td><?php echo $image ?></td>
+                                        <td><?php echo $pname ?></td>
+                                        <td><?php echo $description ?></td>
+                                        <td><?php echo $quantity ?></td>
+                                        <td>₱<?php echo $price ?></td>
+                                        <td><?php echo $status ?></td>
                                         <td>
                                             <div class="form-button-action">
                                                 <button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">
@@ -165,25 +218,12 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td></td>
-                                        <td>Hanging Cabinet</td>
-                                        <td>Hanging Cabinet Description</td>
-                                        <td>5</td>
-                                        <td>₱13,500.00</td>
-                                        <td>Inactive</td>
-                                        <td>
-                                            <div class="form-button-action">
-                                                <button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <?php
+                                        }
+                                    } else {
+                                        echo "No records found";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -226,7 +266,29 @@
     <script src="assets/js/setting-demo.js"></script>
     <script src="assets/js/demo.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
+    function showModal(){
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Product Added Successfully',
+            showConfirmButton: false
+        });
+    }
+
+    function checkExistParam() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success') && urlParams.get('success') === 'true') {
+            showModal();
+        }
+    }
+
+    window.onload = checkExistParam; 
+</script>
+
+    <!-- <script>
         $(document).ready(function () {
             $("#add-row").DataTable({
                 pageLength: 5,
@@ -249,6 +311,6 @@
                 $("#addRowModal").modal("hide");
             });
         });
-    </script>
+    </script> -->
 </body>
 </html>
