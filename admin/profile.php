@@ -30,17 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 <html lang="en">
 <head>
     <?php include('includes/topbar.php'); ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
 </head>
-
 <body>
+    <?php include('includes/sidebar.php')?>
 
-    <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6">Profile</h1>
-    </div>
-    <!-- Single Page Header End -->
+    <!-- Header -->
+    <?php include('includes/header.php'); ?>
 
-    <!-- Main -->
+    <!-- Main Content -->
     <div class="container-xl px-4 mt-4">
         <!-- Account page navigation-->
         <nav class="nav nav-borders">
@@ -66,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
             <div class="col-xl-8">
                 <!-- Account details card-->
                 <div class="card mb-4">
-                    <div class="card-header">Account Information</div>
+                    <div class="card-header">Account Details</div>
                     <div class="card-body">
                         <?php 
                         if(isset($_SESSION['uid'])){
@@ -79,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 
                             if($result && mysqli_num_rows($result) > 0){
                                 $row = mysqli_fetch_assoc($result);
-                                ?> 
-                                <form action="" method="POST">
+                        ?> 
+                                <form>
                                     <div class="mb-3">
                                         <label class="small mb-1" for="inputUsername">Username:</label>
                                         <input class="form-control" name="username" type="text" placeholder="Enter your username" value="<?php echo $row['username'] ?>" readonly>
@@ -107,11 +106,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <label class="small mb-1" for="inputAddress">Address</label>
                                         <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>" readonly>
                                     </div>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editAccount" style="margin-left: 290px"> Edit </button>
-                                    <button type="submit" class="btn btn-danger">Logout</button>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editAccount">Edit</button>
+
+                                    <button type="submit" class="btn btn-danger" formaction="logout.php">Logout</button>
                                 </form>
-                       
-                                <?php
+                        <?php
                             }
                         }
                         ?>
@@ -120,7 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
             </div>
         </div>
     </div>
-    <?php include('includes/footer.php'); ?>
 
     <!-- Edit Account Modal -->
     <div class="modal fade" id="editAccount" tabindex="-1" aria-labelledby="editAccountLabel" aria-hidden="true">
@@ -132,67 +130,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputUsername">Username:</label>
-                                        <input class="form-control" name="username" type="text" placeholder="Enter your username" value="<?php echo $row['username'] ?>" >
-                                    </div>
-                                    <div class="row gx-3 mb-3">
-                                        <div class="col-md-6">
-                                            <label class="small mb-1" for="inputFirstName">First name</label>
-                                            <input class="form-control" name="firstname" type="text" placeholder="Enter your first name" value="<?php echo $row['firstname'] ?>" >
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="small mb-1" for="inputLastName">Last name</label>
-                                            <input class="form-control" name="lastname" type="text" placeholder="Enter your last name" value="<?php echo $row['lastname'] ?>" >
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="small mb-1" for="inputGender">Gender</label>
-                                            <input class="form-control" name="gender" type="text" placeholder="Enter your gender" value="<?php echo $row['gender'] ?>" >
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="small mb-1" for="inputPhone">Phone number</label>
-                                            <input class="form-control" name="contact" type="tel" placeholder="Enter your phone number" value="<?php echo $row['contact'] ?>" >
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputAddress">Address</label>
-                                        <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>" >
-                                    </div>
-                                    <h6> Account Details </h6>
-                                        <div class="row gx-3 mb-3">
-                                            <div class="col-md-6">
-                                                <label class="small mb-1" for="password">Password</label>
-                                                <input class="form-control" name="password" type="password" placeholder="Enter your password" pattern=".{8,16}" title="Password must be 8-16 characters" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="small mb-1" for="cpassword">Comfirm Password</label>
-                                                <input class="form-control" name="cpassword" type="password" placeholder="Confirm password" required>
-                                            </div>
-                                        </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" name="update_profile" class="btn btn-primary">Save changes</button>
+                        <div class="mb-3">
+                            <label class="small mb-1" for="editFirstName">First name</label>
+                            <input class="form-control" name="firstname" type="text" placeholder="Enter your first name" value="<?php echo $row['firstname'] ?>">
                         </div>
+                        <div class="mb-3">
+                            <label class="small mb-1" for="editLastName">Last name</label>
+                            <input class="form-control" name="lastname" type="text" placeholder="Enter your last name" value="<?php echo $row['lastname'] ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="small mb-1" for="editGender">Gender</label>
+                            <input class="form-control" name="gender" type="text" placeholder="Enter your gender" value="<?php echo $row['gender'] ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="small mb-1" for="editPhone">Phone number</label>
+                            <input class="form-control" name="contact" type="tel" placeholder="Enter your phone number" value="<?php echo $row['contact'] ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="small mb-1" for="editAddress">Address</label>
+                            <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="update_profile" class="btn btn-primary">Save changes</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
-
-    <!-- JavaScript Libraries -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/lightbox/js/lightbox.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <!-- Footer -->
+    <!-- <?php include('includes/footer.php'); ?> -->
 </body>
-
 </html>
-                        
