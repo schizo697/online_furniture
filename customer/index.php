@@ -149,7 +149,7 @@
                                 
                                 $getlisting = "SELECT * FROM product 
                                                 JOIN furniture_type ON furniture_type.fid = product.fid 
-                                                WHERE product.status = 'Active'";
+                                                WHERE product.status = 'Active';";
                                 $fetch = $conn->query($getlisting);
                             ?>               
                             <?php 
@@ -160,7 +160,7 @@
                                 <div class="product-img">
                                     <img src="<?php echo "../admin/assets/img/".$row['image']; ?>" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
-                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Couch</div>
+                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;"><?php echo $row['type']; ?></div>
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4><?php echo $row['pname']; ?></h4>
                                     <p><?php echo $row['description']; ?></p>
