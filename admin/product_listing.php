@@ -8,7 +8,9 @@
         $description = $_POST['description'];
         $quantity = $_POST['quantity'];
         $color = $_POST['color'];
-        $size = $_POST['size'];
+        $height = $_POST['height'];
+        $width = $_POST['width'];
+        $length = $_POST['length'];
         $fid = $_POST['fid'];
 
         if (isset($_FILES['image'])) {
@@ -33,9 +35,9 @@
                         move_uploaded_file($tmp_name, $img_upload_path);
             
                         //into the database
-                        $sql = "INSERT INTO product (pname, price, description, quantity, color, size, fid, image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Active')";
+                        $sql = "INSERT INTO furniture (pname, price, description, quantity, color, height, width, length, fid, image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')";
                         $stmt = $conn->prepare($sql);
-                        $stmt->bind_param("ssssssss", $pname, $price, $description, $quantity, $color, $size, $fid, $new_img_name);
+                        $stmt->bind_param("ssssssssss", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $new_img_name);
                         if($stmt->execute()) {
                             $url = "product_listing.php?success=true";
                             echo '<script>window.location.href= "' . $url . '";</script>'; 
@@ -126,31 +128,43 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Price</label>
-                                                        <input name="price" type="text" class="form-control" placeholder="" />
+                                                        <input name="price" type="number" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12 pe-0">
+                                                <div class="col-md-12">
                                                     <div class="form-group form-group-default">
                                                         <label>Description</label>
                                                         <input name="description" type="textarea" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 pe-0">
+                                                <div class="col-md-6">
                                                     <div class="form-group form-group-default">
-                                                        <label>Size</label>
-                                                        <input name="size" type="text" class="form-control" placeholder="" />
+                                                        <label>Height</label>
+                                                        <input name="height" type="number" class="form-control" placeholder="in cm" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Width</label>
+                                                        <input name="width" type="number" class="form-control" placeholder="in cm" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Length</label>
+                                                        <input name="length" type="number" class="form-control" placeholder="in cm" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Color</label>
-                                                        <input name="color" type="text" class="form-control" placeholder="" />
+                                                        <input name="color" type="" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Quantity</label>
-                                                        <input name="quantity" type="text" class="form-control" placeholder="" />
+                                                        <input name="quantity" type="number" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 pe-0">
@@ -186,8 +200,8 @@
                                 </thead>
                                 <tbody>
                                 <?php 
-                                    $sql = "SELECT * FROM product 
-                                            JOIN furniture_type ON product.fid = furniture_type.fid WHERE product.status = 'Active'";
+                                    $sql = "SELECT * FROM furniture 
+                                            JOIN furniture_type ON furniture.fid = furniture_type.fid WHERE furniture.status = 'Active'";
                                     $result = mysqli_query($conn, $sql);
 
                                     if ($result && mysqli_num_rows($result) > 0) {
@@ -201,7 +215,7 @@
                                             $status = $row['status'];
                                 ?>
                                     <tr>
-                                        <td><?php echo $image ?></td>
+                                        <td><img src = "<?php echo "assets/img/".$image; ?>" alt="Image" onclick="window.open(this.src,'_blank');" style = "width: 80px; height: 80px;"></td>
                                         <td><?php echo $pname ?></td>
                                         <td><?php echo $description ?></td>
                                         <td><?php echo $quantity ?></td>

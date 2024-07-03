@@ -147,8 +147,8 @@
                     <?php 
                                 include "../conn.php";
                                 
-                                $getlisting = "SELECT * FROM product 
-                                                JOIN furniture_type ON furniture_type.fid = product.fid 
+                                $getlisting = "SELECT * FROM furniture 
+                                                JOIN furniture_type ON furniture_type.fid = furniture.fid 
                                                 WHERE product.status = 'Active'";
                                 $fetch = $conn->query($getlisting);
                             ?>               
