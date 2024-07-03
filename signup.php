@@ -37,6 +37,7 @@
                         $last_name = $_POST['last_name'];
                         $gender = $_POST['gender'];
                         $contact = $_POST['contact'];
+                        $email = $_POST['email'];
                         $address = $_POST['address'];
                         $username = $_POST['username'];
                         $password = $_POST['password'];
@@ -55,7 +56,7 @@
                             });
                             </script>";
                         } else {
-                            $sql = "INSERT INTO userinfo (firstname, lastname, gender, contact, address) VALUES ('$first_name', '$last_name', '$gender', '$contact', '$address')";
+                            $sql = "INSERT INTO userinfo (firstname, lastname, gender, contact, address, email) VALUES ('$first_name', '$last_name', '$gender', '$contact', '$address', '$email')";
 
                             if ($conn->query($sql) === TRUE) {
                                 $info_id = $conn->insert_id;
@@ -105,7 +106,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="input-group">
-                                        <input type="text" name="gender" id="gender" class="form-control form-control-lg bg-light fs-6" placeholder="Gender" required>
+                                        <input type="text" name="email" id="email" class="form-control form-control-lg bg-light fs-6" placeholder="Email" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -114,11 +115,31 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <fieldset class="form-group row">
+                                    <legend class="col-form-label col-sm-2 float-sm-left pt-0">Gender</legend>
+                                    <div class="col-sm-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="Male" checked>
+                                            <label class="form-check-label" for="gridRadios1">
+                                                Male
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="gender" id="gridRadios2" value="Female">
+                                            <label class="form-check-label" for="gridRadios2">
+                                                Female
+                                            </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
                             <div class="col-md-12">
                                 <div class="input-group">
                                     <input type="text" name="address" id="address" class="form-control form-control-lg bg-light fs-6" placeholder="Address" required>
                                 </div>
-                            </div>
+                            </div><br>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="input-group">

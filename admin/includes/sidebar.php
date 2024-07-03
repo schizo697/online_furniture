@@ -50,14 +50,14 @@
                 </a>
                 <div class="collapse" id="base">
                   <ul class="nav nav-collapse">
-                    <li>
+                    <!-- <li>
                       <a href="product_category.php">
                         <span class="sub-item">Product Category </span>
                       </a>
-                    </li>
+                    </li> -->
                     <li>
                       <a href="product_listing.php">
-                        <span class="sub-item">Product Listing</span>
+                        <span class="sub-item">Product</span>
                       </a>
                     </li>
                     <li>
@@ -146,11 +146,45 @@
                 </div>
               </li>
               <li class="nav-item">
-        <a href="payments.php">
-          <i class="fas fa-money-bill"></i>
-          <p>Payment Option</p>
-        </a>
-      </li>
+                <a href="payments.php">
+                  <i class="fas fa-money-bill"></i>
+                  <p>Payment Option</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#">
+                  <i class="fas fa-star"></i>
+                  <p>Reviews & Rating</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#">
+                  <i class="fas fa-money-bill"></i>
+                  <p>Return & Refund</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#supplier">
+                <i class="fas fa-users"></i>
+              <p>Supplier</p>
+
+                  <span class="caret"></span>
+                </a>
+                <div class="collapse" id="supplier">
+                  <ul class="nav nav-collapse">
+                    <li>
+                      <a href="supplier.php">
+                        <span class="sub-item">Supplier</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="supplies.php">
+                        <span class="sub-item">Supplies</span>
+                      </a>
+                    </li>  
+                  </ul>
+                </div>
+              </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarLayouts">
                   <i class="fas fa-envelope"></i>
