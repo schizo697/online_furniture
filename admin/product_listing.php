@@ -1,71 +1,101 @@
-<!-- handle add product -->
 <?php
-    include '../conn.php';
+// File path: /path/to/your/file.php
 
-    if(isset($_POST['addproduct'])) {
-        $pname = $_POST['pname'];
-        $price = $_POST['price'];
-        $description = $_POST['description'];
-        $quantity = $_POST['quantity'];
-        $color = $_POST['color'];
-        $height = $_POST['height'];
-        $width = $_POST['width'];
-        $length = $_POST['length'];
-        $fid = $_POST['fid'];
+include '../conn.php';
 
-        if (isset($_FILES['image'])) {
-            $img_name = $_FILES['image']['name'];
-            $img_size = $_FILES['image']['size'];
-            $tmp_name = $_FILES['image']['tmp_name'];
-            $error = $_FILES['image']['error'];
-            
-            if ($error === 0) {
-                if ($img_size > 125000000) {
-                        $message = "Sorry, your file is too large";
-                        header("Location: product_listing.php?error=$message");
-                } else {
-                    $img_ex = pathinfo($img_name, PATHINFO_EXTENSION);
-                    $img_ex_loc = strtolower($img_ex);
-            
-                    $allowed_ex = array ("jpg", "jpeg", "png", "pdf");
-            
-                    if (in_array($img_ex_loc, $allowed_ex)) {
-                        $new_img_name = uniqid("FR-", true).'.'.$img_ex_loc;
-                        $img_upload_path = 'assets/img/'.$new_img_name;
-                        move_uploaded_file($tmp_name, $img_upload_path);
-            
-                        //into the database
-                        $sql = "INSERT INTO furniture (pname, price, description, quantity, color, height, width, length, fid, image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')";
-                        $stmt = $conn->prepare($sql);
-                        $stmt->bind_param("ssssssssss", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $new_img_name);
-                        if($stmt->execute()) {
-                            $url = "product_listing.php?success=true";
-                            echo '<script>window.location.href= "' . $url . '";</script>'; 
-                        } else {
-                            echo "<script>Swal.fire({
-                                    icon: 'error',
-                                    text: 'Something went wrong!',
-                                    });
-                                </script>";
-                        }
-                    } else {
-                        $message = "You cannot upload files of this type";
-                        header("Location: product_listing.php?error=$message");
-                    }
-                }
-            } else {
-                $message = "Please upload the required images";
+// Handle Add Product
+if(isset($_POST['addproduct'])) {
+    $pname = $_POST['pname'];
+    $price = $_POST['price'];
+    $description = $_POST['description'];
+    $quantity = $_POST['quantity'];
+    $color = $_POST['color'];
+    $height = $_POST['height'];
+    $width = $_POST['width'];
+    $length = $_POST['length'];
+    $fid = $_POST['fid'];
+
+    if (isset($_FILES['image'])) {
+        $img_name = $_FILES['image']['name'];
+        $img_size = $_FILES['image']['size'];
+        $tmp_name = $_FILES['image']['tmp_name'];
+        $error = $_FILES['image']['error'];
+        
+        if ($error === 0) {
+            if ($img_size > 125000000) {
+                $message = "Sorry, your file is too large";
                 header("Location: product_listing.php?error=$message");
+            } else {
+                $img_ex = pathinfo($img_name, PATHINFO_EXTENSION);
+                $img_ex_loc = strtolower($img_ex);
+
+                $allowed_ex = array ("jpg", "jpeg", "png", "pdf");
+
+                if (in_array($img_ex_loc, $allowed_ex)) {
+                    $new_img_name = uniqid("FR-", true).'.'.$img_ex_loc;
+                    $img_upload_path = 'assets/img/'.$new_img_name;
+                    move_uploaded_file($tmp_name, $img_upload_path);
+
+                    // Insert into the database
+                    $sql = "INSERT INTO furniture (pname, price, description, quantity, color, height, width, length, fid, image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ssssssssss", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $new_img_name);
+                    if($stmt->execute()) {
+                        $url = "product_listing.php?success=true";
+                        echo '<script>window.location.href= "' . $url . '";</script>'; 
+                    } else {
+                        echo "<script>Swal.fire({
+                                icon: 'error',
+                                text: 'Something went wrong!',
+                                });
+                            </script>";
+                    }
+                } else {
+                    $message = "You cannot upload files of this type";
+                    header("Location: product_listing.php?error=$message");
+                }
             }
-        }  
+        } else {
+            $message = "Please upload the required images";
+            header("Location: product_listing.php?error=$message");
+        }
     }
+}
+
+// Handle Update Product
+if(isset($_POST['updateproduct'])) {
+    $pid = $_POST['pid'];
+    $pname = $_POST['pname'];
+    $price = $_POST['price'];
+    $description = $_POST['description'];
+    $quantity = $_POST['quantity'];
+    $color = $_POST['color'];
+    $height = $_POST['height'];
+    $width = $_POST['width'];
+    $length = $_POST['length'];
+    $fid = $_POST['fid'];
+
+    $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, color=?, height=?, width=?, length=?, fid=? WHERE pid=?";
+    $stmt = $conn->prepare($update_query);
+    $stmt->bind_param("sssssssssi", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $pid);
+
+    if($stmt->execute()) {
+        $url = "product_listing.php?update_success=true";
+        echo '<script>window.location.href= "' . $url . '";</script>';
+    } else {
+        echo "<script>Swal.fire({
+                icon: 'error',
+                text: 'Something went wrong!',
+                });
+            </script>";
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <?php include('includes/topbar.php'); ?>
-
 </head>
 <body>
     <?php include('includes/sidebar.php')?>
@@ -93,29 +123,33 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <!-- Modal -->
-                        <form action="" method="POST" enctype = "multipart/form-data">
-                        <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header border-0">
-                                        <h5 class="modal-title">
-                                            <span class="fw-mediumbold"> New</span>
-                                            <span class="fw-light"> Product </span>
-                                        </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p class="small">Fill all the necessary information.</p>
-                                        <form>
+                        <!-- Add Product Modal -->
+                        <form action="" method="POST" enctype="multipart/form-data">
+                            <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header border-0">
+                                            <h5 class="modal-title">
+                                                <span class="fw-mediumbold"> New</span>
+                                                <span class="fw-light"> Product </span>
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="small">Fill all the necessary information.</p>
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
-                                                    <label>Furniture Type</label>
+                                                        <label>Furniture Type</label>
                                                         <select name="fid" class="form-control" required>
                                                             <option selected disabled>Select...</option>
-                                                            <option value="1">Table</option>
-                                                            <option value="2">Chair</option>
+                                                            <?php
+                                                                $name_query = "SELECT * FROM furniture_type";
+                                                                $r = mysqli_query($conn, $name_query);
+                                                                while ($row = mysqli_fetch_array($r)) {
+                                                                    echo "<option value='{$row['fidid']}'>{$row['type']}</option>";
+                                                                }
+                                                            ?>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -158,7 +192,7 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Color</label>
-                                                        <input name="color" type="" class="form-control" placeholder="" />
+                                                        <input name="color" type="text" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
@@ -170,19 +204,18 @@
                                                 <div class="col-md-12 pe-0">
                                                     <div class="form-group form-group-default">
                                                         <label>Image</label>
-                                                        <input type = "file" name="image" id="image' style="border: solid gray 1px; padding: 6px; width: 80%; border-radius: 4px">
+                                                        <input type="file" name="image" id="image" style="border: solid gray 1px; padding: 6px; width: 80%; border-radius: 4px">
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
-                                    </div>
-                                    <div class="modal-footer border-0">
-                                        <button type="submit" name="addproduct" class="btn btn-primary">Add</button>
-                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="submit" name="addproduct" class="btn btn-primary">Add</button>
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         </form>
 
                         <div class="table-responsive">
@@ -194,6 +227,10 @@
                                         <th>Description</th>
                                         <th>Quantity</th>
                                         <th>Price</th>
+                                        <th>Type</th>
+                                        <th>Height</th>
+                                        <th>Width</th>
+                                        <th>Length</th>
                                         <th>Status</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
@@ -212,19 +249,30 @@
                                             $description = $row['description'];
                                             $quantity = $row['quantity'];
                                             $price = $row['price'];
+                                            $type = $row['type'];
+                                            $height = $row['height'];
+                                            $width = $row['width'];
+                                            $length = $row['length'];
                                             $status = $row['status'];
                                 ?>
                                     <tr>
-                                        <td><img src = "<?php echo "assets/img/".$image; ?>" alt="Image" onclick="window.open(this.src,'_blank');" style = "width: 80px; height: 80px;"></td>
+                                        <td><img src="assets/img/<?php echo $row['image']; ?>" alt="Product Image" style="max-width: 100px;"></td> 
                                         <td><?php echo $pname ?></td>
                                         <td><?php echo $description ?></td>
                                         <td><?php echo $quantity ?></td>
                                         <td>₱<?php echo $price ?></td>
+                                        <td><?php echo $type ?></td>
+                                        <td><?php echo $height ?></td>
+                                        <td><?php echo $width ?></td>
+                                        <td><?php echo $length ?></td>
                                         <td><?php echo $status ?></td>
                                         <td>
                                             <div class="form-button-action">
-                                                <button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">
+                                                <button type="button" class="btn btn-link btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $pid ?>', '<?php echo $row['fid'] ?>', '<?php echo $pname ?>', '<?php echo $price ?>', '<?php echo $description ?>', '<?php echo $quantity ?>', '<?php echo $color ?>', '<?php echo $height ?>', '<?php echo $width ?>', '<?php echo $length ?>')">
                                                     <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-primary btn-lg">
+                                                    <i class="far fa-eye"></i>
                                                 </button>
                                                 <button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
                                                     <i class="fa fa-times"></i>
@@ -247,40 +295,105 @@
         </div>
     </div>
 
+    <!-- Edit Product Modal -->
+    <form action="" method="POST" enctype="multipart/form-data">
+        <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title">
+                            <span class="fw-mediumbold"> Edit</span>
+                            <span class="fw-light"> Product </span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="small">Fill all the necessary information.</p>
+                        <input type="hidden" name="pid" id="editPid">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group form-group-default">
+                                    <label>Furniture Type</label>
+                                    <select name="fid" id="editFid" class="form-control" required>
+                                        <option selected disabled>Select...</option>
+                                        <?php
+                                            $name_query = "SELECT * FROM furniture_type";
+                                            $r = mysqli_query($conn, $name_query);
+                                            while ($row = mysqli_fetch_array($r)) {
+                                                echo "<option value='{$row['fidid']}'>{$row['type']}</option>";
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 pe-0">
+                                <div class="form-group form-group-default">
+                                    <label>Product Name</label>
+                                    <input name="pname" id="editPname" type="text" class="form-control" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-default">
+                                    <label>Price</label>
+                                    <input name="price" id="editPrice" type="number" class="form-control" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-md-12 pe-0">
+                                <div class="form-group form-group-default">
+                                    <label>Description</label>
+                                    <input name="description" id="editDescription" type="textarea" class="form-control" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-md-6 pe-0">
+                                <div class="form-group form-group-default">
+                                    <label>Height</label>
+                                    <input name="height" id="editHeight" type="number" class="form-control" placeholder="in cm" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-default">
+                                    <label>Width</label>
+                                    <input name="width" id="editWidth" type="number" class="form-control" placeholder="in cm" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-default">
+                                    <label>Length</label>
+                                    <input name="length" id="editLength" type="number" class="form-control" placeholder="in cm" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-default">
+                                    <label>Color</label>
+                                    <input name="color" id="editColor" type="text" class="form-control" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-default">
+                                    <label>Quantity</label>
+                                    <input name="quantity" id="editQuantity" type="number" class="form-control" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-md-12 pe-0">
+                                <div class="form-group form-group-default">
+                                    <label>Image</label>
+                                    <input type="file" name="image" id="editImage" style="border: solid gray 1px; padding: 6px; width: 80%; border-radius: 4px">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="submit" name="updateproduct" class="btn btn-primary">Update</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
     <!-- Footer -->
-    <!-- <?php include('includes/footer.php'); ?> -->
-
-    <!-- Scripts -->
-    <script src="assets/js/core/jquery-3.7.1.min.js"></script>
-    <script src="assets/js/core/popper.min.js"></script>
-    <script src="assets/js/core/bootstrap.min.js"></script>
-
-    <!-- jQuery Scrollbar -->
-    <script src="assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
-
-    <!-- Chart JS -->
-    <script src="assets/js/plugin/chart.js/chart.min.js"></script>
-
-    <!-- jQuery Sparkline -->
-    <script src="assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
-
-    <!-- Chart Circle -->
-    <script src="assets/js/plugin/chart-circle/circles.min.js"></script>
-
-    <!-- Datatables -->
-    <script src="assets/js/plugin/datatables/datatables.min.js"></script>
-
-    <!-- Sweet Alert -->
-    <script src="admin/assets/js/plugin/sweetalert/sweetalert.min.js"></script>
-
-    <!-- Kaiadmin JS -->
-    <script src="assets/js/kaiadmin.min.js"></script>
-
-    <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-    <script src="assets/js/setting-demo.js"></script>
-    <script src="assets/js/demo.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php include('includes/footer.php'); ?> 
+    <?php include('includes/tables.php'); ?>
 
     <script>
     function showModal(){
@@ -299,32 +412,21 @@
         }
     }
 
-    window.onload = checkExistParam; 
-</script>
+    function populateEditModal(pid, fid, pname, price, description, quantity, color, height, width, length) {
+        document.getElementById('editPid').value = pid;
+        document.getElementById('editFid').value = fid;
+        document.getElementById('editPname').value = pname;
+        document.getElementById('editPrice').value = price;
+        document.getElementById('editDescription').value = description;
+        document.getElementById('editQuantity').value = quantity;
+        document.getElementById('editColor').value = color;
+        document.getElementById('editHeight').value = height;
+        document.getElementById('editWidth').value = width;
+        document.getElementById('editLength').value = length;
+    }
 
-    <!-- <script>
-        $(document).ready(function () {
-            $("#add-row").DataTable({
-                pageLength: 5,
-            });
+    window.onload = checkExistParam;
+    </script>
 
-            var action = 
-                '<td><div class="form-button-action">' +
-                '<button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">' +
-                '<i class="fa fa-edit"></i></button> ' +
-                '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">' +
-                '<i class="fa fa-times"></i></button></div></td>';
-
-            $("#addRowButton").click(function () {
-                $("#add-row").dataTable().fnAddData([
-                    $("#addName").val(),
-                    $("#addPosition").val(),
-                    $("#addOffice").val(),
-                    action,
-                ]);
-                $("#addRowModal").modal("hide");
-            });
-        });
-    </script> -->
 </body>
 </html>

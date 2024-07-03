@@ -149,7 +149,7 @@
                                 
                                 $getlisting = "SELECT * FROM furniture 
                                                 JOIN furniture_type ON furniture_type.fid = furniture.fid 
-                                                WHERE product.status = 'Active'";
+                                                WHERE furniture.status = 'Active'";
                                 $fetch = $conn->query($getlisting);
                             ?>               
                             <?php 
