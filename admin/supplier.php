@@ -5,40 +5,22 @@
     if(isset($_POST['adduser'])) {
         $firstname = $_POST['firstname'];
         $lastname = $_POST['lastname'];
-        $username = $_POST['username'];
-        $password = $_POST['password'];
         $email = $_POST['email'];
         $gender = $_POST['gender'];
         $address = $_POST['address'];
         $contact = $_POST['contact'];
-        $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
 
-        $check_username = "SELECT username FROM useraccount WHERE username = '$username'";
-        $check_result = mysqli_query($conn, $check_username);
-
-        if($check_result && mysqli_num_rows($check_result) > 0) {
-            // Redirect to user_management.php with exist=true parameter
-            $url = "user_management.php?exist=true";
-            echo '<script>window.location.href = "' . $url . '";</script>';
-            exit(); // Exiting to prevent further execution
-        } else {
-            $sql = "INSERT INTO userinfo (firstname, lastname, contact, address, gender, email) VALUES ('$firstname', '$lastname', '$contact', '$address', '$gender', '$email')";
-            if(mysqli_query($conn, $sql)) {
-                $info_id = mysqli_insert_id($conn);
-                $sql = "INSERT INTO useraccount (username, password, levelid, infoid, status) VALUES ('$username', '$encrypted_password', 4, '$info_id', 1)";
+        $sql = "INSERT INTO supplier (firstname, lastname, contact, address, gender, email) VALUES ('$firstname', '$lastname', '$contact', '$address', '$gender', '$email')";
             
-                    if(mysqli_query($conn, $sql)) {
-                        $url = "user_management.php?success=true";
-                        echo '<script>window.location.href= "' . $url . '";</script>';
-                        exit(); 
-                    } else {
-                        $url = "user_management.php?error=true";
-                        echo '<script>window.location.href="' . $url . '";</script';
-                        exit();
-                    }
-                
-            }
-        }
+        if(mysqli_query($conn, $sql)) {
+            $url = "supplier.php?success=true";
+            echo '<script>window.location.href= "' . $url . '";</script>';
+            exit(); 
+        } else {
+            $url = "supplier.php?error=true";
+            echo '<script>window.location.href="' . $url . '";</script';
+            exit();
+        }  
     }
 ?>
 
@@ -51,33 +33,19 @@
         $contact = $_POST['contact'];
         $address = $_POST['address'];
         $email = $_POST['email'];
-        $password = $_POST['password'];
-        $cpassword = $_POST['cpassword'];
-        $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
 
-        if ($password != $cpassword) {
-            $url = 'user_management.php?errorpassword=true';
-            echo '<script>window.location.href="' . $url . '"</script>';
+        $infoupdate = "UPDATE userinfo SET firstname = '$firstname', lastname = '$lastname', contact = '$contact', address = '$address', email = '$email' WHERE infoid = '$user_id'";
+        $inforesult = mysqli_query($conn, $infoupdate);
+    
+        if($inforesult) {
+            $url = 'supplier.php?update=true';
+            echo '<script>window.location.href= "' . $url . '"</script>';
             exit();
         } else {
-            $infoupdate = "UPDATE userinfo SET firstname = '$firstname', lastname = '$lastname', contact = '$contact', address = '$address', email = '$email' WHERE infoid = '$user_id'";
-            $inforesult = mysqli_query($conn, $infoupdate);
-    
-            if($inforesult) {
-                $passwordupdate = "UPDATE useraccount SET password = '$encrypted_password' WHERE uid = '$user_id'";
-                $passwordresult = mysqli_query($conn, $passwordupdate);
-    
-                if($passwordresult){
-                    $url = 'user_management.php?update=true';
-                    echo '<script>window.location.href= "' . $url . '"</script>';
-                    exit();
-                } else {
-                    $url = "user_management.php?error=true";
-                    echo '<script>window.location.href="' . $url . '";</script';
-                    exit();
-                }
-            }
-        }
+            $url = "supplier.php?error=true";
+            echo '<script>window.location.href="' . $url . '";</script';
+            exit();
+        }    
       }
     ?>
 
@@ -209,25 +177,6 @@
                                                         <input name="contact" id="editContact" type="text" class="form-control" placeholder="09*********" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 pe-0">
-                                                    <div class="form-group form-group-default">
-                                                        <label>User Name</label>
-                                                        <input name="username" id="editUserName" type="text" class="form-control" placeholder="" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group form-group-default">
-                                                        <label>Password</label>
-                                                        <input name="password" id="editPassword" type="text" class="form-control" placeholder="********" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group form-group-default">
-                                                        <label>Confirm Password</label>
-                                                        <input name="cpassword" id="confirmPassword" type="text" class="form-control" placeholder="********" />
-                                                    </div>
-                                                </div>
-                                                <div id="passwordError" style="color: red;"></div>
                                             </div>
                                         </form>
                                     </div>
@@ -293,23 +242,10 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Contact</label>
-                                                        <input name="contact" type="text" class="form-control" placeholder="09*********" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 pe-0">
-                                                    <div class="form-group form-group-default">
-                                                        <label>User Name</label>
-                                                        <input name="username" type="text" class="form-control" placeholder="" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group form-group-default">
-                                                        <label>Password</label>
-                                                        <input name="password" type="text" class="form-control" placeholder="********" />
+                                                        <input name="contact" type="number" class="form-control" placeholder="09*********" />
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
                                     </div>
                                     <div class="modal-footer border-0">
                                         <button type="submit" name="adduser" class="btn btn-primary">Add</button>
@@ -333,9 +269,7 @@
                                 </thead>
                                 <tbody>
                                 <?php 
-                                    $sql = "SELECT uid, username, firstname, lastname, gender, contact, address, levelid, status
-                                    FROM useraccount 
-                                    JOIN userinfo ON useraccount.infoid = userinfo.infoid WHERE useraccount.status = 1 AND useraccount.levelid = 4";
+                                    $sql = "SELECT * FROM supplier";
                                     $result = mysqli_query($conn, $sql);
 
                                     if ($result && mysqli_num_rows($result) > 0) {
@@ -343,36 +277,18 @@
                                             $uid = $row['uid'];
                                             $firstname = $row['firstname'];
                                             $lastname = $row['lastname'];
+                                            $email = $row['email'];
                                             $name = $firstname . ' ' . $lastname;
-                                            $username = $row['username'];
                                             $gender = $row['gender'];
                                             $contact = $row['contact'];
                                             $address = $row['address'];
                                             $level = $row['levelid'];
-                                            $type = '';
-                                            switch ($level) {
-                                                case 1:
-                                                    $type = 'Admin';
-                                                    break;
-                                                case 2:
-                                                    $type = 'Staff';
-                                                    break;
-                                                case 3:
-                                                    $type = 'Customer';
-                                                    break;
-                                                case 4:
-                                                    $type = 'Supplier';
-                                                break;
-                                                default:
-                                                    $type = 'Unknown';
-                                                    break;
-                                            }
-                                        ?> 
-                                    <tr>                                     
+                                        ?>
+                                    <tr>                                    
                                         <td><?php echo $name ?></td>
                                         <td><?php echo $address ?></td>                              
                                         <td><?php echo $contact ?></td>
-                                        <td><?php echo $type ?></td>
+                                        <td><?php echo $email ?></td>
                                         <td>
                                             <div class="form-button-action">
                                                 <a href="#" class="btn btn-link btn-success edit-button" data-bs-toggle="modal" data-bs-target="#editmodal" data-account-id="<?php echo $uid?>" data-account-fname="<?php echo $firstname?>" data-account-lname="<?php echo $lastname?>"
