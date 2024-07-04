@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php include('includes/topbar.php'); ?>
+    <?php include('includes/topbar.php');
+    if(!isset($_SESSION['uid'])){
+        header("Location: ../login.php");
+        exit();
+    }
+    ?>
     <style>
   .product-item {
         position: relative;
@@ -137,7 +142,9 @@
                                     <p><?php echo $row['description']; ?></p>
                                     <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $row['price']; ?></p>
                                         <div class="button-group">
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                        <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="<?php echo $row['pid'];?>">
+                                            <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                        </button>
                                             <a href="view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                     </div>
@@ -167,12 +174,43 @@
 </div>
 <!-- End Main Content -->
 
+<script>
+    $(document).ready(function(){
+        $('.add-to-cart').click(function(){
+            var pid = $(this).data('pid');
+
+            $.ajax({
+                url: 'add_to_cart.php',
+                type: 'POST',
+                data: {
+                    pid: pid,
+                },
+                success: function(response){
+                    Swal.fire({
+                        icon: 'success',
+                        text: response,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                },
+                error: function(xhr, status, error){
+                    console.error('AJAX Error: ' + status + ' ' + error);
+                    console.error(xhr);
+                }
+            });
+        });
+    });
+</script>
+
+
 <?php include('includes/footer.php'); ?>
 
 <!-- Back to Top Button -->
 <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
 
 <!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="lib/easing/easing.min.js"></script>

@@ -1,9 +1,5 @@
 <?php 
 session_start(); // Ensure the session is started
-if(!isset($_SESSION['uid'])){
-    header("Location: ../login.php");
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +31,6 @@ if(!isset($_SESSION['uid'])){
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
     <link rel="icon" href="img/Logo1.png" type="image/x-icon" />
-    
 
     <style>
         .logo {

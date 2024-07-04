@@ -4,7 +4,7 @@ include('../conn.php'); // Include database connection
 
 // Check if the user is logged in
 if (!isset($_SESSION['uid'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -108,7 +108,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>" readonly>
                                     </div>
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editAccount" style="margin-left: 290px"> Edit </button>
-                                    <button type="submit" class="btn btn-danger">Logout</button>
+                                    <a href="../login.php?logout=true">
+                                        <button type="button" class="btn btn-danger">Logout</button>
+                                    </a>
                                 </form>
                        
                                 <?php

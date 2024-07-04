@@ -52,14 +52,25 @@
         $email = $_POST['email'];
         $contact = $_POST['contact'];
         $address = $_POST['address'];
+        $type = $_POST['usertype'];
 
             $infoupdate = "UPDATE userinfo SET firstname = '$firstname', lastname = '$lastname', contact = '$contact', address = '$address', email = '$email' WHERE infoid = '$user_id'";
             $inforesult = mysqli_query($conn, $infoupdate);
 
                 if($inforesult){
-                    $url = 'user_management.php?update=true';
-                    echo '<script>window.location.href= "' . $url . '"</script>';
-                    exit();
+
+                    $userupdate = "UPDATE useraccount SET levelid = '$type' WHERE uid = '$user_id'";
+                    $updateres = mysqli_query($conn, $userupdate);
+
+                    if($updateres){
+                        $url = 'user_management.php?update=true';
+                        echo '<script>window.location.href= "' . $url . '"</script>';
+                        exit();
+                    } else {
+                        $url = "user_management.php?error=true";
+                        echo '<script>window.location.href="' . $url . '";</script';
+                        exit();
+                    }
                 } else {
                     $url = "user_management.php?error=true";
                     echo '<script>window.location.href="' . $url . '";</script';
@@ -162,18 +173,15 @@
                                         <form>
                                             <div class="row">
                                             <div class="col-md-6 pe-0">
-                                                    <div class="form-group form-group-default">
-                                                        <label>User ID</label>
-                                                        <input name="userid" id="userID" type="text" class="form-control" placeholder="" readonly/>
-                                                    </div>
+                                                    <input type="hidden" name="userid" id="userID" type="text" class="form-control" placeholder="" readonly/>
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
                                                     <label>User Type</label>
                                                         <select name="usertype" class="form-control" required>
                                                             <option selected disabled>Select...</option>
-                                                            <option value="1">Admin</option>
                                                             <option value="2">Staff</option>
+                                                            <option value="3">Customer</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -240,12 +248,12 @@
                                                     <label>User Type</label>
                                                         <select name="usertype" class="form-control" required>
                                                             <option selected disabled>Select...</option>
-                                                            <option value="1">Admin</option>
                                                             <option value="2">Staff</option>
+                                                            <option value="3">Customer</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 pe-0">
+                                                <div class="col-md-6 pe-0"> 
                                                     <div class="form-group form-group-default">
                                                         <label>First Name</label>
                                                         <input name="firstname" type="text" class="form-control" placeholder="" />

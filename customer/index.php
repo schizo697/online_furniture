@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php include('includes/topbar.php'); ?>
+<?php include('includes/topbarindex.php'); ?>
 <?php include('includes/header.php'); ?>
 <style>
   .product-item {
@@ -165,7 +165,7 @@
                                     <!-- <p><?php echo $row['description']; ?></p> -->
                                     <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $row['price']; ?></p>
                                     <div class="button-group">
-                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                            <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" type="button" data-pid="<?php echo $row['pid'];?>"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</button>
                                             <a href="view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                 </div>
