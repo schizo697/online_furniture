@@ -52,23 +52,11 @@
         $email = $_POST['email'];
         $contact = $_POST['contact'];
         $address = $_POST['address'];
-        $password = $_POST['password'];
-        $cpassword = $_POST['cpassword'];
-        $encrypted_password = password_hash($password, PASSWORD_DEFAULT);
 
-        if ($password != $cpassword) {
-            $url = 'user_management.php?errorpassword=true';
-            echo '<script>window.location.href="' . $url . '"</script>';
-            exit();
-        } else {
             $infoupdate = "UPDATE userinfo SET firstname = '$firstname', lastname = '$lastname', contact = '$contact', address = '$address', email = '$email' WHERE infoid = '$user_id'";
             $inforesult = mysqli_query($conn, $infoupdate);
-    
-            if($inforesult) {
-                $passwordupdate = "UPDATE useraccount SET password = '$encrypted_password' WHERE uid = '$user_id'";
-                $passwordresult = mysqli_query($conn, $passwordupdate);
-    
-                if($passwordresult){
+
+                if($inforesult){
                     $url = 'user_management.php?update=true';
                     echo '<script>window.location.href= "' . $url . '"</script>';
                     exit();
@@ -77,8 +65,7 @@
                     echo '<script>window.location.href="' . $url . '";</script';
                     exit();
                 }
-            }
-        }
+            
       }
     ?>
 
@@ -220,25 +207,6 @@
                                                         <input name="contact" id="editContact" type="text" class="form-control" placeholder="09*********" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 pe-0">
-                                                    <div class="form-group form-group-default">
-                                                        <label>User Name</label>
-                                                        <input name="username" id="editUserName" type="text" class="form-control" placeholder="" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group form-group-default">
-                                                        <label>Password</label>
-                                                        <input name="password" id="editPassword" type="text" class="form-control" placeholder="********" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group form-group-default">
-                                                        <label>Confirm Password</label>
-                                                        <input name="cpassword" id="confirmPassword" type="text" class="form-control" placeholder="********" />
-                                                    </div>
-                                                </div>
-                                                <div id="passwordError" style="color: red;"></div>
                                             </div>
                                         </form>
                                     </div>
@@ -354,9 +322,10 @@
                                 </thead>
                                 <tbody>
                                 <?php 
-                                    $sql = "SELECT uid, username, firstname, lastname, gender, contact, address, levelid, status
+                                    $sql = "SELECT uid, username, email, firstname, lastname, gender, contact, address, levelid, status
                                     FROM useraccount 
-                                    JOIN userinfo ON useraccount.infoid = userinfo.infoid WHERE useraccount.status = 1";
+                                    JOIN userinfo ON useraccount.infoid = userinfo.infoid 
+                                    WHERE useraccount.status = 1 AND useraccount.levelid != 4";
                                     $result = mysqli_query($conn, $sql);
 
                                     if ($result && mysqli_num_rows($result) > 0) {
@@ -366,6 +335,7 @@
                                             $lastname = $row['lastname'];
                                             $name = $firstname . ' ' . $lastname;
                                             $username = $row['username'];
+                                            $email = $row['email'];
                                             $gender = $row['gender'];
                                             $contact = $row['contact'];
                                             $address = $row['address'];
@@ -394,7 +364,7 @@
                                         <td>
                                             <div class="form-button-action">
                                                 <a href="#" class="btn btn-link btn-success edit-button" data-bs-toggle="modal" data-bs-target="#editmodal" data-account-id="<?php echo $uid?>" data-account-fname="<?php echo $firstname?>" data-account-lname="<?php echo $lastname?>"
-                                                    data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>">
+                                                    data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>" data-account-email="<?php echo $email?>">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a href="#" class="btn btn-link btn-primary archive-button" data-bs-toggle="modal" data-bs-target="#archivemodal" data-account-id="<?php echo $uid?>">
@@ -443,12 +413,14 @@ $(document).ready(function() {
         var gender = $(this).data('account-gender');
         var contact = $(this).data('account-contact');
         var address = $(this).data('account-address');
+        var email = $(this).data('account-email');
 
         $('#userID').val(userID);
         $('#editFirstName').val(fname);
         $('#editLastName').val(lname);
         $('#editContact').val(contact);
         $('#editAddress').val(address);
+        $('#editEmail').val(email);
     });
 });
 </script>
