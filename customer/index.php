@@ -148,8 +148,7 @@
                                 include "../conn.php";
                                 
                                 $getlisting = "SELECT * FROM furniture 
-                                                JOIN furniture_type ON furniture_type.fid = furniture.fid 
-                                                WHERE furniture.status = 'Active'";
+                                            JOIN furniture_type ON furniture.fid = furniture_type.fid WHERE furniture.status = 'Active'";
                                 $fetch = $conn->query($getlisting);
                             ?>               
                             <?php 
@@ -160,14 +159,14 @@
                                 <div class="product-img">
                                     <img src="<?php echo "../admin/assets/img/".$row['image']; ?>" class="img-fluid w-100 rounded-top" alt="">
                                 </div>
-                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Couch</div>
+                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;"><?php echo $row ['type']; ?></div>
                                 <div class="p-4 border-top-0 rounded-bottom">
                                     <h4><?php echo $row['pname']; ?></h4>
-                                    <p><?php echo $row['description']; ?></p>
+                                    <!-- <p><?php echo $row['description']; ?></p> -->
                                     <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $row['price']; ?></p>
                                     <div class="button-group">
                                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                            <a href="view_product.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                            <a href="view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                 </div>
                             </div>
@@ -175,7 +174,7 @@
                          <?php } ?>
                     </div>
                 </div>
-                <!-- Additional tabs (e.g., tab-2, tab-3) would follow the same structure -->
+                <!-- Additional tabs (example tab-2, tab-3) -->
             </div>
         </div>
     </div>

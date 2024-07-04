@@ -1,6 +1,4 @@
 <?php
-// File path: /path/to/your/file.php
-
 include '../conn.php';
 
 // Handle Add Product
@@ -13,7 +11,7 @@ if(isset($_POST['addproduct'])) {
     $height = $_POST['height'];
     $width = $_POST['width'];
     $length = $_POST['length'];
-    $fid = $_POST['fid'];
+    $fid = $_POST['fid']; // Make sure fid is correctly retrieved from POST data
 
     if (isset($_FILES['image'])) {
         $img_name = $_FILES['image']['name'];
@@ -29,7 +27,7 @@ if(isset($_POST['addproduct'])) {
                 $img_ex = pathinfo($img_name, PATHINFO_EXTENSION);
                 $img_ex_loc = strtolower($img_ex);
 
-                $allowed_ex = array ("jpg", "jpeg", "png", "pdf");
+                $allowed_ex = array("jpg", "jpeg", "png", "pdf");
 
                 if (in_array($img_ex_loc, $allowed_ex)) {
                     $new_img_name = uniqid("FR-", true).'.'.$img_ex_loc;
@@ -62,22 +60,75 @@ if(isset($_POST['addproduct'])) {
     }
 }
 
+// Handle Remove Product
+if(isset($_POST['remove_product'])) {
+    $remove_pid = $_POST['remove_pid'];
+    $update_query = "UPDATE furniture SET status='Inactive' WHERE pid=?";
+    $stmt = $conn->prepare($update_query);
+    $stmt->bind_param("i", $remove_pid);
+    if($stmt->execute()) {
+        $url = "product_listing.php?remove_success=true";
+        echo '<script>window.location.href= "' . $url . '";</script>';
+    } else {
+        echo "<script>Swal.fire({
+                icon: 'error',
+                text: 'Something went wrong!',
+            });
+        </script>";
+    }
+}
+
+
 // Handle Update Product
 if(isset($_POST['updateproduct'])) {
-    $pid = $_POST['pid'];
-    $pname = $_POST['pname'];
-    $price = $_POST['price'];
-    $description = $_POST['description'];
-    $quantity = $_POST['quantity'];
-    $color = $_POST['color'];
-    $height = $_POST['height'];
-    $width = $_POST['width'];
-    $length = $_POST['length'];
-    $fid = $_POST['fid'];
+    $pid = $_POST['editPid'];
+    $pname = $_POST['editPname'];
+    $price = $_POST['editPrice'];
+    $description = $_POST['editDescription'];
+    $quantity = $_POST['editQuantity'];
+    $color = $_POST['editColor'];
+    $height = $_POST['editHeight'];
+    $width = $_POST['editWidth'];
+    $length = $_POST['editLength'];
+    $fid = $_POST['editFid'];
 
-    $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, color=?, height=?, width=?, length=?, fid=? WHERE pid=?";
-    $stmt = $conn->prepare($update_query);
-    $stmt->bind_param("sssssssssi", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $pid);
+    // Check if a new image is uploaded
+    if (isset($_FILES['editImage']) && $_FILES['editImage']['error'] === 0) {
+        $img_name = $_FILES['editImage']['name'];
+        $img_size = $_FILES['editImage']['size'];
+        $tmp_name = $_FILES['editImage']['tmp_name'];
+
+        if ($img_size <= 125000000) {
+            $img_ex = pathinfo($img_name, PATHINFO_EXTENSION);
+            $img_ex_loc = strtolower($img_ex);
+
+            $allowed_ex = array("jpg", "jpeg", "png", "pdf");
+
+            if (in_array($img_ex_loc, $allowed_ex)) {
+                $new_img_name = uniqid("FR-", true) . '.' . $img_ex_loc;
+                $img_upload_path = 'assets/img/' . $new_img_name;
+                move_uploaded_file($tmp_name, $img_upload_path);
+
+                // Update query including image
+                $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, color=?, height=?, width=?, length=?, fid=?, image=? WHERE pid=?";
+                $stmt = $conn->prepare($update_query);
+                $stmt->bind_param("ssssssssssi", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $new_img_name, $pid);
+            } else {
+                $message = "You cannot upload files of this type";
+                header("Location: product_listing.php?error=$message");
+                exit();
+            }
+        } else {
+            $message = "Sorry, your file is too large";
+            header("Location: product_listing.php?error=$message");
+            exit();
+        }
+    } else {
+        // Update query without image
+        $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, color=?, height=?, width=?, length=?, fid=? WHERE pid=?";
+        $stmt = $conn->prepare($update_query);
+        $stmt->bind_param("sssssssssi", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $pid);
+    }
 
     if($stmt->execute()) {
         $url = "product_listing.php?update_success=true";
@@ -147,7 +198,7 @@ if(isset($_POST['updateproduct'])) {
                                                                 $name_query = "SELECT * FROM furniture_type";
                                                                 $r = mysqli_query($conn, $name_query);
                                                                 while ($row = mysqli_fetch_array($r)) {
-                                                                    echo "<option value='{$row['fidid']}'>{$row['type']}</option>";
+                                                                    echo "<option value='{$row['fid']}'>{$row['type']}</option>";
                                                                 }
                                                             ?>
                                                         </select>
@@ -162,7 +213,7 @@ if(isset($_POST['updateproduct'])) {
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Price</label>
-                                                        <input name="price" type="number" class="form-control" placeholder="" />
+                                                        <input name="price" type="text" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
@@ -218,13 +269,106 @@ if(isset($_POST['updateproduct'])) {
                             </div>
                         </form>
 
+                        <!-- Edit Product Modal -->
+                        <form action="" method="POST" enctype="multipart/form-data">
+                            <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header border-0">
+                                            <h5 class="modal-title">
+                                                <span class="fw-mediumbold"> Edit</span>
+                                                <span class="fw-light"> Product </span>
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="editPid" id="editPid">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Furniture Type</label>
+                                                        <select name="editFid" id="editFid" class="form-control" required>                                   
+                                                            <?php
+                                                                $name_query = "SELECT * FROM furniture_type";
+                                                                $r = mysqli_query($conn, $name_query);
+                                                                while ($row = mysqli_fetch_array($r)) {
+                                                                    echo "<option value='{$row['fid']}'>{$row['type']}</option>";
+                                                                }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Product Name</label>
+                                                        <input name="editPname" id="editPname" type="text" class="form-control" placeholder="" />                                 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Price</label>
+                                                        <input name="editPrice" id="editPrice" type="textarea" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Description</label>
+                                                        <input name="editDescription" id="editDescription" type="textarea" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Height</label>
+                                                        <input name="editHeight" id="editHeight" type="number" class="form-control" placeholder="in cm" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Width</label>
+                                                        <input name="editWidth" id="editWidth" type="number" class="form-control" placeholder="in cm" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Length</label>
+                                                        <input name="editLength" id="editLength" type="number" class="form-control" placeholder="in cm" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Color</label>
+                                                        <input name="editColor" id="editColor" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Quantity</label>
+                                                        <input name="editQuantity" id="editQuantity" type="number" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Image</label>
+                                                        <input type="file" name="editImage" id="editImage" style="border: solid gray 1px; padding: 6px; width: 80%; border-radius: 4px">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="submit" name="updateproduct" class="btn btn-primary">Update</button>
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
                         <div class="table-responsive">
                             <table id="add-row" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>Image</th>
                                         <th>Product Name</th>
-                                        <th>Description</th>
                                         <th>Quantity</th>
                                         <th>Price</th>
                                         <th>Type</th>
@@ -258,27 +402,29 @@ if(isset($_POST['updateproduct'])) {
                                     <tr>
                                         <td><img src="assets/img/<?php echo $row['image']; ?>" alt="Product Image" style="max-width: 100px;"></td> 
                                         <td><?php echo $pname ?></td>
-                                        <td><?php echo $description ?></td>
                                         <td><?php echo $quantity ?></td>
                                         <td>₱<?php echo $price ?></td>
                                         <td><?php echo $type ?></td>
-                                        <td><?php echo $height ?></td>
-                                        <td><?php echo $width ?></td>
-                                        <td><?php echo $length ?></td>
+                                        <td><?php echo $height ?>cm</td>
+                                        <td><?php echo $width ?>cm</td>
+                                        <td><?php echo $length ?>cm</td>
                                         <td><?php echo $status ?></td>
                                         <td>
-                                            <div class="form-button-action">
-                                                <button type="button" class="btn btn-link btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $pid ?>', '<?php echo $row['fid'] ?>', '<?php echo $pname ?>', '<?php echo $price ?>', '<?php echo $description ?>', '<?php echo $quantity ?>', '<?php echo $color ?>', '<?php echo $height ?>', '<?php echo $width ?>', '<?php echo $length ?>')">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-primary btn-lg">
-                                                    <i class="far fa-eye"></i>
-                                                </button>
-                                                <button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </td>
+    <div class="form-button-action">
+        <button type="button" class="btn btn-link btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $pid ?>', '<?php echo $row['fid'] ?>', '<?php echo $pname ?>', '<?php echo $price ?>', '<?php echo $description ?>', '<?php echo $quantity ?>', '<?php echo $row['color'] ?>', '<?php echo $height ?>', '<?php echo $width ?>', '<?php echo $length ?>')">
+            <i class="fa fa-edit"></i>
+        </button>
+        <button type="button" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-primary btn-lg">
+            <i class="far fa-eye"></i>
+        </button>
+        <form action="" method="POST" style="display: inline;">
+            <input type="hidden" name="remove_pid" value="<?php echo $pid; ?>">
+            <button type="submit" name="remove_product" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
+                <i class="fa fa-times"></i>
+            </button>
+        </form>
+    </div>
+</td>
                                     </tr>
                                     <?php
                                         }
@@ -294,102 +440,6 @@ if(isset($_POST['updateproduct'])) {
             </div>
         </div>
     </div>
-
-    <!-- Edit Product Modal -->
-    <form action="" method="POST" enctype="multipart/form-data">
-        <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title">
-                            <span class="fw-mediumbold"> Edit</span>
-                            <span class="fw-light"> Product </span>
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="small">Fill all the necessary information.</p>
-                        <input type="hidden" name="pid" id="editPid">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="form-group form-group-default">
-                                    <label>Furniture Type</label>
-                                    <select name="fid" id="editFid" class="form-control" required>
-                                        <option selected disabled>Select...</option>
-                                        <?php
-                                            $name_query = "SELECT * FROM furniture_type";
-                                            $r = mysqli_query($conn, $name_query);
-                                            while ($row = mysqli_fetch_array($r)) {
-                                                echo "<option value='{$row['fidid']}'>{$row['type']}</option>";
-                                            }
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6 pe-0">
-                                <div class="form-group form-group-default">
-                                    <label>Product Name</label>
-                                    <input name="pname" id="editPname" type="text" class="form-control" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-group-default">
-                                    <label>Price</label>
-                                    <input name="price" id="editPrice" type="number" class="form-control" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="col-md-12 pe-0">
-                                <div class="form-group form-group-default">
-                                    <label>Description</label>
-                                    <input name="description" id="editDescription" type="textarea" class="form-control" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="col-md-6 pe-0">
-                                <div class="form-group form-group-default">
-                                    <label>Height</label>
-                                    <input name="height" id="editHeight" type="number" class="form-control" placeholder="in cm" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-group-default">
-                                    <label>Width</label>
-                                    <input name="width" id="editWidth" type="number" class="form-control" placeholder="in cm" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-group-default">
-                                    <label>Length</label>
-                                    <input name="length" id="editLength" type="number" class="form-control" placeholder="in cm" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-group-default">
-                                    <label>Color</label>
-                                    <input name="color" id="editColor" type="text" class="form-control" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-group-default">
-                                    <label>Quantity</label>
-                                    <input name="quantity" id="editQuantity" type="number" class="form-control" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="col-md-12 pe-0">
-                                <div class="form-group form-group-default">
-                                    <label>Image</label>
-                                    <input type="file" name="image" id="editImage" style="border: solid gray 1px; padding: 6px; width: 80%; border-radius: 4px">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0">
-                        <button type="submit" name="updateproduct" class="btn btn-primary">Update</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
 
     <!-- Footer -->
     <?php include('includes/footer.php'); ?> 
@@ -427,6 +477,5 @@ if(isset($_POST['updateproduct'])) {
 
     window.onload = checkExistParam;
     </script>
-
 </body>
 </html>
