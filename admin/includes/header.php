@@ -6,12 +6,16 @@ if (isset($_SESSION['uid'])) {
     $user_id = $_SESSION['uid'];
 
     // Fetch username from the database based on user ID
-    $sql_username = "SELECT useraccount.username FROM useraccount WHERE useraccount.infoid = '$user_id'";
+    $sql_username = "SELECT * FROM useraccount 
+                      JOIN userinfo ON userinfo.infoid = useraccount.infoid 
+                      WHERE useraccount.infoid = '$user_id'";
     $result_username = mysqli_query($conn, $sql_username);
 
     if ($result_username && mysqli_num_rows($result_username) > 0) {
         $row_username = mysqli_fetch_assoc($result_username);
         $username = $row_username['username'];
+        $email = $row_username['email'];
+        $firstname = $row_username['firstname'];
     } else {
         // Default username if not found (you can handle this case accordingly)
         $username = "Guest";
@@ -189,7 +193,6 @@ if (isset($_SESSION['uid'])) {
                       />
                     </div>
                     <span class="profile-username">
-                      <span class="op-7">Hi,</span>
                       <!-- fetch in the database the username -->
                       <span class="fw-bold"><?php echo htmlspecialchars($username); ?></span>
                     </span>
@@ -206,8 +209,8 @@ if (isset($_SESSION['uid'])) {
                             />
                           </div>
                           <div class="u-text">
-                            <h4>Adrianne</h4>
-                            <p class="text-muted">Adrianne@example.com</p>
+                            <h4><?php echo htmlspecialchars($firstname); ?></h4>
+                            <p class="text-muted"><?php echo htmlspecialchars($email); ?></p>
                             <a
                               href="profile.php"
                               class="btn btn-xs btn-secondary btn-sm"
@@ -219,7 +222,9 @@ if (isset($_SESSION['uid'])) {
                       <li>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="profile.php">My Profile</a>
-                        <a class="dropdown-item" href="#">Logout</a>
+                        <a href="../login.php?logout=true">
+                          <button type="button" class="dropdown-item">Logout</button>
+                        </a>
                       </li>
                     </div>
                   </ul>

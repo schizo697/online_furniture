@@ -146,7 +146,7 @@
                 </div>
               </li>
               <li class="nav-item">
-                <a href="payments.php">
+                <a href="paymentoption.php">
                   <i class="fas fa-money-bill"></i>
                   <p>Payment Option</p>
                 </a>

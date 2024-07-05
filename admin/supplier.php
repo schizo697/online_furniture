@@ -20,7 +20,7 @@ if (!isset($_SESSION['uid'])) {
         $address = $_POST['address'];
         $contact = $_POST['contact'];
 
-        $sql = "INSERT INTO supplier (firstname, lastname, contact, address, gender, email) VALUES ('$firstname', '$lastname', '$contact', '$address', '$gender', '$email')";
+        $sql = "INSERT INTO supplier (firstname, lastname, contact, address, gender, email, levelid, status) VALUES ('$firstname', '$lastname', '$contact', '$address', '$gender', '$email', 4, 1)";
         $result = mysqli_query($conn, $sql);
 
         if($result) {
