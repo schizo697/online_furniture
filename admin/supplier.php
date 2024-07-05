@@ -1,3 +1,13 @@
+<?php 
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['uid'])) {
+    header("Location: ../login.php");
+    exit();
+}
+?>
+
 <!-- handle add user -->
 <?php
     include '../conn.php';

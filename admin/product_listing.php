@@ -1,5 +1,13 @@
 <?php
 include '../conn.php';
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['uid'])) {
+    header("Location: ../login.php");
+    exit();
+}
+
 
 // Handle Add Product
 if(isset($_POST['addproduct'])) {

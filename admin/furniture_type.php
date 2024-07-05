@@ -1,3 +1,14 @@
+<?php 
+session_start();
+include('../conn.php'); // Include database connection
+
+// Check if the user is logged in
+if (!isset($_SESSION['uid'])) {
+    header("Location: ../login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
