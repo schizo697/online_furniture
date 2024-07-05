@@ -15,204 +15,141 @@
 
     <!-- Cart Page Start -->
     <div class="container-fluid py-5">
-    <div class="container py-5">
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Select</th>
-                        <th scope="col">Products</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    include ('../conn.php');
-                    if(isset($_SESSION['uid'])){
-                        $uid = $_SESSION['uid'];
-                        $cart = "SELECT * FROM furniture JOIN cart ON furniture.pid = cart.pid WHERE cart.uid = '$uid' AND cart.qty > 0";
-                        $cartres = mysqli_query($conn, $cart);
-
-                        if($cartres && mysqli_num_rows($cartres) > 0){
-                            while($cartrow = mysqli_fetch_assoc($cartres)){
-                                ?>
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" class="form-check-input mt-4">
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="../admin/assets/img/<?php echo $cartrow['image'] ?>" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="<?php echo $cartrow['pname']; ?>">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="mb-0 mt-4"><?php echo $cartrow['pname']; ?></p>
-                                    </td>
-                                    <td>
-                                        <p class="mb-0 mt-4"><?php echo $cartrow['price']; ?> </p>
-                                    </td>
-                                    <td>
-                                        <div class="input-group quantity mt-4" style="width: 100px;">
-                                            <div class="input-group-btn">
-                                                <button class="btn btn-sm btn-minus rounded-circle bg-light border btn-minus" data-pid = "<?php echo $cartrow['pid']; ?>">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm text-center border-0 input-value"
-                                            value="<?php echo $cartrow['qty']; ?>"
-                                            data-pid="<?php echo $cartrow['pid']; ?>"
-                                            data-qty="<?php echo $cartrow['qty']; ?>">
-                                            <div class="input-group-btn">
-                                                <button class="btn btn-sm btn-plus rounded-circle bg-light border btn-plus" data-pid = "<?php echo $cartrow['pid']; ?>">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-md rounded-circle bg-light border mt-4">
-                                            <i class="fa fa-times text-danger"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <?php 
-                            }
-                        } else {
-                            ?> 
-                            <div style="text-align: center; margin-top: 20px;">
-                                <h3>Your Shopping Cart is Empty</h3>
-                                <p>Start adding items to your cart from our <a href="shop.php">shop</a>.</p>
-                                <a href="shop.php">
-                                    <button type="submit" style="padding: 10px 20px; background-color: #007bff; color: #fff; border: none; cursor: pointer;">Go to Shop</button>
-                                </a>
-                            </div>
-                            <?php 
-                        }
-                    }
-                    ?>
-                </tbody>
-            </table>
-            <!-- Cart Total Section Start -->
-            <div class="d-flex justify-content-end mt-4">
-                <div class="card w-25">
-                    <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php
-                            $total = 0;
-                            $cart = "SELECT furniture.pname, cart.qty, furniture.price FROM furniture JOIN cart ON furniture.pid = cart.pid WHERE cart.uid = '$uid' AND cart.qty > 0";
+        <div class="container py-5">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Select</th>
+                            <th scope="col">Products</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        include ('../conn.php');
+                        if(isset($_SESSION['uid'])){
+                            $uid = $_SESSION['uid'];
+                            $cart = "SELECT * FROM furniture JOIN cart ON furniture.pid = cart.pid WHERE cart.uid = '$uid' AND cart.qty > 0";
                             $cartres = mysqli_query($conn, $cart);
 
-                            if ($cartres && mysqli_num_rows($cartres) > 0) {
-                                while ($cartrow = mysqli_fetch_assoc($cartres)) {
-                                    $price = $cartrow['price'];
-                                    $pname = $cartrow['pname'];
-                                    $qty = $cartrow['qty'];
-                                    $total += $price * $qty;
-                                    ?> 
+                            if($cartres && mysqli_num_rows($cartres) > 0){
+                                while($cartrow = mysqli_fetch_assoc($cartres)){
+                                    ?>
                                     <tr>
-                                        <td><?php echo $pname; ?></td>
-                                        <td><?php echo $qty; ?></td>
-                                        <td><?php echo $price; ?></td>
+                                        <td>
+                                            <input type="checkbox" class="form-check-input mt-4">
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="../admin/assets/img/<?php echo $cartrow['image'] ?>" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="<?php echo $cartrow['pname']; ?>">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="mb-0 mt-4"><?php echo $cartrow['pname']; ?></p>
+                                        </td>
+                                        <td>
+                                            <p class="mb-0 mt-4"><?php echo $cartrow['price']; ?> </p>
+                                        </td>
+                                        <td>
+                                            <div class="input-group quantity mt-4" style="width: 100px;">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-sm btn-minus rounded-circle bg-light border btn-minus" data-pid="<?php echo $cartrow['pid']; ?>">
+                                                        <i class="fa fa-minus"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="text" class="form-control form-control-sm text-center border-0 input-value"
+                                                value="<?php echo $cartrow['qty']; ?>"
+                                                data-pid="<?php echo $cartrow['pid']; ?>"
+                                                data-qty="<?php echo $cartrow['qty']; ?>">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-sm btn-plus rounded-circle bg-light border btn-plus" type="submit" name="remove_product" data-pid="<?php echo $pid; ?>">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-md rounded-circle bg-light border mt-4" onclick="removeFromCart(<?php echo $cartrow['pid']; ?>)">
+                                                <i class="fa fa-times text-danger"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                     <?php 
                                 }
                             } else {
-                                ?>
-                                <tr>
-                                    <td colspan="3">No items found in cart.</td>
-                                </tr>
-                                <?php
+                                ?> 
+                                <div style="text-align: center; margin-top: 20px;">
+                                    <h3>Your Shopping Cart is Empty</h3>
+                                    <p>Start adding items to your cart from our <a href="shop.php">shop</a>.</p>
+                                    <a href="shop.php">
+                                        <button type="submit" style="padding: 10px 20px; background-color: #007bff; color: #fff; border: none; cursor: pointer;">Go to Shop</button>
+                                    </a>
+                                </div>
+                                <?php 
                             }
-                            ?>
-                            </tbody>
-                        </table>
-                        <div>
-                            <label style="margin-left: 10px">Total:</label>
-                            <label style="margin-left: 65%;"><?php echo $total; ?></label>
-                            <form action="checkout.php" id="cart">
-                                <button class="btn btn-success btn-checkout">Check out</button>
-                            </form>
+                        }
+                        ?>
+                    </tbody>
+                </table>
+                <!-- Cart Total Section Start -->
+                <div class="d-flex justify-content-end mt-4">
+                    <div class="card w-25">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                $total = 0;
+                                $cart = "SELECT furniture.pname, cart.qty, furniture.price FROM furniture JOIN cart ON furniture.pid = cart.pid WHERE cart.uid = '$uid' AND cart.qty > 0";
+                                $cartres = mysqli_query($conn, $cart);
+
+                                if ($cartres && mysqli_num_rows($cartres) > 0) {
+                                    while ($cartrow = mysqli_fetch_assoc($cartres)) {
+                                        $price = $cartrow['price'];
+                                        $pname = $cartrow['pname'];
+                                        $qty = $cartrow['qty'];
+                                        $total += $price * $qty;
+                                        ?> 
+                                        <tr>
+                                            <td><?php echo $pname; ?></td>
+                                            <td><?php echo $qty; ?></td>
+                                            <td><?php echo $price; ?></td>
+                                        </tr>
+                                        <?php 
+                                    }
+                                } else {
+                                    ?>
+                                    <tr>
+                                        <td colspan="3">No items found in cart.</td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+                                </tbody>
+                            </table>
+                            <div>
+                                <label style="margin-left: 10px">Total:</label>
+                                <label style="margin-left: 65%;"><?php echo $total; ?></label>
+                                <form action="checkout.php" id="cart">
+                                    <button class="btn btn-success btn-checkout">Check out</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<script>
-    $(document).ready(function(){
-        $('.btn-minus').click(function(){
-            var pid = $(this).data('pid');
-
-            $.ajax({
-                url: 'btn_minus.php',
-                type: 'POST',
-                data: {
-                    pid: pid,
-                }
-            });
-        });
-    });
-</script>
-
-<script>
-$(document).ready(function(){
-    $('.input-value').change(function(){
-        var pid = $(this).data('pid');
-        var qty = $(this).val();
-
-        $.ajax({
-            url: 'input_value.php',
-            type: 'POST',
-            data: {
-                pid: pid,
-                qty: qty
-            },
-            success: function(response) {
-                console.log('Quantity updated successfully.');
-            },
-            error: function(xhr, status, error) {
-                console.error('Error updating quantity:', error);
-            }
-        });
-    });
-});
-</script>
-
-<script>
-    $(document).ready(function(){
-        $('.btn-plus').click(function(){
-            var pid = $(this).data('pid');
-
-            $.ajax({
-                url: 'btn_plus.php',
-                type: 'POST',
-                data: {
-                    pid: pid,
-                }
-            });
-        });
-    });
-</script>
-</script>
-    <!-- Cart Page End -->
-
-    <?php include('includes/footer.php'); ?>
-
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -226,6 +163,87 @@ $(document).ready(function(){
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('.btn-minus').click(function(){
+                var pid = $(this).data('pid');
+
+                $.ajax({
+                    url: 'btn_minus.php',
+                    type: 'POST',
+                    data: {
+                        pid: pid,
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+    $(document).ready(function(){
+        $('.input-value').change(function(){
+            var pid = $(this).data('pid');
+            var qty = $(this).val();
+
+            $.ajax({
+                url: 'input_value.php',
+                type: 'POST',
+                data: {
+                    pid: pid,
+                    qty: qty
+                },
+                success: function(response) {
+                    console.log('Quantity updated successfully.');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating quantity:', error);
+                }
+            });
+        });
+    });
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            $('.btn-plus').click(function(){
+                var pid = $(this).data('pid');
+
+                $.ajax({
+                    url: 'btn_plus.php',
+                    type: 'POST',
+                    data: {
+                        pid: pid,
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        function removeFromCart(pid) {
+            $.ajax({
+                url: 'remove_item.php',
+                type: 'POST',
+                data: {
+                    pid: pid,
+                },
+                success: function(response) {
+                    console.log('Item removed successfully.');
+                    location.reload(); // Reload the page to update the cart view
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error removing item:', error);
+                }
+            });
+        }
+    </script>
+    <!-- Cart Page End -->
+
+    <?php include('includes/footer.php'); ?>
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
 </body>
 
 </html>

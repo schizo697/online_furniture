@@ -11,7 +11,7 @@ if(isset($_POST['addproduct'])) {
     $height = $_POST['height'];
     $width = $_POST['width'];
     $length = $_POST['length'];
-    $fid = $_POST['fid']; // Make sure fid is correctly retrieved from POST data
+    $fid = $_POST['fid']; 
 
     if (isset($_FILES['image'])) {
         $img_name = $_FILES['image']['name'];
@@ -69,6 +69,7 @@ if(isset($_POST['remove_product'])) {
     if($stmt->execute()) {
         $url = "product_listing.php?remove_success=true";
         echo '<script>window.location.href= "' . $url . '";</script>';
+        
     } else {
         echo "<script>Swal.fire({
                 icon: 'error',
@@ -131,6 +132,7 @@ if(isset($_POST['updateproduct'])) {
     }
 
     if($stmt->execute()) {
+        
         $url = "product_listing.php?update_success=true";
         echo '<script>window.location.href= "' . $url . '";</script>';
     } else {
@@ -363,6 +365,8 @@ if(isset($_POST['updateproduct'])) {
                             </div>
                         </form>
 
+
+                        <!-- Table -->
                         <div class="table-responsive">
                             <table id="add-row" class="display table table-striped table-hover">
                                 <thead>
@@ -410,21 +414,21 @@ if(isset($_POST['updateproduct'])) {
                                         <td><?php echo $length ?>cm</td>
                                         <td><?php echo $status ?></td>
                                         <td>
-    <div class="form-button-action">
-        <button type="button" class="btn btn-link btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $pid ?>', '<?php echo $row['fid'] ?>', '<?php echo $pname ?>', '<?php echo $price ?>', '<?php echo $description ?>', '<?php echo $quantity ?>', '<?php echo $row['color'] ?>', '<?php echo $height ?>', '<?php echo $width ?>', '<?php echo $length ?>')">
-            <i class="fa fa-edit"></i>
-        </button>
-        <button type="button" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-primary btn-lg">
-            <i class="far fa-eye"></i>
-        </button>
-        <form action="" method="POST" style="display: inline;">
-            <input type="hidden" name="remove_pid" value="<?php echo $pid; ?>">
-            <button type="submit" name="remove_product" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
-                <i class="fa fa-times"></i>
-            </button>
-        </form>
-    </div>
-</td>
+                                        <div class="form-button-action">
+                                            <button type="button" class="btn btn-link btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $pid ?>', '<?php echo $row['fid'] ?>', '<?php echo $pname ?>', '<?php echo $price ?>', '<?php echo $description ?>', '<?php echo $quantity ?>', '<?php echo $row['color'] ?>', '<?php echo $height ?>', '<?php echo $width ?>', '<?php echo $length ?>')">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button type="button" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-primary btn-lg">
+                                                <i class="far fa-eye"></i>
+                                            </button>
+                                            <form action="" method="POST" style="display: inline;">
+                                                <input type="hidden" name="remove_pid" value="<?php echo $pid; ?>">
+                                                <button type="submit" name="remove_product" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                     </tr>
                                     <?php
                                         }
@@ -444,7 +448,7 @@ if(isset($_POST['updateproduct'])) {
     <!-- Footer -->
     <?php include('includes/footer.php'); ?> 
     <?php include('includes/tables.php'); ?>
-
+    
     <script>
     function showModal(){
         Swal.fire({

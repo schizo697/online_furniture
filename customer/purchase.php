@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 <body>
     <!-- Single Page Header start -->
     <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6">Profile</h1>
+        <h1 class="text-center text-white display-6">My Purchase</h1>
     </div>
     <!-- Single Page Header End -->
 
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
             <div class="col-xl-4">
                 <!-- Add your content for the left column here -->
             </div>
-            <div class="col-xl-8">
+            <div class="col-xl-16">
                 <!-- Add Tabs Here -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">

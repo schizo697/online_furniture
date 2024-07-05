@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php include('includes/topbarindex.php'); ?>
+<?php include('includes/topbar.php'); ?>
 <?php include('includes/header.php'); ?>
 <style>
   .product-item {
@@ -165,7 +165,9 @@
                                     <!-- <p><?php echo $row['description']; ?></p> -->
                                     <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $row['price']; ?></p>
                                     <div class="button-group">
-                                            <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" type="button" data-pid="<?php echo $row['pid'];?>"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</button>
+                                    <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="<?php echo $row['pid'];?>">
+                                            <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                        </button>
                                             <a href="view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
                                         </div>
                                 </div>
@@ -184,7 +186,34 @@
 
 <?php include('includes/footer.php'); ?>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function(){
+        $('.add-to-cart').click(function(){
+            var pid = $(this).data('pid');
 
+            $.ajax({
+                url: 'add_to_cart.php',
+                type: 'POST',
+                data: {
+                    pid: pid,
+                },
+                success: function(response){
+                    Swal.fire({
+                        icon: 'success',
+                        text: response,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                },
+                error: function(xhr, status, error){
+                    console.error('AJAX Error: ' + status + ' ' + error);
+                    console.error(xhr);
+                }
+            });
+        });
+    });
+</script>
         <!-- Back to Top -->
         <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
