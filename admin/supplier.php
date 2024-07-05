@@ -11,8 +11,9 @@
         $contact = $_POST['contact'];
 
         $sql = "INSERT INTO supplier (firstname, lastname, contact, address, gender, email) VALUES ('$firstname', '$lastname', '$contact', '$address', '$gender', '$email')";
-            
-        if(mysqli_query($conn, $sql)) {
+        $result = mysqli_query($conn, $sql);
+
+        if($result) {
             $url = "supplier.php?success=true";
             echo '<script>window.location.href= "' . $url . '";</script>';
             exit(); 
@@ -34,7 +35,7 @@
         $address = $_POST['address'];
         $email = $_POST['email'];
 
-        $infoupdate = "UPDATE userinfo SET firstname = '$firstname', lastname = '$lastname', contact = '$contact', address = '$address', email = '$email' WHERE infoid = '$user_id'";
+        $infoupdate = "UPDATE supplier SET firstname = '$firstname', lastname = '$lastname', contact = '$contact', address = '$address', email = '$email' WHERE sid = '$user_id'";
         $inforesult = mysqli_query($conn, $infoupdate);
     
         if($inforesult) {
@@ -274,7 +275,7 @@
 
                                     if ($result && mysqli_num_rows($result) > 0) {
                                         while ($row = mysqli_fetch_assoc($result)) {
-                                            $uid = $row['uid'];
+                                            $uid = $row['sid'];
                                             $firstname = $row['firstname'];
                                             $lastname = $row['lastname'];
                                             $email = $row['email'];
@@ -292,7 +293,7 @@
                                         <td>
                                             <div class="form-button-action">
                                                 <a href="#" class="btn btn-link btn-success edit-button" data-bs-toggle="modal" data-bs-target="#editmodal" data-account-id="<?php echo $uid?>" data-account-fname="<?php echo $firstname?>" data-account-lname="<?php echo $lastname?>"
-                                                    data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>">
+                                                    data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>" data-account-email="<?php echo $email?>">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a href="#" class="btn btn-link btn-primary archive-button" data-bs-toggle="modal" data-bs-target="#archivemodal" data-account-id="<?php echo $uid?>">
@@ -341,12 +342,14 @@ $(document).ready(function() {
         var gender = $(this).data('account-gender');
         var contact = $(this).data('account-contact');
         var address = $(this).data('account-address');
+        var email = $(this).data('account-email');
 
         $('#userID').val(userID);
         $('#editFirstName').val(fname);
         $('#editLastName').val(lname);
         $('#editContact').val(contact);
         $('#editAddress').val(address);
+        $('#editEmail').val(email);
     });
 });
 </script>
