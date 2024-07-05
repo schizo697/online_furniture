@@ -9,6 +9,52 @@ if (!isset($_SESSION['uid'])) {
 }
 ?>
 
+<!-- handle add payment -->
+<?php
+    if(isset($_POST['addPayment'])) {
+        $accname = $_POST['accname'];
+        $accnumber = $_POST['accnumber'];
+        $type = $_POST['type'];
+        $addedby = $_SESSION['uid'];
+
+        $sql = "INSERT INTO paymentoption (accountname, accountnumber, type, addedby, status) VALUES ('$accname', '$accnumber', '$type', '$addedby', 'Active')";
+        $result = mysqli_query($conn, $sql);
+
+        if($result) {
+            $url = "paymentoption.php?success=true";
+            echo '<script>window.location.href= "' . $url . '";</script>';
+            exit(); 
+        } else {
+            $url = "paymentoption.php?error=true";
+            echo '<script>window.location.href="' . $url . '";</script';
+            exit();
+        }  
+    }
+?>
+
+<!-- handle edit user -->
+<?php
+      if(isset($_POST['btnSave'])){
+        $poid = $_POST['poid'];
+        $accname = $_POST['accname'];
+        $accnumber = $_POST['accnumber'];
+        $type = $_POST['type'];
+
+        $poupdate = "UPDATE paymentoption SET accountname = '$accname', accountnumber = '$accnumber', type = '$type' WHERE poid = '$poid'";
+        $inforesult = mysqli_query($conn, $poupdate);
+    
+        if($inforesult) {
+            $url = 'paymentoption.php?update=true';
+            echo '<script>window.location.href= "' . $url . '"</script>';
+            exit();
+        } else {
+            $url = "paymentoption.php?error=true";
+            echo '<script>window.location.href="' . $url . '";</script';
+            exit();
+        }    
+      }
+    ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +86,7 @@ if (!isset($_SESSION['uid'])) {
                         </div>
                     </div>
                     <div class="card-body">
-                        <!-- Modal -->
+                        <!-- Add Modal -->
                         <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -52,28 +98,90 @@ if (!isset($_SESSION['uid'])) {
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p class="small">Create a new product using this form, make sure you fill them all</p>
-                                        <form>
+                                        <form action="" method="POST">
                                             <div class="row">
-                                                <div class="col-sm-12">
+                                                <div class="col-md-6">
                                                     <div class="form-group form-group-default">
-                                                        <label>Name</label>
-                                                        <input id="addProductName" type="text" class="form-control" placeholder="Product Name" />
+                                                        <label>Account Name</label>
+                                                        <input name="accname" type="text" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-12">
+                                                <div class="col-md-6">
                                                     <div class="form-group form-group-default">
-                                                        <label>Supplier</label>
-                                                        <input id="addDescription" type="text" class="form-control" placeholder="Product Description" />
+                                                        <label>Account Number</label>
+                                                        <input name="accnumber" type="number" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                    <label>Payment Method</label>
+                                                        <select name="type" class="form-control" required>
+                                                            <option selected disabled>Select...</option>
+                                                            <option value="Gcash">Gcash</option>
+                                                            <option value="Maya">Maya</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
                                     </div>
                                     <div class="modal-footer border-0">
-                                        <button type="button" id="addRowButton" class="btn btn-primary">Add</button>
+                                        <button type="submit" name="addPayment" class="btn btn-primary">Add</button>
                                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                                     </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="editmodal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title">
+                                            <span class="fw-mediumbold"> Edit</span>
+                                            <span class="fw-light"> Payment Information </span>
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="" method="POST">
+                                            <div class="row">
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>User ID</label>
+                                                        <input name="poid" id="userID" type="text" class="form-control" placeholder="" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Account Name</label>
+                                                        <input name="accname" id="editAccName" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Account Number</label>
+                                                        <input name="accnumber" id="editAccNumber" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                    <label>Payment Method</label>
+                                                        <select name="type" class="form-control" required>
+                                                            <option selected disabled>Select...</option>
+                                                            <option value="Gcash">Gcash</option>
+                                                            <option value="Maya">Maya</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <button type="submit" name="btnSave" class="btn btn-primary">Save Changes</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                    </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -85,27 +193,49 @@ if (!isset($_SESSION['uid'])) {
                                         <th>Account Name</th>
                                         <th>Account Number</th>
                                         <th>Type</th>
+                                        <th>Date Added</th>
                                         <th>Status</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php 
+                                        $sql = "SELECT * FROM paymentoption";
+                                        $result = mysqli_query($conn, $sql);
+
+                                        if ($result && mysqli_num_rows($result) > 0) {
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                $poid = $row['poid'];
+                                                $accountname = $row['accountname'];
+                                                $accountnumber = $row['accountnumber'];
+                                                $type = $row['type'];
+                                                $date = $row['dateadded'];
+                                                $status = $row['status'];
+                                    ?>
                                     <tr>
-                                        <td>Admin</td>
-                                        <td>09123456789</td>
-                                        <td>Gcash</td>
-                                        <td>Active</td>
+                                        <td><?php echo $accountname ?></td>
+                                        <td><?php echo $accountnumber ?></td>
+                                        <td><?php echo $type ?></td>
+                                        <td><?php echo $date ?></td>
+                                        <td><?php echo $status ?></td>
                                         <td>
                                             <div class="form-button-action">
-                                                <button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
+                                                <a href="#" class="btn btn-link btn-success edit-button" data-bs-toggle="modal" data-bs-target="#editmodal" data-account-id="<?php echo $poid?>" data-account-accname="<?php echo $accountname?>" data-account-accnumber="<?php echo $accountnumber?>"
+                                                    data-account-type="<?php echo $type?>">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-link btn-primary archive-button" data-bs-toggle="modal" data-bs-target="#archivemodal" data-account-id="<?php echo $uid?>">
                                                     <i class="fa fa-times"></i>
-                                                </button>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
+                                    <?php
+                                        }
+                                    } else {
+                                        echo "No records found";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -148,57 +278,59 @@ if (!isset($_SESSION['uid'])) {
     <script src="assets/js/setting-demo.js"></script>
     <script src="assets/js/demo.js"></script>
 
-    <script>
-        $(document).ready(function () {
-            $("#add-row").DataTable({
-                pageLength: 5,
-            });
-
-            // Image preview functionality
-            $("#addImage").change(function() {
-                readURL(this);
-            });
-
-            function readURL(input) {
-                if (input.files && input.files[0]) {
-                    var reader = new FileReader();
-                    reader.onload = function (e) {
-                        $('#imagePreview').attr('src', e.target.result);
-                        $('#imagePreview').show();
-                    };
-                    reader.readAsDataURL(input.files[0]);
-                }
-            }
-
-            var action = 
-                '<td><div class="form-button-action">' +
-                '<button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">' +
-                '<i class="fa fa-edit"></i></button> ' +
-                '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">' +
-                '<i class="fa fa-times"></i></button></div></td>';
-
-            $("#addRowButton").click(function () {
-                var id = $("#addID").val();
-                var image = $("#imagePreview").attr('src');
-                var productName = $("#addProductName").val();
-                var description = $("#addDescription").val();
-                var quantity = $("#addQuantity").val();
-                var price = $("#addPrice").val();
-                var status = $("#addStatus").val();
-
-                $("#add-row").dataTable().fnAddData([
-                    id,
-                    '<img src="' + image + '" alt="Product Image" style="max-width: 100px; height: auto;" />',
-                    productName,
-                    description,
-                    quantity,
-                    price,
-                    status,
-                    action,
-                ]);
-                $("#addRowModal").modal("hide");
-            });
-        });
-    </script>
+    
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+$(document).ready(function() {
+    $('.archive-button').click(function() {
+        var userid = $(this).data('account-id');
+        $('#userid').val(userid);
+    });
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    $('.edit-button').click(function() {
+        var userID = $(this).data('account-id');
+        var accname = $(this).data('account-accname');
+        var accnumber = $(this).data('account-accnumber'); 
+
+        $('#userID').val(userID);
+        $('#editAccName').val(accname);
+        $('#editAccNumber').val(accnumber);
+    });
+});
+</script>
+
+<script>
+    function showAlert(type, message) {
+        Swal.fire({
+            icon: type,
+            text: message,
+        });
+    }
+
+    function checkURLParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('exist') && urlParams.get('exist') === 'true') {
+            showAlert('warning', 'Username Already Exists');
+        } else if (urlParams.has('success') && urlParams.get('success') === 'true') {
+            showAlert('success', 'Account added successfully');
+        } else if (urlParams.has('error') && urlParams.get('error') === 'true') {
+            showAlert('error', 'Something went wrong!');
+        } else if (urlParams.has('update') && urlParams.get('update') === 'true') {
+            showAlert('success', 'Account updated successfully');
+        } else if (urlParams.has('errorpassword') && urlParams.get('errorpassword') === 'true') {
+            showAlert('error', 'Password do not match');
+        } else if (urlParams.has('archive') && urlParams.get('archive') === 'true') {
+            showAlert('success', 'Account archived successfully');
+        }
+    }
+
+    window.onload = checkURLParams;
+</script>
 </html>
