@@ -226,10 +226,10 @@ if(isset($_POST['updateproduct'])) {
                                                         <input name="price" type="text" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12">
+                                                <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
                                                         <label>Description</label>
-                                                        <input name="description" type="textarea" class="form-control" placeholder="" />
+                                                        <textarea name="description" class="form-control" placeholder=""></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
@@ -320,10 +320,11 @@ if(isset($_POST['updateproduct'])) {
                                                         <input name="editPrice" id="editPrice" type="textarea" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12 pe-0">
+                                                <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
                                                         <label>Description</label>
-                                                        <input name="editDescription" id="editDescription" type="textarea" class="form-control" placeholder="" />
+                                                        <!-- <input name="editDescription" id="editDescription" type="textarea" class="form-control" placeholder="" /> -->
+                                                        <textarea name="editDescription" id="editDescription" class="form-control" placeholder=""></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 pe-0">
