@@ -41,7 +41,7 @@
                                 ?>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" class="form-check-input mt-4">
+                                        <input type="checkbox" name="selected_item[]" class="form-check-input mt-4 cart-checkbox" data-pid="<?php echo $cartrow['pid']; ?>" value="<?php echo $cartrow['pid']; ?>">
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
@@ -107,41 +107,30 @@
                                     <th>Price</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                            <?php
-                            $total = 0;
-                            $cart = "SELECT furniture.pname, cart.qty, furniture.price FROM furniture JOIN cart ON furniture.pid = cart.pid WHERE cart.uid = '$uid' AND cart.qty > 0";
-                            $cartres = mysqli_query($conn, $cart);
-
-                            if ($cartres && mysqli_num_rows($cartres) > 0) {
-                                while ($cartrow = mysqli_fetch_assoc($cartres)) {
-                                    $price = $cartrow['price'];
-                                    $pname = $cartrow['pname'];
-                                    $qty = $cartrow['qty'];
-                                    $total += $price * $qty;
-                                    ?> 
-                                    <tr>
-                                        <td><?php echo $pname; ?></td>
-                                        <td><?php echo $qty; ?></td>
-                                        <td><?php echo $price; ?></td>
-                                    </tr>
-                                    <?php 
-                                }
-                            } else {
-                                ?>
-                                <tr>
-                                    <td colspan="3">No items found in cart.</td>
-                                </tr>
-                                <?php
-                            }
-                            ?>
+                            <tbody id="cart-table-body">
+                                <!-- Table rows will be dynamically added here -->
                             </tbody>
                         </table>
+
                         <div>
-                            <label style="margin-left: 10px">Total:</label>
-                            <label style="margin-left: 65%;"><?php echo $total; ?></label>
-                            <form action="checkout.php" id="cart">
-                                <button class="btn btn-success btn-checkout">Check out</button>
+                            <label style="margin-left: 10px">Subtotal:</label>
+                            <label id="subtotal" style="margin-left: 10px"></label>
+                        </div>
+                        <div>
+                            <?php
+                            if(isset($_POST['btnCheck'])){
+                                $selected_pid = explode(',', $_POST['selected_pid']);
+                                $selected_pid_str = implode(',', $selected_pid);
+                                $url = "checkout.php?selected_pid=" . $selected_pid_str;
+                                echo "<script>window.location.href='" . $url . "'</script>";
+                                exit();
+                            }
+                            ?>
+                            <br>
+                            <br>
+                            <form action="" method="POST" id="cart">
+                                <input type="hidden" name="selected_pid" value="">
+                                <button class="btn btn-success btn-checkout" name="btnCheck">Check out</button>
                             </form>
                         </div>
                     </div>
@@ -151,6 +140,62 @@
     </div>
 </div>
 
+<!-- check box -->
+<script>
+function updateHiddenInput() {
+    var checkboxes = document.querySelectorAll("input[name='selected_item[]']");
+    var selectedValues = Array.from(checkboxes)
+                             .filter(checkbox => checkbox.checked)
+                             .map(checkbox => checkbox.value);
+    var hiddenInput = document.querySelector("input[name='selected_pid']");
+    hiddenInput.value = selectedValues.join(',');
+}
+
+document.querySelectorAll("input[name='selected_item[]']").forEach(checkbox => {
+    checkbox.addEventListener('change', updateHiddenInput);
+});
+</script>
+
+<!-- price jquery -->
+<script>
+$(document).ready(function(){
+    $('.cart-checkbox').click(function(){
+        var selectedPids = $('.cart-checkbox:checked').map(function(){
+            return $(this).data('pid');
+        }).get();
+
+        // Update hidden input value
+        $('#selected-pid').val(selectedPids.join(','));
+
+        // Update table dynamically
+        $.ajax({
+            url: 'cart_price.php',
+            type: 'POST',
+            data: {
+                selected_pid: selectedPids.join(',')
+            },
+            success: function(response) {
+                // Parse response JSON or handle as needed
+                var data = JSON.parse(response);
+                $('#cart-table-body').empty();
+                var subtotal = 0;
+                $.each(data.items, function(index, item) {
+                    var row = '<tr>' +
+                                '<td>' + item.item_name + '</td>' +
+                                '<td>' + item.qty + '</td>' +
+                                '<td>' + item.price + '</td>' +
+                             '</tr>';
+                    $('#cart-table-body').append(row);
+                    subtotal += (item.price * item.qty);
+                });
+                $('#subtotal').text('$' + subtotal.toFixed(2));
+            }
+        });
+    });
+});
+</script>
+
+<!-- btn-minus jquery -->
 <script>
     $(document).ready(function(){
         $('.btn-minus').click(function(){
@@ -167,6 +212,7 @@
     });
 </script>
 
+<!-- input jquery -->
 <script>
 $(document).ready(function(){
     $('.input-value').change(function(){
@@ -191,6 +237,7 @@ $(document).ready(function(){
 });
 </script>
 
+<!-- btn-plus jquery -->
 <script>
     $(document).ready(function(){
         $('.btn-plus').click(function(){
