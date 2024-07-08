@@ -140,16 +140,62 @@
 
     <?php include('includes/footer.php'); ?>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/lightbox/js/lightbox.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+<!-- jquery selected pid check box -->
+<script>
+function updateHiddenInput() {
+    var checkboxes = document.querySelectorAll("input[name='selected_item[]']");
+    var selectedValues = Array.from(checkboxes)
+                             .filter(checkbox => checkbox.checked)
+                             .map(checkbox => checkbox.value);
+    var hiddenInput = document.querySelector("input[name='selected_pid']");
+    hiddenInput.value = selectedValues.join(',');
+}
+
+document.querySelectorAll("input[name='selected_item[]']").forEach(checkbox => {
+    checkbox.addEventListener('change', updateHiddenInput);
+});
+</script>
+
+    <!-- jquery display check box -->
+<script>
+$(document).ready(function(){
+    $('.cart-checkbox').click(function(){
+        var selectedPids = $('.cart-checkbox:checked').map(function(){
+            return $(this).data('pid');
+        }).get();
+
+        // Update hidden input value
+        $('#selected-pid').val(selectedPids.join(','));
+
+        // Update table dynamically
+        $.ajax({
+            url: 'cart_price.php',
+            type: 'POST',
+            data: {
+                selected_pid: selectedPids.join(',')
+            },
+            success: function(response) {
+                // Parse response JSON or handle as needed
+                var data = JSON.parse(response);
+                $('#cart-table-body').empty();
+                var subtotal = 0;
+                $.each(data.items, function(index, item) {
+                    var row = '<tr>' +
+                                '<td>' + item.item_name + '</td>' +
+                                '<td>' + item.qty + '</td>' +
+                                '<td>' + item.price + '</td>' +
+                             '</tr>';
+                    $('#cart-table-body').append(row);
+                    subtotal += (item.price * item.qty);
+                });
+                $('#subtotal').text('$' + subtotal.toFixed(2));
+                $('#total').text('$' + data.total.toFixed(2));
+            }
+        });
+    });
+});
+</script>
+
 
 <script>
     $(document).ready(function(){
