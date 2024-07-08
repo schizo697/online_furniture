@@ -1,9 +1,6 @@
-<?php 
-session_start(); // Ensure the session is started
-if(!isset($_SESSION['uid'])){
-    header("Location: ../login.php");
-    exit();
-}
+<?php
+session_start();
+include '../conn.php';
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +32,6 @@ if(!isset($_SESSION['uid'])){
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
     <link rel="icon" href="img/Logo1.png" type="image/x-icon" />
-    
 
     <style>
         .logo {
@@ -46,9 +42,8 @@ if(!isset($_SESSION['uid'])){
 </head>
 
 <body>
-
     <!-- Spinner Start -->
-    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-grow text-primary" role="status"></div>
     </div>
     <!-- Spinner End -->
@@ -57,15 +52,14 @@ if(!isset($_SESSION['uid'])){
     <div class="container-fluid fixed-top">
         <div class="container topbar bg-primary d-none d-lg-block">
             <div class="d-flex justify-content-between">
-            <div class="top-info ps-2">
-                           
-                            <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">123 Street, New York</a></small>
-                            <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">Email@Example.com</a></small>
-                            
-                        </div>
-                        <img src="img/Logo1.png" alt="Logo" class="logo">
+                <div class="top-info ps-2">
+                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">123 Street, New York</a></small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">Email@Example.com</a></small>
+                </div>
+                <img src="img/Logo1.png" alt="Logo" class="logo">
             </div>
         </div>
+
         <div class="container px-0">
             <nav class="navbar navbar-light bg-white navbar-expand-xl">
                 <a href="index.php" class="navbar-brand"><h1 class="text-primary display-6">MPM: Furniture Shop</h1></a>
@@ -75,13 +69,25 @@ if(!isset($_SESSION['uid'])){
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
                         <a href="index.php" class="nav-item nav-link active">Home</a>
-                        <a href="shop.php" class="nav-item nav-link active">Shop</a>
+                        <a href="shop.php" class="nav-item nav-link">Shop</a>
                     </div>
                     <div class="d-flex m-3 me-0">
-                       
+                       <?php
+                       if (isset($_SESSION['uid'])) {
+                           $stmt = $conn->prepare("SELECT COUNT(DISTINCT pid) AS product_count FROM cart WHERE uid = ?");
+                           $stmt->bind_param("i", $_SESSION['uid']);
+                           $stmt->execute();
+                           $stmt->bind_result($product_count);
+                           $stmt->fetch();
+                           $stmt->close();
+                       }
+                       ?>
                         <a href="cart.php" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
-                            <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;"></span>
+                            <?php if (isset($product_count)) { ?>
+                            <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" 
+                            style="top: -5px; left: 15px; height: 20px; min-width: 20px;"><?php echo $product_count; ?></span>
+                            <?php } ?>
                         </a>
                         <a href="profile.php" class="my-auto me-4">
                             <i class="fas fa-user fa-2x"></i>
@@ -89,7 +95,7 @@ if(!isset($_SESSION['uid'])){
                         <?php 
                         if(!isset($_SESSION['uid'])){
                             ?> 
-                            <a href="../login.php" class="btn btn-outline-primary me-4">Login</a> <!-- Adjust styling as needed -->
+                            <a href="../login.php" class="btn btn-outline-primary me-4">Login</a>
                             <?php
                         }
                         ?>
