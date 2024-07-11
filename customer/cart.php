@@ -157,123 +157,142 @@
 
     <!-- Custom Scripts -->
     <script>
-        function updateHiddenInput() {
-            var checkboxes = document.querySelectorAll("input[name='selected_item[]']");
-            var selectedValues = Array.from(checkboxes)
-                                     .filter(checkbox => checkbox.checked)
-                                     .map(checkbox => checkbox.value);
-            var hiddenInput = document.querySelector("input[name='selected_pid']");
-            hiddenInput.value = selectedValues.join(',');
-        }
+    function updateHiddenInput() {
+        var checkboxes = document.querySelectorAll("input[name='selected_item[]']");
+        var selectedValues = Array.from(checkboxes)
+                                 .filter(checkbox => checkbox.checked)
+                                 .map(checkbox => checkbox.value);
+        var hiddenInput = document.querySelector("input[name='selected_pid']");
+        hiddenInput.value = selectedValues.join(',');
+    }
 
-        document.querySelectorAll("input[name='selected_item[]']").forEach(checkbox => {
-            checkbox.addEventListener('change', updateHiddenInput);
-        });
+    document.querySelectorAll("input[name='selected_item[]']").forEach(checkbox => {
+        checkbox.addEventListener('change', updateHiddenInput);
+    });
+</script>
 
-        $(document).ready(function(){
-            $('.cart-checkbox').click(function(){
-                var selectedPids = $('.cart-checkbox:checked').map(function(){
-                    return $(this).data('pid');
-                }).get();
+<script>
+    $(document).ready(function(){
+        $('.cart-checkbox').click(function(){
+            var selectedPids = $('.cart-checkbox:checked').map(function(){
+                return $(this).data('pid');
+            }).get();
 
-                // Update hidden input value
-                $('#selected-pid').val(selectedPids.join(','));
+            // Update hidden input value
+            $('#selected-pid').val(selectedPids.join(','));
 
-                // Update table dynamically
-                $.ajax({
-                    url: 'cart_price.php',
-                    type: 'POST',
-                    data: {
-                        selected_pid: selectedPids.join(',')
-                    },
-                    success: function(response) {
-                        var data = JSON.parse(response);
-                        $('#cart-table-body').empty();
-                        var subtotal = 0;
-                        $.each(data.items, function(index, item) {
-                            var row = '<tr>' +
-                                        '<td>' + item.item_name + '</td>' +
-                                        '<td>' + item.qty + '</td>' +
-                                        '<td>' + item.price + '</td>' +
-                                     '</tr>';
-                            $('#cart-table-body').append(row);
-                            subtotal += (item.price * item.qty);
-                        });
-                        $('#subtotal').text('₱' + subtotal.toFixed(2));
-                    }
-                });
-            });
-
-            $('.btn-minus').click(function(){
-                var pid = $(this).data('pid');
-
-                $.ajax({
-                    url: 'btn_minus.php',
-                    type: 'POST',
-                    data: {
-                        pid: pid,
-                    },
-                    success: function() {
-                        location.reload();
-                    }
-                });
-            });
-
-            $('.input-value').change(function(){
-                var pid = $(this).data('pid');
-                var qty = $(this).val();
-
-                $.ajax({
-                    url: 'input_value.php',
-                    type: 'POST',
-                    data: {
-                        pid: pid,
-                        qty: qty
-                    },
-                    success: function(response) {
-                        console.log('Quantity updated successfully.');
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error updating quantity:', error);
-                    }
-                });
-            });
-
-            $('.btn-plus').click(function(){
-                var pid = $(this).data('pid');
-
-                $.ajax({
-                    url: 'btn_plus.php',
-                    type: 'POST',
-                    data: {
-                        pid: pid,
-                    },
-                    success: function() {
-                        location.reload();
-                    }
-                });
-            });
-
-            $('.btn-remove').click(function(){
-                var pid = $(this).data('pid');
-
-                $.ajax({
-                    url: 'remove_item.php',
-                    type: 'POST',
-                    data: {
-                        pid: pid
-                    },
-                    success: function(response) {
-                        console.log('Item removed successfully.');
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error removing item:', error);
-                    }
-                });
+            // Update table dynamically
+            $.ajax({
+                url: 'cart_price.php',
+                type: 'POST',
+                data: {
+                    selected_pid: selectedPids.join(',')
+                },
+                success: function(response) {
+                    var data = JSON.parse(response);
+                    $('#cart-table-body').empty();
+                    var subtotal = 0;
+                    $.each(data.items, function(index, item) {
+                        var row = '<tr>' +
+                                    '<td>' + item.item_name + '</td>' +
+                                    '<td>' + item.qty + '</td>' +
+                                    '<td>' + item.price + '</td>' +
+                                 '</tr>';
+                        $('#cart-table-body').append(row);
+                        subtotal += (item.price * item.qty);
+                    });
+                    $('#subtotal').text('₱' + subtotal.toFixed(2));
+                }
             });
         });
-    </script>
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('.btn-minus').click(function(){
+            var pid = $(this).data('pid');
+
+            $.ajax({
+                url: 'btn_minus.php',
+                type: 'POST',
+                data: {
+                    pid: pid,
+                },
+                success: function() {
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('.input-value').change(function(){
+            var pid = $(this).data('pid');
+            var qty = $(this).val();
+
+            $.ajax({
+                url: 'input_value.php',
+                type: 'POST',
+                data: {
+                    pid: pid,
+                    qty: qty
+                },
+                success: function(response) {
+                    console.log('Quantity updated successfully.');
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating quantity:', error);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('.btn-plus').click(function(){
+            var pid = $(this).data('pid');
+
+            $.ajax({
+                url: 'btn_plus.php',
+                type: 'POST',
+                data: {
+                    pid: pid,
+                },
+                success: function() {
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('.btn-remove').click(function(){
+            var pid = $(this).data('pid');
+
+            $.ajax({
+                url: 'remove_item.php',
+                type: 'POST',
+                data: {
+                    pid: pid
+                },
+                success: function(response) {
+                    console.log('Item removed successfully.');
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error removing item:', error);
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

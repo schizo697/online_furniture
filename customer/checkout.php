@@ -1,29 +1,5 @@
 <?php 
 session_start();
-include('../conn.php'); // Include database connection
-
-// Check if the user is logged in
-if (!isset($_SESSION['uid'])) {
-    header("Location: ../login.php");
-    exit();
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
-    $uid = $_SESSION['uid'];
-    $firstname = mysqli_real_escape_string($conn, $_POST['firstname']);
-    $lastname = mysqli_real_escape_string($conn, $_POST['lastname']);
-    $gender = mysqli_real_escape_string($conn, $_POST['gender']);
-    $contact = mysqli_real_escape_string($conn, $_POST['contact']);
-    $address = mysqli_real_escape_string($conn, $_POST['address']);
-    
-    $update_sql = "UPDATE userinfo SET firstname='$firstname', lastname='$lastname', gender='$gender', contact='$contact', address='$address' WHERE infoid='$uid'";
-    
-    if (mysqli_query($conn, $update_sql)) {
-        echo "<script>alert('Profile updated successfully.');</script>";
-    } else {
-        echo "<script>alert('Error updating profile.');</script>";
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                     if(isset($_SESSION['uid'])){
                                         $user_id = $_SESSION['uid'];
                                         
-                                        $sql = "SELECT userinfo.firstname, userinfo.lastname, userinfo.gender, userinfo.contact, userinfo.address, userinfo.city, userinfo.postal, useraccount.username FROM userinfo
+                                        $sql = "SELECT userinfo.firstname, userinfo.lastname, userinfo.email, userinfo.gender, userinfo.contact, userinfo.address, userinfo.city, userinfo.postal, useraccount.username FROM userinfo
                                         JOIN useraccount ON userinfo.infoid = useraccount.infoid
                                         WHERE userinfo.infoid = '$user_id'";
                                         $result = mysqli_query($conn, $sql);
@@ -76,47 +52,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                 <h5 class="font-size-16 mb-1">Billing Info</h5>
                                                 <p class="text-muted text-truncate mb-4">Set your address</p>
                                                 <div class="mb-3">
-                                                <form>
+                                                <?php 
+                                                include('../conn.php'); // Include database connection
+
+                                                // Check if the user is logged in
+                                                if (!isset($_SESSION['uid'])) {
+                                                    header("Location: ../login.php");
+                                                    exit();
+                                                }
+
+                                                if (isset($_POST['btnUpdate'])) {
+                                                    $uid = $_SESSION['uid'];
+                                                    $firstname = $_POST['firstname'];
+                                                    $lastname = $_POST['lastname'];
+                                                    $email = $_POST['email'];
+                                                    $contact = $_POST['contact'];
+                                                    $address = $_POST['address'];
+                                                    $city = $_POST['city'];
+                                                    $postal = $_POST['postal'];
+                                                    
+                                                    $update_sql = "UPDATE userinfo SET firstname='$firstname', lastname='$lastname',email='$email', contact='$contact', address='$address' WHERE infoid='$uid'";
+                                                    
+                                                    if (mysqli_query($conn, $update_sql)) {
+                                                        echo "<script>alert('Profile updated successfully.');</script>";
+                                                    } else {
+                                                        echo "<script>alert('Error updating profile.');</script>";
+                                                    }
+                                                }
+                                                ?>
+                                                <form action="" method="POST">
                                                     <div>
                                                         <div class="row">
                                                             <div class="col-lg-4">
                                                                 <div class="mb-3">
-                                                                    <label class="form-label" for="billing-name">Full Name <span style="color: red;">*</span></label>
-                                                                    <input class="form-control" name="name" type="text" placeholder="Enter your name" value="<?php echo $row['firstname'] ?> <?php echo $row['lastname'] ?>" required >
+                                                                    <label class="form-label" for="billing-name">First Name <span style="color: red;">*</span></label>
+                                                                    <input class="form-control" name="firstname" type="text" placeholder="Enter your name" value="<?php echo $row['firstname']?>" required >
                                                                 </div>
-                                                            </div>
-                                                            <div class="col-lg-4">
                                                                 <div class="mb-3">
                                                                     <label class="form-label" for="billing-email-address">Email Address</label>
-                                                                    <input type="email" class="form-control" id="billing-email-address" placeholder="Enter email"  required>
+                                                                    <input type="email" class="form-control" name="email" id="billing-email-address" placeholder="Enter email" value="<?php echo $row['email']; ?>"  required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-4">
                                                                 <div class="mb-3">
+                                                                    <label class="form-label" for="billing-name">Last Name <span style="color: red;">*</span></label>
+                                                                    <input class="form-control" name="lastname" type="text" placeholder="Enter your name" value="<?php echo $row['lastname']?>" required >
+                                                                </div>
+                                                                <div class="mb-3">
                                                                     <label class="form-label" for="billing-phone">Phone <span style="color: red;">*</span></label>
-                                                                    <input type="text" class="form-control" id="billing-phone" placeholder="Enter Phone no." value="<?php echo $row['contact'] ?> "required>
+                                                                    <input type="text" class="form-control" name="contact"  id="billing-phone" placeholder="Enter Phone no." value="<?php echo $row['contact'] ?> "required>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label" for="billing-address">Address <span style="color: red;">*</span></label>
-                                                            <input type="text" class="form-control" id="billing-address" placeholder="Enter full address" value="<?php echo $row['address'] ?> "required>                                                
+                                                            <label class="form-label" for="billing-address">Address (Street, Barangay) <span style="color: red;">*</span></label>
+                                                            <input type="text" class="form-control" name="address" id="billing-address" placeholder="Enter full address" value="<?php echo $row['address'] ?> "required>                                                
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-lg-4">
                                                                 <div class="mb-4 mb-lg-0">
                                                                     <label class="form-label" for="billing-city">City <span style="color: red;">*</span></label>
-                                                                    <input type="text" class="form-control" id="billing-city" placeholder="Enter City" value="<?php echo $row['city']; ?>" required>
+                                                                    <input type="text" class="form-control" name="city" id="billing-city" placeholder="Enter City" value="<?php echo $row['city']; ?>" required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-4">
                                                                 <div class="mb-0">
                                                                     <label class="form-label" for="zip-code">Zip / Postal code <span style="color: red;">*</span></label>
-                                                                    <input type="text" class="form-control" id="zip-code" placeholder="Enter Postal code" value="<?php echo $row['postal'] ?>" required>
+                                                                    <input type="text" class="form-control" name="postal" id="zip-code" placeholder="Enter Postal code" value="<?php echo $row['postal'] ?>" required>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <br>
+                                                    <button class="btn btn-primary btn-sm" name="btnUpdate" style="margin-left: 45%">Update</button>
                                                 </form>
                                                 <?php
                                         }
@@ -209,22 +217,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                             <?php 
                             if(isset($_GET['selected_pid']) && isset($_SESSION['uid'])){
                                 $uid = $_SESSION['uid'];
-                                $selected_pid = $_GET['selected_pid'];
-                                $pid = explode(',', $selected_pid);
-                                $pid_str = implode("','", $pid);  // Separate each pid with ',' and enclose in single quotes
+                                $pid = $_GET['selected_pid'];
+
+                                // Ensure $pid is a valid comma-separated list
+                                $pid_list = implode(',', array_map('intval', explode(',', $pid)));
 
                                 // selected pid = 0
-                                if(empty($selected_pid)){
+                                if(empty($pid_list)){
                                     $url = "cart.php";
-                                    echo "<script>window.location.href= ' $url '</script>";
+                                    echo "<script>window.location.href= '$url'</script>";
                                     exit();
                                 } else {
-                                    $order = "SELECT * FROM cart JOIN 
-                                    furniture ON cart.pid = furniture.pid WHERE cart.pid IN ('$pid_str') AND cart.uid = '$uid'";
+                                    $order = "SELECT * FROM cart 
+                                            JOIN furniture ON cart.pid = furniture.pid 
+                                            WHERE cart.pid IN ($pid_list) AND cart.uid = '$uid'";
                                     $order_res = mysqli_query($conn, $order);
-    
+
                                     $subtotal = 0; 
-    
+
                                     if($order_res && mysqli_num_rows($order_res) > 0){
                                         while($order_row = mysqli_fetch_assoc($order_res)){
                                             $pname = $order_row['pname'];
@@ -262,25 +272,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                     ₱<?php echo $subtotal; ?>
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <h5 class="font-size-14 m-0">Shipping Charge :</h5>
-                                </td>
-                                <td>
-                                    ₱25
-                                </td>
-                            </tr>
-                            <tr class="bg-light">
-                                <td colspan="2">
-                                    <h5 class="font-size-14 m-0">Total:</h5>
-                                </td>
-                                <td>
-                                    ₱<?php echo $subtotal + 25; ?>
-                                </td>
-                            </tr>
+                            <?php
+                            $cityquery = "SELECT city FROM userinfo WHERE infoid = '$uid'";
+                            $cityres = mysqli_query($conn, $cityquery);
+
+                            if($cityres && mysqli_num_rows($cityres) > 0){
+                                $cityrow = mysqli_fetch_assoc($cityres);
+                                $city = $cityrow['city'];
+                                
+                                if($city != 'General Santos City' && $city != 'Gensan'){
+                                    ?>
+                                    <tr>
+                                        <td colspan="2">
+                                            <h5 class="font-size-14 m-0">Shipping Charge :</h5>
+                                        </td>
+                                        <td>
+                                            ₱100
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-light">
+                                        <td colspan="2">
+                                            <h5 class="font-size-14 m-0">Total:</h5>
+                                        </td>
+                                        <td>
+                                            ₱<?php echo $subtotal + 100; ?>
+                                        </td>
+                                    </tr>
+                                    <form action="" method="POST" id="order-summary">
+                                    <input type="text" name="pid" value="<?php echo $pid; ?>">
+                                    <input type="text" name="uid" value ="<?php echo $uid;?>">
+                                    <input type="text" name="qty" value ="<?php echo $qty; ?>">
+                                    <input type="text" name="total" value ="<?php echo $subtotal; + 100?>">
+                                    </form>
+                                    <?php
+                                } else{
+                                    ?>
+                                    <tr>
+                                        <td colspan="2">
+                                            <h5 class="font-size-14 m-0">Shipping Charge :</h5>
+                                        </td>
+                                        <td>
+                                            ₱0
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-light">
+                                        <td colspan="2">
+                                            <h5 class="font-size-14 m-0">Total:</h5>
+                                        </td>
+                                        <td>
+                                            ₱<?php echo $subtotal; ?>
+                                        </td>
+                                    </tr>
+                                    <form action="" method="POST" id="order-summary">
+                                    <input type="text" name="pid" value="<?php echo $pid; ?>">
+                                    <input type="text" name="uid" value ="<?php echo $uid;?>">
+                                    <input type="text" name="qty" value ="<?php echo $qty; ?>">
+                                    <input type="text" name="total" value ="<?php echo $subtotal;?>">
+                                    </form>
+                                    <?php
+                                }                                
+                            }
+                            ?>
                             </tbody>
                         </table>
-                        
                     </div>
                 </div>
             </div>
@@ -303,6 +357,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 <script src="lib/waypoints/waypoints.min.js"></script>
 <script src="lib/lightbox/js/lightbox.min.js"></script>
 <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
