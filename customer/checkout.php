@@ -9,14 +9,14 @@ if (!isset($_SESSION['uid'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
-    $user_id = $_SESSION['uid'];
+    $uid = $_SESSION['uid'];
     $firstname = mysqli_real_escape_string($conn, $_POST['firstname']);
     $lastname = mysqli_real_escape_string($conn, $_POST['lastname']);
     $gender = mysqli_real_escape_string($conn, $_POST['gender']);
     $contact = mysqli_real_escape_string($conn, $_POST['contact']);
     $address = mysqli_real_escape_string($conn, $_POST['address']);
     
-    $update_sql = "UPDATE userinfo SET firstname='$firstname', lastname='$lastname', gender='$gender', contact='$contact', address='$address' WHERE infoid='$user_id'";
+    $update_sql = "UPDATE userinfo SET firstname='$firstname', lastname='$lastname', gender='$gender', contact='$contact', address='$address' WHERE infoid='$uid'";
     
     if (mysqli_query($conn, $update_sql)) {
         echo "<script>alert('Profile updated successfully.');</script>";
@@ -61,67 +61,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                             </div>
                             <div class="feed-item-list">
                                 <div>
-                                <?php 
-                        if(isset($_SESSION['uid'])){
-                            $user_id = $_SESSION['uid'];
-                            
-                            $sql = "SELECT userinfo.firstname, userinfo.lastname, userinfo.gender, userinfo.contact, userinfo.address, useraccount.username FROM userinfo
-                            JOIN useraccount ON userinfo.infoid = useraccount.infoid
-                            WHERE userinfo.infoid = '$user_id'";
-                            $result = mysqli_query($conn, $sql);
+                                    <?php 
+                                    if(isset($_SESSION['uid'])){
+                                        $user_id = $_SESSION['uid'];
+                                        
+                                        $sql = "SELECT userinfo.firstname, userinfo.lastname, userinfo.gender, userinfo.contact, userinfo.address, useraccount.username FROM userinfo
+                                        JOIN useraccount ON userinfo.infoid = useraccount.infoid
+                                        WHERE userinfo.infoid = '$user_id'";
+                                        $result = mysqli_query($conn, $sql);
 
-                            if($result && mysqli_num_rows($result) > 0){
-                                $row = mysqli_fetch_assoc($result);
-                                ?> 
-                                    <h5 class="font-size-16 mb-1">Billing Info</h5>
-                                    <p class="text-muted text-truncate mb-4">Set your address</p>
-                                    <div class="mb-3">
-                                    <form>
-                                        <div>
-                                            <div class="row">
-                                                <div class="col-lg-4">
-                                                    <div class="mb-3">
-                                                        <label class="form-label" for="billing-name">Full Name <span style="color: red;">*</span></label>
-                                                        <input class="form-control" name="name" type="text" placeholder="Enter your name" value="<?php echo $row['firstname'] ?> <?php echo $row['lastname'] ?>" required >
+                                        if($result && mysqli_num_rows($result) > 0){
+                                            $row = mysqli_fetch_assoc($result);
+                                            ?> 
+                                                <h5 class="font-size-16 mb-1">Billing Info</h5>
+                                                <p class="text-muted text-truncate mb-4">Set your address</p>
+                                                <div class="mb-3">
+                                                <form>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label" for="billing-name">Full Name <span style="color: red;">*</span></label>
+                                                                    <input class="form-control" name="name" type="text" placeholder="Enter your name" value="<?php echo $row['firstname'] ?> <?php echo $row['lastname'] ?>" required >
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label" for="billing-email-address">Email Address</label>
+                                                                    <input type="email" class="form-control" id="billing-email-address" placeholder="Enter email"  required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label" for="billing-phone">Phone <span style="color: red;">*</span></label>
+                                                                    <input type="text" class="form-control" id="billing-phone" placeholder="Enter Phone no." value="<?php echo $row['contact'] ?> "required>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="billing-address">Address <span style="color: red;">*</span></label>
+                                                            <input type="text" class="form-control" id="billing-address" placeholder="Enter full address" value="<?php echo $row['address'] ?> "required>                                                
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="mb-4 mb-lg-0">
+                                                                    <label class="form-label" for="billing-city">City <span style="color: red;">*</span></label>
+                                                                    <input type="text" class="form-control" id="billing-city" placeholder="Enter City" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <div class="mb-0">
+                                                                    <label class="form-label" for="zip-code">Zip / Postal code <span style="color: red;">*</span></label>
+                                                                    <input type="text" class="form-control" id="zip-code" placeholder="Enter Postal code" required>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-4">
-                                                    <div class="mb-3">
-                                                        <label class="form-label" for="billing-email-address">Email Address</label>
-                                                        <input type="email" class="form-control" id="billing-email-address" placeholder="Enter email"  required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-4">
-                                                    <div class="mb-3">
-                                                        <label class="form-label" for="billing-phone">Phone <span style="color: red;">*</span></label>
-                                                        <input type="text" class="form-control" id="billing-phone" placeholder="Enter Phone no." value="<?php echo $row['contact'] ?> "required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label" for="billing-address">Address <span style="color: red;">*</span></label>
-                                                <input type="text" class="form-control" id="billing-address" placeholder="Enter full address" value="<?php echo $row['address'] ?> "required>                                                
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-4">
-                                                    <div class="mb-4 mb-lg-0">
-                                                        <label class="form-label" for="billing-city">City <span style="color: red;">*</span></label>
-                                                        <input type="text" class="form-control" id="billing-city" placeholder="Enter City" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-4">
-                                                    <div class="mb-0">
-                                                        <label class="form-label" for="zip-code">Zip / Postal code <span style="color: red;">*</span></label>
-                                                        <input type="text" class="form-control" id="zip-code" placeholder="Enter Postal code" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <?php
-                            }
-                        }
-                        ?>
+                                                </form>
+                                                <?php
+                                        }
+                                    }
+                                    ?>
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                         <div class="col-lg-3 col-sm-6">
                                                             <div>
                                                                 <label class="card-radio-label">
-                                                                    <input type="radio" name="pay-method" id="pay-methodoption3" class="card-radio-input" value="cod" checked="">
+                                                                    <input type="radio" name="pay-method" id="pay-methodoption2" class="card-radio-input" value="cod" checked="">
                                                                     <span class="card-radio py-3 text-center text-truncate">
                                                                         <i class="bx bx-money d-block h2 mb-3"></i>
                                                                         <span>Cash on Delivery</span>
@@ -206,77 +206,78 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row"><img src="https://www.bootdey.com/image/280x280/FF00FF/000000" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
-                                    <td>
-                                        <h5 class="font-size-16 text-truncate"><a href="#" class="text-dark">Waterproof Mobile Phone</a></h5>
-                                        <p class="text-muted mb-0">
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star-half text-warning"></i>
-                                        </p>
-                                        <p class="text-muted mb-0 mt-1">$ 260 x 2</p>
-                                    </td>
-                                    <td>$ 520</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"><img src="https://www.bootdey.com/image/280x280/FF00FF/000000" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
-                                    <td>
-                                        <h5 class="font-size-16 text-truncate"><a href="#" class="text-dark">Smartphone Dual Camera</a></h5>
-                                        <p class="text-muted mb-0">
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star text-warning"></i>
-                                        </p>
-                                        <p class="text-muted mb-0 mt-1">$ 260 x 1</p>
-                                    </td>
-                                    <td>$ 260</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <h5 class="font-size-14 m-0">Sub Total :</h5>
-                                    </td>
-                                    <td>
-                                        $ 780
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <h5 class="font-size-14 m-0">Discount :</h5>
-                                    </td>
-                                    <td>
-                                        - $ 78
-                                    </td>
-                                </tr>
+                            <?php 
+                            if(isset($_GET['selected_pid']) && isset($_SESSION['uid'])){
+                                $uid = $_SESSION['uid'];
+                                $selected_pid = $_GET['selected_pid'];
+                                $pid = explode(',', $selected_pid);
+                                $pid_str = implode("','", $pid);  // Separate each pid with ',' and enclose in single quotes
 
-                                <tr>
-                                    <td colspan="2">
-                                        <h5 class="font-size-14 m-0">Shipping Charge :</h5>
-                                    </td>
-                                    <td>
-                                        $ 25
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <h5 class="font-size-14 m-0">Estimated Tax :</h5>
-                                    </td>
-                                    <td>
-                                        $ 18.20
-                                    </td>
-                                </tr>                              
-                                    
-                                <tr class="bg-light">
-                                    <td colspan="2">
-                                        <h5 class="font-size-14 m-0">Total:</h5>
-                                    </td>
-                                    <td>
-                                        $ 745.2
-                                    </td>
-                                </tr>
+                                // selected pid = 0
+                                if(empty($selected_pid)){
+                                    $url = "cart.php";
+                                    echo "<script>window.location.href= ' $url '</script>";
+                                    exit();
+                                } else {
+                                    $order = "SELECT * FROM cart JOIN 
+                                    furniture ON cart.pid = furniture.pid WHERE cart.pid IN ('$pid_str') AND cart.uid = '$uid'";
+                                    $order_res = mysqli_query($conn, $order);
+    
+                                    $subtotal = 0; 
+    
+                                    if($order_res && mysqli_num_rows($order_res) > 0){
+                                        while($order_row = mysqli_fetch_assoc($order_res)){
+                                            $pname = $order_row['pname'];
+                                            $qty = $order_row['qty'];
+                                            $price = $order_row['price'];
+                                            $total = $price * $qty;
+                                            $subtotal += $total; // Add to subtotal
+                                            ?>
+                                            <tr>
+                                                <th scope="row"><img src="https://www.bootdey.com/image/280x280/FF00FF/000000" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
+                                                <td>
+                                                    <h5 class="font-size-16 text-truncate"><a href="#" class="text-dark"><?php echo $pname; ?></a></h5>
+                                                    <p class="text-muted mb-0">
+                                                        <i class="bx bxs-star text-warning"></i>
+                                                        <i class="bx bxs-star text-warning"></i>
+                                                        <i class="bx bxs-star text-warning"></i>
+                                                        <i class="bx bxs-star text-warning"></i>
+                                                        <i class="bx bxs-star-half text-warning"></i>
+                                                    </p>
+                                                    <p class="text-muted mb-0 mt-1">₱<?php echo $price . ' * ' . $qty;?></p>
+                                                </td>
+                                                <td>₱<?php echo $total; ?></td>
+                                            </tr>
+                                            <?php
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                            <tr>
+                                <td colspan="2">
+                                    <h5 class="font-size-14 m-0">Sub Total :</h5>
+                                </td>
+                                <td>
+                                    ₱<?php echo $subtotal; ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <h5 class="font-size-14 m-0">Shipping Charge :</h5>
+                                </td>
+                                <td>
+                                    ₱25
+                                </td>
+                            </tr>
+                            <tr class="bg-light">
+                                <td colspan="2">
+                                    <h5 class="font-size-14 m-0">Total:</h5>
+                                </td>
+                                <td>
+                                    ₱<?php echo $subtotal + 25; ?>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                         
