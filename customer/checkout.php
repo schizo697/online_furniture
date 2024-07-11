@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                     if(isset($_SESSION['uid'])){
                                         $user_id = $_SESSION['uid'];
                                         
-                                        $sql = "SELECT userinfo.firstname, userinfo.lastname, userinfo.gender, userinfo.contact, userinfo.address, useraccount.username FROM userinfo
+                                        $sql = "SELECT userinfo.firstname, userinfo.lastname, userinfo.gender, userinfo.contact, userinfo.address, userinfo.city, userinfo.postal, useraccount.username FROM userinfo
                                         JOIN useraccount ON userinfo.infoid = useraccount.infoid
                                         WHERE userinfo.infoid = '$user_id'";
                                         $result = mysqli_query($conn, $sql);
@@ -106,13 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                             <div class="col-lg-4">
                                                                 <div class="mb-4 mb-lg-0">
                                                                     <label class="form-label" for="billing-city">City <span style="color: red;">*</span></label>
-                                                                    <input type="text" class="form-control" id="billing-city" placeholder="Enter City" required>
+                                                                    <input type="text" class="form-control" id="billing-city" placeholder="Enter City" value="<?php echo $row['city']; ?>" required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-4">
                                                                 <div class="mb-0">
                                                                     <label class="form-label" for="zip-code">Zip / Postal code <span style="color: red;">*</span></label>
-                                                                    <input type="text" class="form-control" id="zip-code" placeholder="Enter Postal code" required>
+                                                                    <input type="text" class="form-control" id="zip-code" placeholder="Enter Postal code" value="<?php echo $row['postal'] ?>" required>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                             <div class="col">
                                 <div class="text-end mt-2 mt-sm-0">
                                     <a href="#" class="btn btn-success">
-                                        <i class="mdi mdi-cart-outline me-1"></i> Procced </a>
+                                        <i class="mdi mdi-cart-outline me-1"></i> Place Order </a>
                                 </div>
                             </div> <!-- end col -->
                         </div> <!-- end row-->

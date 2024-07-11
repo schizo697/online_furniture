@@ -15,8 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
     $gender = mysqli_real_escape_string($conn, $_POST['gender']);
     $contact = mysqli_real_escape_string($conn, $_POST['contact']);
     $address = mysqli_real_escape_string($conn, $_POST['address']);
-    
-    $update_sql = "UPDATE userinfo SET firstname='$firstname', lastname='$lastname', gender='$gender', contact='$contact', address='$address' WHERE infoid='$user_id'";
+    $city = mysqli_real_escape_string($conn, $_POST['city']);
+    $postal = mysqli_real_escape_string($conn, $_POST['postal']);
+
+    $update_sql = "UPDATE userinfo SET firstname='$firstname', lastname='$lastname', gender='$gender', contact='$contact', address='$address', city='$city', postal='$postal' WHERE infoid='$user_id'";
     
     if (mysqli_query($conn, $update_sql)) {
         echo "<script>alert('Profile updated successfully.');</script>";
@@ -72,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                         if(isset($_SESSION['uid'])){
                             $user_id = $_SESSION['uid'];
                             
-                            $sql = "SELECT userinfo.firstname, userinfo.lastname, userinfo.gender, userinfo.contact, userinfo.address, useraccount.username FROM userinfo
+                            $sql = "SELECT userinfo.firstname, userinfo.lastname, userinfo.gender, userinfo.contact, userinfo.address, userinfo.city, userinfo.postal, useraccount.username FROM userinfo
                             JOIN useraccount ON userinfo.infoid = useraccount.infoid
                             WHERE userinfo.infoid = '$user_id'";
                             $result = mysqli_query($conn, $sql);
@@ -107,6 +109,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <label class="small mb-1" for="inputAddress">Address</label>
                                         <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>" readonly>
                                     </div>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="inputPhone">City</label>
+                                            <input class="form-control" name="contact" type="tel" placeholder="Enter your city" value="<?php echo $row['city'] ?>" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="inputPhone">Postal Code</label>
+                                            <input class="form-control" name="contact" type="tel" placeholder="Enter your postal code" value="<?php echo $row['postal'] ?>" readonly>
+                                        </div>
+                                    </div>
+                                    
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editAccount" style="margin-left: 290px"> Edit </button>
                                     <a href="../login.php?logout=true">
                                         <button type="button" class="btn btn-danger">Logout</button>
@@ -136,29 +149,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                     <div class="modal-body">
                     <div class="mb-3">
                                         <label class="small mb-1" for="inputUsername">Username:</label>
-                                        <input class="form-control" name="username" type="text" placeholder="Enter your username" value="<?php echo $row['username'] ?>" >
+                                        <input class="form-control" name="username" type="text" placeholder="Enter your username" value="<?php echo $row['username'] ?>" require>
                                     </div>
                                     <div class="row gx-3 mb-3">
                                         <div class="col-md-6">
                                             <label class="small mb-1" for="inputFirstName">First name</label>
-                                            <input class="form-control" name="firstname" type="text" placeholder="Enter your first name" value="<?php echo $row['firstname'] ?>" >
+                                            <input class="form-control" name="firstname" type="text" placeholder="Enter your first name" value="<?php echo $row['firstname'] ?>" require>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="small mb-1" for="inputLastName">Last name</label>
-                                            <input class="form-control" name="lastname" type="text" placeholder="Enter your last name" value="<?php echo $row['lastname'] ?>" >
+                                            <input class="form-control" name="lastname" type="text" placeholder="Enter your last name" value="<?php echo $row['lastname'] ?>" require>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="small mb-1" for="inputGender">Gender</label>
-                                            <input class="form-control" name="gender" type="text" placeholder="Enter your gender" value="<?php echo $row['gender'] ?>" >
+                                            <input class="form-control" name="gender" type="text" placeholder="Enter your gender" value="<?php echo $row['gender'] ?>" require>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="small mb-1" for="inputPhone">Phone number</label>
-                                            <input class="form-control" name="contact" type="tel" placeholder="Enter your phone number" value="<?php echo $row['contact'] ?>" >
+                                            <input class="form-control" name="contact" type="tel" placeholder="Enter your phone number" value="<?php echo $row['contact'] ?>" require>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="small mb-1" for="inputAddress">Address</label>
-                                        <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>" >
+                                        <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>" require>
+                                    </div>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="inputPhone">City</label>
+                                            <input class="form-control" name="contact" type="tel" placeholder="Enter your city" value="<?php echo $row['city'] ?>" require>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="inputPhone">Postal Code</label>
+                                            <input class="form-control" name="contact" type="tel" placeholder="Enter your postal code" value="<?php echo $row['postal'] ?>" require>
+                                        </div>
                                     </div>
                                     <h6> Account Details </h6>
                                         <div class="row gx-3 mb-3">
