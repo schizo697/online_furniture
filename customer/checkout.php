@@ -1,5 +1,7 @@
 <?php 
-session_start();
+if(isset($_SESSION['uid'])){
+    $uid = $_SESSION['uid'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,78 +55,56 @@ session_start();
                                                 <p class="text-muted text-truncate mb-4">Set your address</p>
                                                 <div class="mb-3">
                                                 <?php 
-                                                include('../conn.php'); // Include database connection
-
-                                                // Check if the user is logged in
+                                                include('../conn.php'); 
+                                              
                                                 if (!isset($_SESSION['uid'])) {
                                                     header("Location: ../login.php");
                                                     exit();
                                                 }
-
-                                                if (isset($_POST['btnUpdate'])) {
-                                                    $uid = $_SESSION['uid'];
-                                                    $firstname = $_POST['firstname'];
-                                                    $lastname = $_POST['lastname'];
-                                                    $email = $_POST['email'];
-                                                    $contact = $_POST['contact'];
-                                                    $address = $_POST['address'];
-                                                    $city = $_POST['city'];
-                                                    $postal = $_POST['postal'];
-                                                    
-                                                    $update_sql = "UPDATE userinfo SET firstname='$firstname', lastname='$lastname',email='$email', contact='$contact', address='$address' WHERE infoid='$uid'";
-                                                    
-                                                    if (mysqli_query($conn, $update_sql)) {
-                                                        echo "<script>alert('Profile updated successfully.');</script>";
-                                                    } else {
-                                                        echo "<script>alert('Error updating profile.');</script>";
-                                                    }
-                                                }
                                                 ?>
                                                 <form action="" method="POST">
-                                                    <div>
-                                                        <div class="row">
-                                                            <div class="col-lg-4">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label" for="billing-name">First Name <span style="color: red;">*</span></label>
-                                                                    <input class="form-control" name="firstname" type="text" placeholder="Enter your name" value="<?php echo $row['firstname']?>" required >
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label class="form-label" for="billing-email-address">Email Address</label>
-                                                                    <input type="email" class="form-control" name="email" id="billing-email-address" placeholder="Enter email" value="<?php echo $row['email']; ?>"  required>
-                                                                </div>
+                                                <div>
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="billing-name">First Name <span style="color: red;">*</span></label>
+                                                                <input class="form-control update-profile" name="firstname" type="text" placeholder="Enter your name" value="<?php echo htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8'); ?>" required>
                                                             </div>
-                                                            <div class="col-lg-4">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label" for="billing-name">Last Name <span style="color: red;">*</span></label>
-                                                                    <input class="form-control" name="lastname" type="text" placeholder="Enter your name" value="<?php echo $row['lastname']?>" required >
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label class="form-label" for="billing-phone">Phone <span style="color: red;">*</span></label>
-                                                                    <input type="text" class="form-control" name="contact"  id="billing-phone" placeholder="Enter Phone no." value="<?php echo $row['contact'] ?> "required>
-                                                                </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="billing-email-address">Email Address</label>
+                                                                <input type="email" class="form-control update-profile" name="email" id="billing-email-address" placeholder="Enter email" value="<?php echo htmlspecialchars($row['email'], ENT_QUOTES, 'UTF-8'); ?>" required>
                                                             </div>
                                                         </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label" for="billing-address">Address (Street, Barangay) <span style="color: red;">*</span></label>
-                                                            <input type="text" class="form-control" name="address" id="billing-address" placeholder="Enter full address" value="<?php echo $row['address'] ?> "required>                                                
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-lg-4">
-                                                                <div class="mb-4 mb-lg-0">
-                                                                    <label class="form-label" for="billing-city">City <span style="color: red;">*</span></label>
-                                                                    <input type="text" class="form-control" name="city" id="billing-city" placeholder="Enter City" value="<?php echo $row['city']; ?>" required>
-                                                                </div>
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="billing-name">Last Name <span style="color: red;">*</span></label>
+                                                                <input class="form-control update-profile" name="lastname" type="text" placeholder="Enter your name" value="<?php echo htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8'); ?>" required>
                                                             </div>
-                                                            <div class="col-lg-4">
-                                                                <div class="mb-0">
-                                                                    <label class="form-label" for="zip-code">Zip / Postal code <span style="color: red;">*</span></label>
-                                                                    <input type="text" class="form-control" name="postal" id="zip-code" placeholder="Enter Postal code" value="<?php echo $row['postal'] ?>" required>
-                                                                </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="billing-phone">Phone <span style="color: red;">*</span></label>
+                                                                <input type="text" class="form-control update-profile" name="contact" id="billing-phone" placeholder="Enter Phone no." value="<?php echo htmlspecialchars($row['contact'], ENT_QUOTES, 'UTF-8'); ?>" required>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <br>
-                                                    <button class="btn btn-primary btn-sm" name="btnUpdate" style="margin-left: 45%">Update</button>
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="billing-address">Address (Street, Barangay) <span style="color: red;">*</span></label>
+                                                        <input type="text" class="form-control update-profile" name="address" id="billing-address" placeholder="Enter full address" value="<?php echo htmlspecialchars($row['address'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-4 mb-lg-0">
+                                                                <label class="form-label" for="billing-city">City <span style="color: red;">*</span></label>
+                                                                <input type="text" class="form-control update-profile" name="city" id="billing-city" placeholder="Enter City" value="<?php echo htmlspecialchars($row['city'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-0">
+                                                                <label class="form-label" for="zip-code">Zip / Postal code <span style="color: red;">*</span></label>
+                                                                <input type="text" class="form-control update-profile" name="postal" id="zip-code" placeholder="Enter Postal code" value="<?php echo htmlspecialchars($row['postal'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 </form>
                                                 <?php
                                         }
@@ -238,13 +218,14 @@ session_start();
                                     if($order_res && mysqli_num_rows($order_res) > 0){
                                         while($order_row = mysqli_fetch_assoc($order_res)){
                                             $pname = $order_row['pname'];
+                                            $img = $order_row['image'];
                                             $qty = $order_row['qty'];
                                             $price = $order_row['price'];
                                             $total = $price * $qty;
-                                            $subtotal += $total; // Add to subtotal
+                                            $subtotal += $total;
                                             ?>
                                             <tr>
-                                                <th scope="row"><img src="https://www.bootdey.com/image/280x280/FF00FF/000000" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
+                                                <th scope="row"><img src="../admin/assets/img/<?php echo $img; ?>" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
                                                 <td>
                                                     <h5 class="font-size-16 text-truncate"><a href="#" class="text-dark"><?php echo $pname; ?></a></h5>
                                                     <p class="text-muted mb-0">
@@ -272,67 +253,28 @@ session_start();
                                     ₱<?php echo $subtotal; ?>
                                 </td>
                             </tr>
-                            <?php
-                            $cityquery = "SELECT city FROM userinfo WHERE infoid = '$uid'";
-                            $cityres = mysqli_query($conn, $cityquery);
-
-                            if($cityres && mysqli_num_rows($cityres) > 0){
-                                $cityrow = mysqli_fetch_assoc($cityres);
-                                $city = $cityrow['city'];
-                                
-                                if($city != 'General Santos City' && $city != 'Gensan'){
-                                    ?>
-                                    <tr>
-                                        <td colspan="2">
-                                            <h5 class="font-size-14 m-0">Shipping Charge :</h5>
-                                        </td>
-                                        <td>
-                                            ₱100
-                                        </td>
-                                    </tr>
-                                    <tr class="bg-light">
-                                        <td colspan="2">
-                                            <h5 class="font-size-14 m-0">Total:</h5>
-                                        </td>
-                                        <td>
-                                            ₱<?php echo $subtotal + 100; ?>
-                                        </td>
-                                    </tr>
-                                    <form action="" method="POST" id="order-summary">
-                                    <input type="text" name="pid" value="<?php echo $pid; ?>">
-                                    <input type="text" name="uid" value ="<?php echo $uid;?>">
-                                    <input type="text" name="qty" value ="<?php echo $qty; ?>">
-                                    <input type="text" name="total" value ="<?php echo $subtotal; + 100?>">
-                                    </form>
-                                    <?php
-                                } else{
-                                    ?>
-                                    <tr>
-                                        <td colspan="2">
-                                            <h5 class="font-size-14 m-0">Shipping Charge :</h5>
-                                        </td>
-                                        <td>
-                                            ₱0
-                                        </td>
-                                    </tr>
-                                    <tr class="bg-light">
-                                        <td colspan="2">
-                                            <h5 class="font-size-14 m-0">Total:</h5>
-                                        </td>
-                                        <td>
-                                            ₱<?php echo $subtotal; ?>
-                                        </td>
-                                    </tr>
-                                    <form action="" method="POST" id="order-summary">
-                                    <input type="text" name="pid" value="<?php echo $pid; ?>">
-                                    <input type="text" name="uid" value ="<?php echo $uid;?>">
-                                    <input type="text" name="qty" value ="<?php echo $qty; ?>">
-                                    <input type="text" name="total" value ="<?php echo $subtotal;?>">
-                                    </form>
-                                    <?php
-                                }                                
-                            }
-                            ?>
+                            <tr>
+                                <td colspan="2">
+                                    <h5 class="font-size-14 m-0">Shipping Charge :</h5>
+                                </td>
+                                <td>
+                                    ₱<span id="shipping-charge">0</span>
+                                </td>
+                            </tr>
+                            <tr class="bg-light">
+                                <td colspan="2">
+                                    <h5 class="font-size-14 m-0">Total:</h5>
+                                </td>
+                                <td>
+                                    ₱<span id="total"><?php echo $subtotal; ?></span>
+                                </td>
+                            </tr>
+                            <form action="place_order.php" method="POST" id="order-summary">
+                                <input type="hidden" name="pid" value="<?php echo $pid; ?>">
+                                <input type="hidden" name="uid" value="<?php echo $uid; ?>">
+                                <input type="hidden" name="qty" value="<?php echo $qty; ?>">
+                                <input type="hidden" name="total" value="<?php echo $subtotal; ?>">
+                            </form>
                             </tbody>
                         </table>
                     </div>
@@ -361,6 +303,61 @@ session_start();
 
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Function to update shipping fee, subtotal, and total based on the city
+        function updateFees() {
+            var city = $('input[name="city"]').val().toLowerCase();
+            var subtotal = parseFloat("<?php echo $subtotal; ?>");
+            var shippingFee = 100;
+
+            if (city === 'gensan' || city === 'general santos city') {
+                shippingFee = 0;
+            }
+
+            var total = subtotal + shippingFee;
+
+            $('#shipping-charge').text(shippingFee);
+            $('#total').text(total);
+        }
+
+        // Call updateFees on page load to initialize values
+        updateFees();
+
+        // Update fees when the city input changes
+        $('input[name="city"]').on('input', function() {
+            updateFees();
+        });
+
+        // Update profile and fees when form data changes
+        $('.update-profile').change(function() {
+            var formData = {
+                uid: "<?php echo $uid; ?>",
+                firstname: $('input[name="firstname"]').val(),
+                lastname: $('input[name="lastname"]').val(),
+                email: $('input[name="email"]').val(),
+                contact: $('input[name="contact"]').val(),
+                address: $('input[name="address"]').val(),
+                city: $('input[name="city"]').val(),
+                postal: $('input[name="postal"]').val()
+            };
+
+            $.ajax({
+                url: 'update_profile.php',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    console.log('Profile updated successfully');
+                    updateFees(); // Update fees after profile is updated
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating profile:', error);
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
