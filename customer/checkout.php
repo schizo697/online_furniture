@@ -128,54 +128,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                         </li>
                  
                         <li class="checkout-item">
-                                        <div class="avatar checkout-icon p-1">
-                                            <div class="avatar-title rounded-circle bg-primary">
-                                                <i class="bx bxs-wallet-alt text-white font-size-20"></i>
-                                            </div>
-                                        </div>
-                                        <div class="feed-item-list">
-                                            <div>
-                                                <h5 class="font-size-16 mb-1">Payment Info</h5>
-                                                <p class="text-muted text-truncate mb-4">Choose payment method</p>
-                                            </div>
-                                            <div>
-                                                <h5 class="font-size-14 mb-3">Payment method : <span style="color: red;">*</span></h5>
-                                                <form action="" method="POST" id="payment-method" enctype="multipart/form-data">
-                                                    <div class="row">
-                                                        <div class="col-lg-3 col-sm-6">
-                                                            <div data-bs-toggle="collapse">
-                                                                <label class="card-radio-label">
-                                                                    <input type="radio" name="pay-method" id="pay-methodoption1" class="card-radio-input" value="gcash">
-                                                                    <span class="card-radio py-3 text-center text-truncate">
-                                                                        <i class="bx bx-wallet d-block h2 mb-3"></i>
-                                                                        Gcash
-                                                                    </span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-3 col-sm-6">
-                                                            <div>
-                                                                <label class="card-radio-label">
-                                                                    <input type="radio" name="pay-method" id="pay-methodoption2" class="card-radio-input" value="cod" checked="">
-                                                                    <span class="card-radio py-3 text-center text-truncate">
-                                                                        <i class="bx bx-money d-block h2 mb-3"></i>
-                                                                        <span>Cash on Delivery</span>
-                                                                    </span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="gcash-upload" style="display:none;">
-                                                        <label class="form-label" for="gcash-receipt">Send to this number and Upload Gcash Receipt</label>
-                                                        <input type="file" class="form-control" id="gcash-receipt" name="gcash-receipt">
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </li>
-                                                        </ol>
-                                                    </div>
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-wallet-alt text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <div>
+                                    <h5 class="font-size-16 mb-1">Payment Info</h5>
+                                    <p class="text-muted text-truncate mb-4">Choose payment method</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-size-14 mb-3">Payment method : <span style="color: red;">*</span></h5>
+                                    <form action="" method="POST" id="payment-method" enctype="multipart/form-data">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-6">
+                                                <div data-bs-toggle="collapse">
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="pay-method" id="pay-methodoption1" class="card-radio-input" value="gcash">
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-wallet d-block h2 mb-3"></i>
+                                                            Gcash
+                                                        </span>
+                                                    </label>
                                                 </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-6">
+                                                <div>
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="pay-method" id="pay-methodoption3" class="card-radio-input" value="cod" checked="">
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-money d-block h2 mb-3"></i>
+                                                            <span>Cash on Delivery</span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="gcash-upload" style="display:none;">
+                                            <label class="form-label" for="gcash-receipt">Send to this number and Upload Gcash Receipt</label>
+                                            <input type="file" class="form-control" id="gcash-receipt" name="gcash-receipt">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
 
                         <div class="row my-4">
                             <div class="col">

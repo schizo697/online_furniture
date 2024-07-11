@@ -79,7 +79,7 @@ if(isset($_GET['logout']) && $_GET['logout'] == 'true'){
                                     } elseif ($user_level == 2) {
                                         header("Location: staff/dashboard.php");
                                     } elseif ($user_level == 3) {
-                                        header("Location: customer/shop.php");
+                                        header("Location: customer/index.php");
                                     }
                                     exit();
                                 } else {
