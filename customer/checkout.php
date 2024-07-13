@@ -133,7 +133,7 @@ if(isset($_SESSION['uid'])){
                                             <div class="col-lg-3 col-sm-6">
                                                 <div data-bs-toggle="collapse">
                                                     <label class="card-radio-label">
-                                                        <input type="radio" name="pay-method" id="pay-methodoption1" class="card-radio-input" value="gcash">
+                                                        <input type="radio" name="pay-method" id="gcash" class="card-radio-input" value="gcash">
                                                         <span class="card-radio py-3 text-center text-truncate">
                                                             <i class="bx bx-wallet d-block h2 mb-3"></i>
                                                             Gcash
@@ -144,7 +144,7 @@ if(isset($_SESSION['uid'])){
                                             <div class="col-lg-3 col-sm-6">
                                                 <div>
                                                     <label class="card-radio-label">
-                                                        <input type="radio" name="pay-method" id="pay-methodoption3" class="card-radio-input" value="cod" checked="">
+                                                        <input type="radio" name="pay-method" id="cod" class="card-radio-input" value="cod" checked="">
                                                         <span class="card-radio py-3 text-center text-truncate">
                                                             <i class="bx bx-money d-block h2 mb-3"></i>
                                                             <span>Cash on Delivery</span>
@@ -172,8 +172,9 @@ if(isset($_SESSION['uid'])){
                             </div> <!-- end col -->
                             <div class="col">
                                 <div class="text-end mt-2 mt-sm-0">
-                                    <a href="#" class="btn btn-success">
-                                        <i class="mdi mdi-cart-outline me-1"></i> Place Order </a>
+                                    <a href="#" class="btn btn-success" id="placeorder">
+                                        <i class="mdi mdi-cart-outline me-1"></i> Place Order
+                                    </a>
                                 </div>
                             </div> <!-- end col -->
                         </div> <!-- end row-->
@@ -269,11 +270,11 @@ if(isset($_SESSION['uid'])){
                                     ₱<span id="total"><?php echo $subtotal; ?></span>
                                 </td>
                             </tr>
-                            <form action="place_order.php" method="POST" id="order-summary">
-                                <input type="hidden" name="pid" value="<?php echo $pid; ?>">
-                                <input type="hidden" name="uid" value="<?php echo $uid; ?>">
-                                <input type="hidden" name="qty" value="<?php echo $qty; ?>">
-                                <input type="hidden" name="total" value="<?php echo $subtotal; ?>">
+                            <form action="" method="POST" id="order-summary">
+                                <input type="hidden" id="pid" name="pid" value="<?php echo $pid; ?>">
+                                <input type="hidden" id="uid" name="uid" value="<?php echo $uid; ?>">
+                                <input type="hidden" id="qty" name="qty" value="<?php echo $qty; ?>">
+                                <input type="hidden" id="totalorder" name="total" value="<?php echo $subtotal; ?>">
                             </form>
                             </tbody>
                         </table>
@@ -304,6 +305,51 @@ if(isset($_SESSION['uid'])){
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
 
+<script>
+    document.getElementById('gcash').addEventListener('change', function() {
+        document.getElementById('gcash-upload').style.display = 'block';
+    });
+
+    document.getElementById('cod').addEventListener('change', function() {
+        document.getElementById('gcash-upload').style.display = 'none';
+    });
+
+    document.getElementById('placeorder').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        var pid = document.getElementById('pid').value;
+        var uid = document.getElementById('uid').value;
+        var qty = document.getElementById('qty').value;
+        var totalorder = document.getElementById('totalorder').value;
+
+        var payMethod = document.querySelector('input[name="pay-method"]:checked').value;
+        var gcashrec = document.querySelector('input[name="gcash-receipt"]').value;
+
+        var formData = document.createElement('form');
+        formData.method = 'POST';
+        formData.action = 'place_order.php';
+
+        var inputs = [
+            { name: 'pid', value: pid },
+            { name: 'uid', value: uid },
+            { name: 'qty', value: qty },
+            { name: 'totalorder', value: totalorder },
+            { name: 'payMethod', value: payMethod },
+            { name: 'gcashrec', value: gcashrec }
+        ];
+
+        inputs.forEach(function(input) {
+            var inputField = document.createElement('input');
+            inputField.type = 'hidden';
+            inputField.name = input.name;
+            inputField.value = input.value;
+            formData.appendChild(inputField);
+        });
+
+        document.body.appendChild(formData);
+        formData.submit();
+    });
+</script>
 <script>
     $(document).ready(function() {
         // Function to update shipping fee, subtotal, and total based on the city
