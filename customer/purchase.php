@@ -94,39 +94,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php
-                                            $user_id = $_SESSION['uid'];
+                                        <?php
                                             $orders_query = "SELECT * FROM orders 
                                                 JOIN furniture ON orders.pid = furniture.pid 
-                                                WHERE orders.osid = '1' AND orders.uid = '$user_id'";
-                                            $order_res = mysqli_query($conn, $orders_query);
+                                                WHERE orders.osid = '1' AND orders.uid = ?";
+                                            $stmt = $conn->prepare($orders_query);
+                                            $stmt->bind_param("i", $_SESSION['uid']);
+                                            $stmt->execute();
+                                            $order_res = $stmt->get_result();
 
-                                            if ($order_res && mysqli_num_rows($order_res) > 0) {
-                                                while ($order_row = mysqli_fetch_assoc($order_res)) {
+                                            if ($order_res && $order_res->num_rows > 0) {
+                                                $orders = [];
+                                                while ($order_row = $order_res->fetch_assoc()) {
                                                     $order_code = $order_row['order_code'];
-                                                    $pname = $order_row['pname'];
-                                                    $price = $order_row['price'];
-                                                    $total_quantity = $order_row['quantity'];
-                                                    $total = $order_row['total'];
-                                                    $date = $order_row['date'];
+                                                    if (!isset($orders[$order_code])) {
+                                                        $orders[$order_code] = [
+                                                            'product_details' => [],
+                                                            'total' => 0,
+                                                            'date' => $order_row['date']
+                                                        ];
+                                                    }
+                                                    $orders[$order_code]['product_details'][] = [
+                                                        'pname' => $order_row['pname'],
+                                                        'price' => $order_row['price'],
+                                                        'qty' => $order_row['qty']
+                                                    ];
+                                                    $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
+                                                }
+
+                                                foreach ($orders as $order_code => $order) {
+                                                    $product_details_str = '';
+                                                    $total_price_str = '';
+                                                    $qty_str = '';
+                                                    foreach ($order['product_details'] as $product) {
+                                                        $product_details_str .= $product['pname'] . '<br>';
+                                                        $total_price_str .= $product['price'] . '<br>';
+                                                        $qty_str .= $product['qty'] . '<br>';
+                                                    }
                                             ?>
                                             <tr>
                                                 <td><?php echo $order_code; ?></td>
-                                                <td><?php echo $pname; ?></td>
-                                                <td><?php echo $price; ?></td>
-                                                <td><?php echo $total_quantity; ?></td>
-                                                <td><?php echo $total; ?></td>
-                                                <td><?php echo $date; ?></td>
+                                                <td><?php echo $product_details_str; ?></td>
+                                                <td><?php echo $total_price_str; ?></td>
+                                                <td><?php echo $qty_str; ?></td>
+                                                <td><?php echo $order['total']; ?></td>
+                                                <td><?php echo $order['date']; ?></td>
+                                              
                                                 <td>
-                                                    <a href="product_details.php?order_code=<?php echo $order_code ?>"
-                                                        class="btn btn-success btn-sm">
+                                                    <a href="product_view.php?order_code=<?php echo $order_code ?>"
+                                                        class="btn btn-warning btn-sm">
                                                         <i class="fas fa-eye"></i> View
                                                     </a>
                                                     <button type="button" class="btn btn-danger btn-sm cancel_btn"
-                                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                                        data-order-code="<?php echo $order_code; ?>">
-                                                        Cancel
-                                                    </button>
+                                                        data-bs-toggle="modal" data-order-code="<?php echo $order_code; ?>">
+                                                    Cancel
+                                                </button>
+
                                                 </td>
                                             </tr>
                                             <?php
@@ -162,124 +185,77 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php
+                                        <?php
                                             $orders_query = "SELECT * FROM orders 
                                                 JOIN furniture ON orders.pid = furniture.pid 
-                                                WHERE orders.osid = '2' AND orders.uid = '$user_id'";
-                                            $order_res = mysqli_query($conn, $orders_query);
+                                                WHERE orders.osid = '2' AND orders.uid = ?";
+                                            $stmt = $conn->prepare($orders_query);
+                                            $stmt->bind_param("i", $_SESSION['uid']);
+                                            $stmt->execute();
+                                            $order_res = $stmt->get_result();
 
-                                            if ($order_res && mysqli_num_rows($order_res) > 0) {
-                                                while ($order_row = mysqli_fetch_assoc($order_res)) {
+                                            if ($order_res && $order_res->num_rows > 0) {
+                                                $orders = [];
+                                                while ($order_row = $order_res->fetch_assoc()) {
                                                     $order_code = $order_row['order_code'];
-                                                    $pname = $order_row['pname'];
-                                                    $price = $order_row['price'];
-                                                    $total_quantity = $order_row['quantity'];
-                                                    $total = $order_row['total'];
-                                                    $date = $order_row['date'];
-                                            ?>
-                                            <tr>
-                                                <td><?php echo $order_code; ?></td>
-                                                <td><?php echo $pname; ?></td>
-                                                <td><?php echo $price; ?></td>
-                                                <td><?php echo $total_quantity; ?></td>
-                                                <td><?php echo $total; ?></td>
-                                                <td><?php echo $date; ?></td>
-                                                <td>
-                                                    <a href="product_details.php?order_code=<?php echo $order_code ?>"
-                                                        class="btn btn-success btn-sm">
-                                                        <i class="fas fa-check"></i> Order Received
-                                                    </a>
-                                                    <button type="button" class="btn btn-warning btn-sm cancel_btn"
-                                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                                        data-order-code="<?php echo $order_code; ?>">
-                                                        <i class="fas fa-check"></i>
-                                                        View
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <?php
+                                                    if (!isset($orders[$order_code])) {
+                                                        $orders[$order_code] = [
+                                                            'product_details' => [],
+                                                            'total' => 0,
+                                                            'date' => $order_row['date']
+                                                        ];
+                                                    }
+                                                    $orders[$order_code]['product_details'][] = [
+                                                        'pname' => $order_row['pname'],
+                                                        'price' => $order_row['price'],
+                                                        'qty' => $order_row['qty']
+                                                    ];
+                                                    $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
                                                 }
-                                            } else {
-                                                echo '<tr><td colspan="7" class="text-center">No orders to receive
-                                                        yet.</td></tr>';
-                                            }
-                                            ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Completed TAB -->
-                      <!-- To Receive Orders Tab -->
-                    <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2>Shopping Cart - Completed</h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">Order Code</th>
-                                                <th class="text-center">Product Name & Details</th>
-                                                <th class="text-right">Product Price</th>
-                                                <th class="text-center">Quantity</th>
-                                                <th class="text-right">Total Price</th>
-                                                <th class="text-center">Date Order</th>
-                                                <th class="text-center">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            $orders_query = "SELECT * FROM orders 
-                                                JOIN furniture ON orders.pid = furniture.pid 
-                                                WHERE orders.osid = '3' AND orders.uid = '$user_id'";
-                                            $order_res = mysqli_query($conn, $orders_query);
 
-                                            if ($order_res && mysqli_num_rows($order_res) > 0) {
-                                                while ($order_row = mysqli_fetch_assoc($order_res)) {
-                                                    $order_code = $order_row['order_code'];
-                                                    $pname = $order_row['pname'];
-                                                    $price = $order_row['price'];
-                                                    $total_quantity = $order_row['quantity'];
-                                                    $total = $order_row['total'];
-                                                    $date = $order_row['date'];
+                                                foreach ($orders as $order_code => $order) {
+                                                    $product_details_str = '';
+                                                    $total_price_str = '';
+                                                    $qty_str = '';
+                                                    foreach ($order['product_details'] as $product) {
+                                                        $product_details_str .= $product['pname'] . '<br>';
+                                                        $total_price_str .= $product['price'] . '<br>';
+                                                        $qty_str .= $product['qty'] . '<br>';
+                                                    }
                                             ?>
                                             <tr>
                                                 <td><?php echo $order_code; ?></td>
-                                                <td><?php echo $pname; ?></td>
-                                                <td><?php echo $price; ?></td>
-                                                <td><?php echo $total_quantity; ?></td>
-                                                <td><?php echo $total; ?></td>
-                                                <td><?php echo $date; ?></td>
+                                                <td><?php echo $product_details_str; ?></td>
+                                                <td><?php echo $total_price_str; ?></td>
+                                                <td><?php echo $qty_str; ?></td>
+                                                <td><?php echo $order['total']; ?></td>
+                                                <td><?php echo $order['date']; ?></td>
                                                 <td>
-                                                    <a href="product_details.php?order_code=<?php echo $order_code ?>"
-                                                        class="btn btn-success btn-sm">
+                                                <a href="product_view.php?order_code=<?php echo $order_code ?>"
+                                                        class="btn btn-warning btn-sm">
                                                         <i class="fas fa-eye"></i> View
                                                     </a>
-                                                    <button type="button" class="btn btn-danger btn-sm cancel_btn"
-                                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                                        data-order-code="<?php echo $order_code; ?>">
-                                                        Cancel
-                                                    </button>
+                                                    <button type="button" class="btn btn-success btn-sm received_btn" data-order-id="<?php echo htmlspecialchars($order_code); ?>">
+    <i class="fas fa-check"></i> Received
+</button>
+
+
                                                 </td>
                                             </tr>
                                             <?php
                                                 }
                                             } else {
-                                                echo '<tr><td colspan="7" class="text-center">No orders complete
-                                                        yet.</td></tr>';
+                                                echo '<tr><td colspan="7" class="text-center">No orders to receive found.</td></tr>';
                                             }
                                             ?>
                                         </tbody>
+
                                     </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Cancelled TAB -->
+                    <!-- Cancelled Orders Tab -->
                     <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
                         <div class="card">
                             <div class="card-header">
@@ -300,71 +276,273 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php
+                                        <?php
                                             $orders_query = "SELECT * FROM orders 
                                                 JOIN furniture ON orders.pid = furniture.pid 
-                                                WHERE orders.osid = '0' AND orders.uid = '$user_id'";
-                                            $order_res = mysqli_query($conn, $orders_query);
+                                                WHERE orders.osid = '0' AND orders.uid = ?";
+                                            $stmt = $conn->prepare($orders_query);
+                                            $stmt->bind_param("i", $_SESSION['uid']);
+                                            $stmt->execute();
+                                            $order_res = $stmt->get_result();
 
-                                            if ($order_res && mysqli_num_rows($order_res) > 0) {
-                                                while ($order_row = mysqli_fetch_assoc($order_res)) {
+                                            if ($order_res && $order_res->num_rows > 0) {
+                                                $orders = [];
+                                                while ($order_row = $order_res->fetch_assoc()) {
                                                     $order_code = $order_row['order_code'];
-                                                    $pname = $order_row['pname'];
-                                                    $price = $order_row['price'];
-                                                    $total_quantity = $order_row['quantity'];
-                                                    $total = $order_row['total'];
-                                                    $date = $order_row['date'];
+                                                    if (!isset($orders[$order_code])) {
+                                                        $orders[$order_code] = [
+                                                            'product_details' => [],
+                                                            'total' => 0,
+                                                            'date' => $order_row['date']
+                                                        ];
+                                                    }
+                                                    $orders[$order_code]['product_details'][] = [
+                                                        'pname' => $order_row['pname'],
+                                                        'price' => $order_row['price'],
+                                                        'qty' => $order_row['qty']
+                                                    ];
+                                                    $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
+                                                }
+
+                                                foreach ($orders as $order_code => $order) {
+                                                    $product_details_str = '';
+                                                    $total_price_str = '';
+                                                    $qty_str = '';
+                                                    foreach ($order['product_details'] as $product) {
+                                                        $product_details_str .= $product['pname'] . '<br>';
+                                                        $total_price_str .= $product['price'] . '<br>';
+                                                        $qty_str .= $product['qty'] . '<br>';
+                                                    }
                                             ?>
                                             <tr>
                                                 <td><?php echo $order_code; ?></td>
-                                                <td><?php echo $pname; ?></td>
-                                                <td><?php echo $price; ?></td>
-                                                <td><?php echo $total_quantity; ?></td>
-                                                <td><?php echo $total; ?></td>
-                                                <td><?php echo $date; ?></td>
-                                                <td>
-                                                    <a href="product_details.php?order_code=<?php echo $order_code ?>"
-                                                        class="btn btn-success btn-sm">
-                                                        <i class="fas fa-eye"></i> Reorder
+                                                <td><?php echo $product_details_str; ?></td>
+                                                <td><?php echo $total_price_str; ?></td>
+                                                <td><?php echo $qty_str; ?></td>
+                                                <td><?php echo $order['total']; ?></td>
+                                                <td><?php echo $order['date']; ?></td>
+                                                    <td>
+                                                    <a href="product_view.php?order_code=<?php echo $order_code ?>"
+                                                        class="btn btn-warning btn-sm">
+                                                        <i class="fas fa-eye"></i> View
                                                     </a>
-                                               
+                                                    <button type="button" class="btn btn-success btn-sm buy_again_btn" 
+                                                    data-order-code="<?php echo $order_code; ?>">
+                                                    Buy Again
+                                                </button>
+
+                                                    </td>
+                                                </tr>
+                                                <?php
+                                                    }
+                                                } else {
+                                                    echo '<tr><td colspan="7" class="text-center">No orders to receive found.</td></tr>';
+                                                }
+                                                ?>
+                                            </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Completed Orders Tab -->
+                    <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Shopping Cart - Completed</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Order Code</th>
+                                                <th class="text-center">Product Name & Details</th>
+                                                <th class="text-right">Product Price</th>
+                                                <th class="text-center">Quantity</th>
+                                                <th class="text-right">Total Price</th>
+                                                <th class="text-center">Date Order</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                     
+                                        <?php
+                                            $orders_query = "SELECT * FROM orders 
+                                                JOIN furniture ON orders.pid = furniture.pid 
+                                                WHERE orders.osid = '3' AND orders.uid = ?";
+                                            $stmt = $conn->prepare($orders_query);
+                                            $stmt->bind_param("i", $_SESSION['uid']);
+                                            $stmt->execute();
+                                            $order_res = $stmt->get_result();
+
+                                            if ($order_res && $order_res->num_rows > 0) {
+                                                $orders = [];
+                                                while ($order_row = $order_res->fetch_assoc()) {
+                                                    $order_code = $order_row['order_code'];
+                                                    if (!isset($orders[$order_code])) {
+                                                        $orders[$order_code] = [
+                                                            'product_details' => [],
+                                                            'total' => 0,
+                                                            'date' => $order_row['date']
+                                                        ];
+                                                    }
+                                                    $orders[$order_code]['product_details'][] = [
+                                                        'pname' => $order_row['pname'],
+                                                        'price' => $order_row['price'],
+                                                        'qty' => $order_row['qty']
+                                                    ];
+                                                    $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
+                                                }
+
+                                                foreach ($orders as $order_code => $order) {
+                                                    $product_details_str = '';
+                                                    $total_price_str = '';
+                                                    $qty_str = '';
+                                                    foreach ($order['product_details'] as $product) {
+                                                        $product_details_str .= $product['pname'] . '<br>';
+                                                        $total_price_str .= $product['price'] . '<br>';
+                                                        $qty_str .= $product['qty'] . '<br>';
+                                                    }
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $order_code; ?></td>
+                                                <td><?php echo $product_details_str; ?></td>
+                                                <td><?php echo $total_price_str; ?></td>
+                                                <td><?php echo $qty_str; ?></td>
+                                                <td><?php echo $order['total']; ?></td>
+                                                <td><?php echo $order['date']; ?></td>
+                                                <td>
+                                                <a href="product_view.php?order_code=<?php echo $order_code ?>"
+                                                        class="btn btn-warning btn-sm">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                  
                                                 </td>
                                             </tr>
                                             <?php
                                                 }
                                             } else {
-                                                echo '<tr><td colspan="7" class="text-center">No orders cancell
-                                                        yet.</td></tr>';
+                                                echo '<tr><td colspan="7" class="text-center">No orders to receive found.</td></tr>';
                                             }
                                             ?>
                                         </tbody>
+
                                     </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- End Tabs -->
             </div>
         </div>
     </div>
 
-    <br><br><br><br><br><br><br>
+<br><br>
     <?php include('includes/footer.php'); ?>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-   
+    <script>
+    $(document).ready(function() {
+        $('.cancel_btn').click(function() {
+            var orderCode = $(this).data('order-code');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You want to cancel this order?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, cancel it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'cancel_order.php',
+                        data: { order_code: orderCode },
+                        success: function(response) {
+                            // Handle success response if needed
+                            location.reload(); // Reload the page after cancellation
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                            // Handle error as needed
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+<!-- Received -->
+<script>
+    $(document).ready(function() {
+        $('.received_btn').click(function() {
+            var orderCode = $(this).data('order-id');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You want to mark this order as received?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, mark it as received!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+    type: 'POST',
+    url: 'update_order_status.php',
+    data: { order_code: orderCode, new_osid: 3 },
+    success: function(response) {
+        console.log('Response from update_order_status.php:', response); // Check response from PHP
+        Swal.fire(
+            'Received!',
+            'Order marked as received successfully.',
+            'success'
+        ).then(function() {
+            location.reload(); // Reload the page to reflect changes
+        });
+    },
+    error: function(xhr, status, error) {
+        console.error(xhr.responseText);
+        Swal.fire(
+            'Error!',
+            'Failed to mark order as received. Please try again.',
+            'error'
+        );
+    }
+});
 
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
+                }
+            });
+        });
+    });
+</script>
+<script>
+$(document).ready(function() {
+    $('.buy_again_btn').click(function() {
+        var orderCode = $(this).data('order-code');
+        $.ajax({
+            type: 'POST',
+            url: 'buyagain.php', // Replace with your PHP script to update osid
+            data: { order_code: orderCode, new_osid: 1 },
+            success: function(response) {
+             
+                location.reload(); 
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
+</script>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/lightbox/js/lightbox.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
 </body>
 </html>

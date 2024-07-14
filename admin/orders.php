@@ -8,14 +8,14 @@ if (!isset($_SESSION['uid'])) {
     exit();
 }
 
-// Handle decline action
+//  decline action
 if (isset($_POST['decline'])) {
     $order_code = $_POST['decline'];
     $update_query = "UPDATE orders SET osid = '0' WHERE order_code = '$order_code'";
     mysqli_query($conn, $update_query);
 }
 
-// Handle confirm action
+//  confirm action
 if (isset($_POST['confirm'])) {
     $order_code = $_POST['confirm'];
     $update_query = "UPDATE orders SET osid = '2' WHERE order_code = '$order_code'";
@@ -27,8 +27,7 @@ if (isset($_POST['confirm'])) {
 <html lang="en">
 <head>
     <?php include('includes/topbar.php'); ?>
-    <title>Registered User</title>
-    <!-- Include your CSS and other head content here -->
+   
 </head>
 <body>
     <?php include('includes/sidebar.php'); ?>
@@ -50,21 +49,18 @@ if (isset($_POST['confirm'])) {
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Orders Table</h4>
-                            
                         </div>
                     </div>
                     <div class="card-body">
-                      
-
                         <div class="table-responsive">
                             <table id="order-table" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>Order Code</th>
-                                        <th>Image</th>
+                                        <!-- <th>Image</th> -->
                                         <th>Customer Name</th>
-                                        <th>Product Name</th>
-                                        <th>Quantity</th>
+                                        <th>Product Names</th>
+                                        <th>Total Quantity</th>
                                         <th>Total</th>
                                         <th>Mode of Payment</th>
                                         <th>Date of Order</th>
@@ -74,36 +70,49 @@ if (isset($_POST['confirm'])) {
                                 <tbody>
                                     <?php
                                     $user_id = $_SESSION['uid'];
-                                    $orders_query = "SELECT * 
-                                                    FROM orders 
-                                                    JOIN furniture ON orders.pid = furniture.pid 
-                                                    JOIN userinfo ON orders.uid = userinfo.infoid
-                                                    WHERE orders.osid = '1' AND orders.uid ='$user_id'";
+                                    $orders_query = "SELECT order_code, GROUP_CONCAT(furniture.image) AS images, 
+                                                    CONCAT(userinfo.firstname, ' ', userinfo.lastname) AS customer_name, 
+                                                    GROUP_CONCAT(furniture.pname SEPARATOR ', ') AS product_names, 
+                                                    SUM(orders.qty) AS total_quantity, 
+                                                    SUM(orders.total) AS total_amount, 
+                                                    orders.mop, orders.date FROM orders JOIN furniture ON orders.pid = furniture.pid 
+                                                    JOIN userinfo ON orders.uid = userinfo.infoid 
+                                                    WHERE orders.osid = '1' AND orders.uid = '$user_id' 
+                                                    GROUP BY orders.order_code";
                                     $order_res = mysqli_query($conn, $orders_query);
 
                                     if ($order_res && mysqli_num_rows($order_res) > 0) {
                                         while ($order_row = mysqli_fetch_assoc($order_res)) {
                                             $order_code = $order_row['order_code'];
-                                            $order_id = $order_row['order_id'];
-                                            $image = $order_row['image'];
-                                            $customer_name = $order_row['firstname'] . ' ' . $order_row['lastname'];
-                                            $product_name = $order_row['pname'];
-                                            $quantity = $order_row['qty'];
-                                            $total = $order_row['total']; 
+                                            $images = explode(',', $order_row['images']);
+                                            $customer_name = $order_row['customer_name'];
+                                            $product_names = $order_row['product_names'];
+                                            $total_quantity = $order_row['total_quantity'];
+                                            $total_amount = $order_row['total_amount'];
                                             $mop = $order_row['mop'];
-                                            $date = $order_row['date']; 
+                                            $date = $order_row['date'];
                                     ?>
                                     <tr>
                                         <td><?php echo $order_code; ?></td>
-                                        <td><img src="assets/img/<?php echo $image; ?>" alt="Order Image" style="max-width: 100px;"></td>
+                                        <!-- <td>
+                                            <?php foreach ($images as $image) { ?>
+                                                <img src="assets/img/<?php echo $image; ?>" alt="Order Image" style="max-width: 100px;">
+                                            <?php } ?>
+                                        </td> -->
                                         <td><?php echo $customer_name; ?></td>
-                                        <td><?php echo $product_name; ?></td>
-                                        <td><?php echo $quantity; ?></td>
-                                        <td><?php echo $total; ?></td>
+                                        <td><?php echo $product_names; ?></td>
+                                        <td><?php echo $total_quantity; ?></td>
+                                        <td><?php echo $total_amount; ?></td>
                                         <td><?php echo $mop; ?></td>
                                         <td><?php echo $date; ?></td>
                                         <td>
                                             <div class="form-button-action">
+                                            <form action="view_order.php" method="GET" style="display: inline;">
+                                                    <input type="hidden" name="order_code" value="<?php echo $order_code; ?>">
+                                                    <button type="submit" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-info">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </form>
                                                 <form action="" method="POST" style="display: inline;">
                                                     <input type="hidden" name="confirm" value="<?php echo $order_code; ?>">
                                                     <button type="submit" data-bs-toggle="tooltip" title="Confirm" class="btn btn-link btn-primary">
