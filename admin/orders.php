@@ -10,15 +10,15 @@ if (!isset($_SESSION['uid'])) {
 
 // Handle decline action
 if (isset($_POST['decline'])) {
-    $order_code = $_POST['decline'];
-    $update_query = "UPDATE orders SET osid = '0' WHERE order_code = '$order_code'";
+    $order_id = $_POST['decline'];
+    $update_query = "UPDATE orders SET osid = '0' WHERE order_id = '$order_id'";
     mysqli_query($conn, $update_query);
 }
 
 // Handle confirm action
 if (isset($_POST['confirm'])) {
-    $order_code = $_POST['confirm'];
-    $update_query = "UPDATE orders SET osid = '2' WHERE order_code = '$order_code'";
+    $order_id = $_POST['confirm'];
+    $update_query = "UPDATE orders SET osid = '2' WHERE order_id = '$order_id'";
     mysqli_query($conn, $update_query);
 }
 ?>
@@ -84,6 +84,7 @@ if (isset($_POST['confirm'])) {
                                     if ($order_res && mysqli_num_rows($order_res) > 0) {
                                         while ($order_row = mysqli_fetch_assoc($order_res)) {
                                             $order_code = $order_row['order_code'];
+                                            $order_id = $order_row['order_id'];
                                             $image = $order_row['image'];
                                             $customer_name = $order_row['firstname'] . ' ' . $order_row['lastname'];
                                             $product_name = $order_row['pname'];
@@ -104,13 +105,13 @@ if (isset($_POST['confirm'])) {
                                         <td>
                                             <div class="form-button-action">
                                                 <form action="" method="POST" style="display: inline;">
-                                                    <input type="hidden" name="confirm" value="<?php echo $order_code; ?>">
+                                                    <input type="hidden" name="confirm" value="<?php echo $order_id; ?>">
                                                     <button type="submit" data-bs-toggle="tooltip" title="Confirm" class="btn btn-link btn-primary">
                                                         <i class="fas fa-check-square"></i>
                                                     </button>
                                                 </form>
                                                 <form action="" method="POST" style="display: inline;">
-                                                    <input type="hidden" name="decline" value="<?php echo $order_code; ?>">
+                                                    <input type="hidden" name="decline" value="<?php echo $order_id; ?>">
                                                     <button type="submit" data-bs-toggle="tooltip" title="Decline" class="btn btn-link btn-danger">
                                                         <i class="fa fa-times"></i>
                                                     </button>
