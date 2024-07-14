@@ -90,7 +90,7 @@
                 <div class="collapse" id="transaction">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="registered_user.php">
+                      <a href="orders.php">
                         <span class="sub-item">Ordering</span>
                       </a>
                     </li>
@@ -133,7 +133,7 @@
                       </a>
                     </li>
                     <li>
-                      <a href="reservation.php">
+                      <a href="customize.php">
                         <span class="sub-item">Customize Options</span>
                       </a>
                     </li>
