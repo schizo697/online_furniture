@@ -49,7 +49,7 @@ if (!isset($_SESSION['uid'])) {
                                 <?php 
                                     $sql = "SELECT * FROM furniture 
                                             JOIN furniture_type ON furniture.fid = furniture_type.fid 
-                                            LEFT JOIN orders ON orders.pid = furniture.pid 
+                                            LEFT JOIN orders ON orders.pid = furniture.pid  AND orders.osid = 3
                                             WHERE furniture.status = 'Active'";
                                     $result = mysqli_query($conn, $sql);
 
