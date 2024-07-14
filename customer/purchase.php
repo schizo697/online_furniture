@@ -36,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 </head>
 
 <body>
-    <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
+  <!-- Single Page Header start -->
+  <div class="container-fluid page-header py-5">
         <h1 class="text-center text-white display-6">My Purchase</h1>
     </div>
     <!-- Single Page Header End -->
@@ -46,103 +46,309 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
     <div class="container-xl px-4 mt-4">
         <!-- Account page navigation -->
         <nav class="nav nav-borders">
-            <a class="nav-link active ms-0" href="profile.php">Profile</a>
+         
             <a class="nav-link" href="purchase.php">My Purchase</a>
         </nav>
         <hr class="mt-0 mb-4">
         <div class="row">
-            <div class="col-xl-4">
-                <!-- Add your content for the left column here -->
-            </div>
-            <div class="col-xl-16">
-                <!-- Add Tabs Here -->
+            <div class="col-xl-12">
+                <!-- Tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="to-pay-tab" data-bs-toggle="tab" href="#to-pay" role="tab" aria-controls="to-pay" aria-selected="true">Pending</a>
+                        <a class="nav-link active" id="to-pay-tab" data-bs-toggle="tab" href="#to-pay" role="tab"
+                            aria-controls="to-pay" aria-selected="true">Pending</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="to-receive-tab" data-bs-toggle="tab" href="#to-receive" role="tab" aria-controls="to-receive" aria-selected="false">To Receive</a>
+                        <a class="nav-link" id="to-receive-tab" data-bs-toggle="tab" href="#to-receive" role="tab"
+                            aria-controls="to-receive" aria-selected="false">To Receive</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="cancelled-tab" data-bs-toggle="tab" href="#cancelled" role="tab" aria-controls="cancelled" aria-selected="false">Cancelled</a>
+                        <a class="nav-link" id="cancelled-tab" data-bs-toggle="tab" href="#cancelled" role="tab"
+                            aria-controls="cancelled" aria-selected="false">Cancelled</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="completed-tab" data-bs-toggle="tab" href="#completed" role="tab" aria-controls="completed" aria-selected="false">Completed</a>
+                        <a class="nav-link" id="completed-tab" data-bs-toggle="tab" href="#completed" role="tab"
+                            aria-controls="completed" aria-selected="false">Completed</a>
                     </li>
                 </ul>
-                <div class="tab-content" id="myTabContent">
+                <!-- Tab content -->
+                <div class="tab-content mt-3" id="myTabContent">
+                    <!-- Pending Orders Tab -->
                     <div class="tab-pane fade show active" id="to-pay" role="tabpanel" aria-labelledby="to-pay-tab">
-                        <div class="container px-3 my-5 clearfix">
-                            <!-- Shopping cart table for To Pay -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2>Shopping Cart - Pending</h2>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered m-0">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center py-3 px-4">Order Code</th>
-                                                    <th class="text-center py-3 px-4">Product Name &amp; Details</th>
-                                                    <th class="text-right py-3 px-4">Product Price</th>
-                                                    <!-- <th class="text-center py-3 px-4">Quantity</th>
-                                                    <th class="text-center py-3 px-4">Total Price</th> -->
-                                                    <!-- <th class="text-center py-3 px-4">Date Order</th> -->
-                                                    <th class="text-right py-3 px-4">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Shopping Cart - Pending</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Order Code</th>
+                                                <th class="text-center">Product Name & Details</th>
+                                                <th class="text-right">Product Price</th>
+                                                <th class="text-center">Quantity</th>
+                                                <th class="text-right">Total Price</th>
+                                                <th class="text-center">Date Order</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
                                             <?php
-                                            if(isset($_SESSION['uid'])){
-                                                $user_id = $_SESSION['uid'];
-                                                $orders = "SELECT * FROM furniture 
-                                            JOIN furniture_type ON furniture.fid = furniture_type.fid WHERE furniture.status = 'Active'";
-                                                $order_res = mysqli_query($conn, $orders);
-                                                if($order_res && mysqli_num_rows($order_res) > 0){
-                                                    while($order_row = mysqli_fetch_assoc($order_res)){
-                                                        $pid = $order_row['pid'];
-                                                        $pname = $order_row['pname'];
-                                                        $price = $order_row['price'];
-                                                        // $total_price = $order_row['total_price'];
-                                                        // $total_quantity = $order_row['total_quantity'];
-                                                        // $date_order = $order_row['date_order_formatted'];
-                                                        ?>
-                                                        <tr>
-                                                            <td><?php echo $pid; ?></td>
-                                                            <td><?php echo $pname; ?></td>
-                                                            <td><?php echo $price; ?></td>
-                                                            <!-- <td><?php echo $total_quantity; ?></td>
-                                                            <td><?php echo $total_price; ?></td> -->
-                                                            <!-- <td><?php echo $date_order; ?></td> -->
-                                                            <td>
-                                                                <a href="product_details.php?order_code=<?php echo $order_code ?>" class="btn btn-success btn-small">
-                                                                    <i class="fas fa-times"></i> View
-                                                                </a>
-                                                                <button type="button" class="btn btn-danger btn-small cancel_btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-order-code="<?php echo $order_code;?>">
-                                                                    Cancel
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <?php
-                                                    }
+                                            $user_id = $_SESSION['uid'];
+                                            $orders_query = "SELECT * FROM orders 
+                                                JOIN furniture ON orders.pid = furniture.pid 
+                                                WHERE orders.osid = '1' AND orders.uid = '$user_id'";
+                                            $order_res = mysqli_query($conn, $orders_query);
+
+                                            if ($order_res && mysqli_num_rows($order_res) > 0) {
+                                                while ($order_row = mysqli_fetch_assoc($order_res)) {
+                                                    $order_code = $order_row['order_code'];
+                                                    $pname = $order_row['pname'];
+                                                    $price = $order_row['price'];
+                                                    $total_quantity = $order_row['quantity'];
+                                                    $total = $order_row['total'];
+                                                    $date = $order_row['date'];
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $order_code; ?></td>
+                                                <td><?php echo $pname; ?></td>
+                                                <td><?php echo $price; ?></td>
+                                                <td><?php echo $total_quantity; ?></td>
+                                                <td><?php echo $total; ?></td>
+                                                <td><?php echo $date; ?></td>
+                                                <td>
+                                                    <a href="product_details.php?order_code=<?php echo $order_code ?>"
+                                                        class="btn btn-success btn-sm">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                    <button type="button" class="btn btn-danger btn-sm cancel_btn"
+                                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                        data-order-code="<?php echo $order_code; ?>">
+                                                        Cancel
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php
                                                 }
+                                            } else {
+                                                echo '<tr><td colspan="7" class="text-center">No pending orders found.</td></tr>';
                                             }
                                             ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- / Shopping cart table -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Add content for other tabs here -->
+                    <!-- To Receive Orders Tab -->
+                    <div class="tab-pane fade" id="to-receive" role="tabpanel" aria-labelledby="to-receive-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Shopping Cart - To Receive</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Order Code</th>
+                                                <th class="text-center">Product Name & Details</th>
+                                                <th class="text-right">Product Price</th>
+                                                <th class="text-center">Quantity</th>
+                                                <th class="text-right">Total Price</th>
+                                                <th class="text-center">Date Order</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $orders_query = "SELECT * FROM orders 
+                                                JOIN furniture ON orders.pid = furniture.pid 
+                                                WHERE orders.osid = '2' AND orders.uid = '$user_id'";
+                                            $order_res = mysqli_query($conn, $orders_query);
+
+                                            if ($order_res && mysqli_num_rows($order_res) > 0) {
+                                                while ($order_row = mysqli_fetch_assoc($order_res)) {
+                                                    $order_code = $order_row['order_code'];
+                                                    $pname = $order_row['pname'];
+                                                    $price = $order_row['price'];
+                                                    $total_quantity = $order_row['quantity'];
+                                                    $total = $order_row['total'];
+                                                    $date = $order_row['date'];
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $order_code; ?></td>
+                                                <td><?php echo $pname; ?></td>
+                                                <td><?php echo $price; ?></td>
+                                                <td><?php echo $total_quantity; ?></td>
+                                                <td><?php echo $total; ?></td>
+                                                <td><?php echo $date; ?></td>
+                                                <td>
+                                                    <a href="product_details.php?order_code=<?php echo $order_code ?>"
+                                                        class="btn btn-success btn-sm">
+                                                        <i class="fas fa-check"></i> Order Received
+                                                    </a>
+                                                    <button type="button" class="btn btn-warning btn-sm cancel_btn"
+                                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                        data-order-code="<?php echo $order_code; ?>">
+                                                        <i class="fas fa-check"></i>
+                                                        View
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                                }
+                                            } else {
+                                                echo '<tr><td colspan="7" class="text-center">No orders to receive
+                                                        yet.</td></tr>';
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Completed TAB -->
+                      <!-- To Receive Orders Tab -->
+                    <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Shopping Cart - Completed</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Order Code</th>
+                                                <th class="text-center">Product Name & Details</th>
+                                                <th class="text-right">Product Price</th>
+                                                <th class="text-center">Quantity</th>
+                                                <th class="text-right">Total Price</th>
+                                                <th class="text-center">Date Order</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $orders_query = "SELECT * FROM orders 
+                                                JOIN furniture ON orders.pid = furniture.pid 
+                                                WHERE orders.osid = '3' AND orders.uid = '$user_id'";
+                                            $order_res = mysqli_query($conn, $orders_query);
+
+                                            if ($order_res && mysqli_num_rows($order_res) > 0) {
+                                                while ($order_row = mysqli_fetch_assoc($order_res)) {
+                                                    $order_code = $order_row['order_code'];
+                                                    $pname = $order_row['pname'];
+                                                    $price = $order_row['price'];
+                                                    $total_quantity = $order_row['quantity'];
+                                                    $total = $order_row['total'];
+                                                    $date = $order_row['date'];
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $order_code; ?></td>
+                                                <td><?php echo $pname; ?></td>
+                                                <td><?php echo $price; ?></td>
+                                                <td><?php echo $total_quantity; ?></td>
+                                                <td><?php echo $total; ?></td>
+                                                <td><?php echo $date; ?></td>
+                                                <td>
+                                                    <a href="product_details.php?order_code=<?php echo $order_code ?>"
+                                                        class="btn btn-success btn-sm">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                    <button type="button" class="btn btn-danger btn-sm cancel_btn"
+                                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                        data-order-code="<?php echo $order_code; ?>">
+                                                        Cancel
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                                }
+                                            } else {
+                                                echo '<tr><td colspan="7" class="text-center">No orders complete
+                                                        yet.</td></tr>';
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Cancelled TAB -->
+                    <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Shopping Cart - Cancelled</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Order Code</th>
+                                                <th class="text-center">Product Name & Details</th>
+                                                <th class="text-right">Product Price</th>
+                                                <th class="text-center">Quantity</th>
+                                                <th class="text-right">Total Price</th>
+                                                <th class="text-center">Date Order</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $orders_query = "SELECT * FROM orders 
+                                                JOIN furniture ON orders.pid = furniture.pid 
+                                                WHERE orders.osid = '0' AND orders.uid = '$user_id'";
+                                            $order_res = mysqli_query($conn, $orders_query);
+
+                                            if ($order_res && mysqli_num_rows($order_res) > 0) {
+                                                while ($order_row = mysqli_fetch_assoc($order_res)) {
+                                                    $order_code = $order_row['order_code'];
+                                                    $pname = $order_row['pname'];
+                                                    $price = $order_row['price'];
+                                                    $total_quantity = $order_row['quantity'];
+                                                    $total = $order_row['total'];
+                                                    $date = $order_row['date'];
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $order_code; ?></td>
+                                                <td><?php echo $pname; ?></td>
+                                                <td><?php echo $price; ?></td>
+                                                <td><?php echo $total_quantity; ?></td>
+                                                <td><?php echo $total; ?></td>
+                                                <td><?php echo $date; ?></td>
+                                                <td>
+                                                    <a href="product_details.php?order_code=<?php echo $order_code ?>"
+                                                        class="btn btn-success btn-sm">
+                                                        <i class="fas fa-eye"></i> Reorder
+                                                    </a>
+                                               
+                                                </td>
+                                            </tr>
+                                            <?php
+                                                }
+                                            } else {
+                                                echo '<tr><td colspan="7" class="text-center">No orders cancell
+                                                        yet.</td></tr>';
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
+    <br><br><br><br><br><br><br>
     <?php include('includes/footer.php'); ?>
 
    

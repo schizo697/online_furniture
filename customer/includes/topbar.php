@@ -72,6 +72,7 @@ include '../conn.php';
                         <a href="index.php" class="nav-item nav-link active">Home</a>
                         <a href="shop.php" class="nav-item nav-link">Shop</a>
                         <a href="customize.php" class="nav-item nav-link">Customized</a>
+                        <a href="purchase.php" class="nav-item nav-link">My Purchase</a>
                     </div>
                     <div class="d-flex m-3 me-0">
                        <?php
