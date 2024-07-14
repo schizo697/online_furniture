@@ -9,6 +9,8 @@ if (!isset($_SESSION['uid'])) {
 }
 ?>
 
+<!-- restored -->
+
 <!-- handle add payment -->
 <?php
     if(isset($_POST['addPayment'])) {
