@@ -35,12 +35,6 @@
           <p>Dashboard</p>
         </a>
       </li>
-      <li class="nav-item">
-        <a href="user_management.php">
-          <i class="fas fa-user-tie"></i>
-          <p>User Management</p>
-        </a>
-      </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#base">
                 <i class="fas fa-box"></i>
@@ -117,40 +111,6 @@
                   </ul>
                 </div>
               </li>
-
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#customization">
-                <i class="fas fa-cogs"></i>
-              <p>Customization</p>
-
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="customization">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="furniture_type.php">
-                        <span class="sub-item">Furniture Type</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="reservation.php">
-                        <span class="sub-item">Customize Options</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="components/gridsystem.html">
-                        <span class="sub-item">Cost Estimation</span>
-                      </a>
-                    </li>  
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a href="paymentoption.php">
-                  <i class="fas fa-money-bill"></i>
-                  <p>Payment Option</p>
-                </a>
-              </li>
               <li class="nav-item">
                 <a href="#">
                   <i class="fas fa-star"></i>
@@ -163,49 +123,7 @@
                   <p>Return & Refund</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#supplier">
-                <i class="fas fa-users"></i>
-              <p>Supplier</p>
-
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="supplier">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="supplier.php">
-                        <span class="sub-item">Supplier</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="supplies.php">
-                        <span class="sub-item">Supplies</span>
-                      </a>
-                    </li>  
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                  <i class="fas fa-envelope"></i>
-                  <p>Reports</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="sidebarLayouts">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="sidebar-style-2.html">
-                        <span class="sub-item">Report 1</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="icon-menu.html">
-                        <span class="sub-item">Report 2</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
+              
               </li>
             </ul>
           </div>

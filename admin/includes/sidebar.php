@@ -66,7 +66,7 @@
                       </a>
                     </li>
                     <li>
-                      <a href="components/panels.html">
+                      <a href="inventoryrecord.php">
                         <span class="sub-item">Inventory Record</span>
                       </a>
                     </li>
