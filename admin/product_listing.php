@@ -99,6 +99,7 @@ if(isset($_POST['updateproduct'])) {
     $height = $_POST['editHeight'];
     $width = $_POST['editWidth'];
     $length = $_POST['editLength'];
+    $status = $_POST['editStatus']; // Corrected variable name
     $fid = $_POST['editFid'];
 
     // Check if a new image is uploaded
@@ -119,36 +120,35 @@ if(isset($_POST['updateproduct'])) {
                 move_uploaded_file($tmp_name, $img_upload_path);
 
                 // Update query including image
-                $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, color=?, height=?, width=?, length=?, fid=?, image=? WHERE pid=?";
+                $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, status=?, color=?, height=?, width=?, length=?, fid=?, image=? WHERE pid=?";
                 $stmt = $conn->prepare($update_query);
-                $stmt->bind_param("ssssssssssi", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $new_img_name, $pid);
+                $stmt->bind_param("sssssssssssi", $pname, $price, $description, $quantity, $status, $color, $height, $width, $length, $fid, $new_img_name, $pid);
             } else {
                 $message = "You cannot upload files of this type";
                 header("Location: product_listing.php?error=$message");
-                exit();
+                exit(); // Added exit to prevent further execution
             }
         } else {
             $message = "Sorry, your file is too large";
             header("Location: product_listing.php?error=$message");
-            exit();
+            exit(); // Added exit to prevent further execution
         }
     } else {
         // Update query without image
-        $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, color=?, height=?, width=?, length=?, fid=? WHERE pid=?";
+        $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, status=?, color=?, height=?, width=?, length=?, fid=? WHERE pid=?";
         $stmt = $conn->prepare($update_query);
-        $stmt->bind_param("sssssssssi", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $pid);
+        $stmt->bind_param("ssssssssssi", $pname, $price, $description, $quantity, $status, $color, $height, $width, $length, $fid, $pid);
     }
 
     if($stmt->execute()) {
-        
         $url = "product_listing.php?update_success=true";
         echo '<script>window.location.href= "' . $url . '";</script>';
     } else {
         echo "<script>Swal.fire({
                 icon: 'error',
                 text: 'Something went wrong!',
-                });
-            </script>";
+            });
+        </script>";
     }
 }
 ?>
@@ -357,6 +357,12 @@ if(isset($_POST['updateproduct'])) {
                                                         <input name="editQuantity" id="editQuantity" type="number" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Status</label>
+                                                        <input name="editStatus" id="editStatus" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-12 pe-0">
                                                     <div class="form-group form-group-default">
                                                         <label>Image</label>
@@ -395,7 +401,9 @@ if(isset($_POST['updateproduct'])) {
                                 <tbody>
                                 <?php 
                                     $sql = "SELECT * FROM furniture 
-                                            JOIN furniture_type ON furniture.fid = furniture_type.fid WHERE furniture.status = 'Active'";
+                                            JOIN furniture_type ON furniture.fid = furniture_type.fid";
+                                            // $sql = "SELECT * FROM furniture 
+                                            // JOIN furniture_type ON furniture.fid = furniture_type.fid WHERE furniture.status = 'Active'";
                                     $result = mysqli_query($conn, $sql);
 
                                     if ($result && mysqli_num_rows($result) > 0) {
@@ -424,9 +432,11 @@ if(isset($_POST['updateproduct'])) {
                                         <td><?php echo $status ?></td>
                                         <td>
                                         <div class="form-button-action">
-                                            <button type="button" class="btn btn-link btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $pid ?>', '<?php echo $row['fid'] ?>', '<?php echo $pname ?>', '<?php echo $price ?>', '<?php echo $description ?>', '<?php echo $quantity ?>', '<?php echo $row['color'] ?>', '<?php echo $height ?>', '<?php echo $width ?>', '<?php echo $length ?>')">
-                                                <i class="fa fa-edit"></i>
-                                            </button>
+                                        <button type="button" class="btn btn-link btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#editProductModal" 
+                                                    onclick="populateEditModal('<?php echo $pid ?>', '<?php echo $row['fid'] ?>', '<?php echo $pname ?>', '<?php echo $price ?>', '<?php echo $description ?>', '<?php echo $quantity ?>', '<?php echo $row['color'] ?>', '<?php echo $height ?>', '<?php echo $width ?>', '<?php echo $length ?>', '<?php echo $status ?>')">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+
                                             <button type="button" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-primary btn-lg">
                                                 <i class="far fa-eye"></i>
                                             </button>
@@ -475,18 +485,20 @@ if(isset($_POST['updateproduct'])) {
         }
     }
 
-    function populateEditModal(pid, fid, pname, price, description, quantity, color, height, width, length) {
-        document.getElementById('editPid').value = pid;
-        document.getElementById('editFid').value = fid;
-        document.getElementById('editPname').value = pname;
-        document.getElementById('editPrice').value = price;
-        document.getElementById('editDescription').value = description;
-        document.getElementById('editQuantity').value = quantity;
-        document.getElementById('editColor').value = color;
-        document.getElementById('editHeight').value = height;
-        document.getElementById('editWidth').value = width;
-        document.getElementById('editLength').value = length;
-    }
+    // Fix in JavaScript function populateEditModal
+    function populateEditModal(pid, fid, pname, price, description, quantity, color, height, width, length, status) {
+    document.getElementById('editPid').value = pid;
+    document.getElementById('editFid').value = fid;
+    document.getElementById('editPname').value = pname;
+    document.getElementById('editPrice').value = price;
+    document.getElementById('editDescription').value = description;
+    document.getElementById('editQuantity').value = quantity;   
+    document.getElementById('editColor').value = color;
+    document.getElementById('editHeight').value = height;
+    document.getElementById('editWidth').value = width;
+    document.getElementById('editLength').value = length;
+    document.getElementById('editStatus').value = status; 
+}
 
     window.onload = checkExistParam;
     </script>
