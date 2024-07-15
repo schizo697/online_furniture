@@ -435,10 +435,13 @@ if(isset($_POST['updateproduct'])) {
                                                     onclick="populateEditModal('<?php echo $pid ?>', '<?php echo $row['fid'] ?>', '<?php echo $pname ?>', '<?php echo $price ?>', '<?php echo $description ?>', '<?php echo $quantity ?>', '<?php echo $row['color'] ?>', '<?php echo $height ?>', '<?php echo $width ?>', '<?php echo $length ?>', '<?php echo $status ?>')">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
-
-                                            <button type="button" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-primary btn-lg">
-                                                <i class="far fa-eye"></i>
-                                            </button>
+                                            
+                                                <form action="view_product.php" method="GET" style="display: inline;">
+                                                    <input type="hidden" name="pid" value="<?php echo $pid; ?>">
+                                                    <button type="submit" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-info">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </form>
                                             <form action="" method="POST" style="display: inline;">
                                                 <input type="hidden" name="remove_pid" value="<?php echo $pid; ?>">
                                                 <button type="submit" name="remove_product" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
