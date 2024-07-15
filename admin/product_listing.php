@@ -69,15 +69,14 @@ if(isset($_POST['addproduct'])) {
 }
 
 // Handle Remove Product
-if(isset($_POST['remove_product'])) {
+if (isset($_POST['remove_product'])) {
     $remove_pid = $_POST['remove_pid'];
     $update_query = "UPDATE furniture SET status='Inactive' WHERE pid=?";
     $stmt = $conn->prepare($update_query);
     $stmt->bind_param("i", $remove_pid);
-    if($stmt->execute()) {
+    if ($stmt->execute()) {
         $url = "product_listing.php?remove_success=true";
         echo '<script>window.location.href= "' . $url . '";</script>';
-        
     } else {
         echo "<script>Swal.fire({
                 icon: 'error',
