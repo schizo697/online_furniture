@@ -38,11 +38,10 @@ if (!isset($_SESSION['uid'])) {
                                 <thead>
                                     <tr>
                                         <th>Image</th>
-                                        <th>Product</th>
+                                        <th>Product Name</th>
                                         <th>Available</th>
                                         <th>Sold</th>
                                         <th>Total Quantity</th>
-                                        <th style="width: 10%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -68,16 +67,6 @@ if (!isset($_SESSION['uid'])) {
                                         <td><?php echo $quantity ?></td>
                                         <td><?php echo isset($sold) ? $sold : 0; ?></td>
                                         <td><?php echo $total ?></td>
-                                        <td>
-                                            <div class="form-button-action">
-                                                <button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                     <?php
                                         }

@@ -154,8 +154,18 @@ if(isset($_SESSION['uid'])){
                                             </div>
                                         </div>
                                         <div id="gcash-upload" style="display:none;">
-                                            <label class="form-label" for="gcash-receipt">Send to this number and Upload Gcash Receipt</label>
-                                            <input type="file" class="form-control" id="gcash-receipt" name="gcash-receipt">
+                                        <?php 
+                                            $sql = "SELECT * FROM paymentoption
+                                                    WHERE status = 'Active'";
+                                            $result = mysqli_query($conn, $sql);
+
+                                            if ($result && mysqli_num_rows($result) > 0) {
+                                                $row = mysqli_fetch_assoc($result)
+                                        ?>
+                                            <label class="form-label" for="gcash-receipt">Send to this number: <?php echo $row['accountnumber'];?> | <?php echo $row['accountname']; ?> </label><br>
+                                            <?php } ?>
+                                            <label class="form-label" for="gcash-receipt">Upload Gcash Receipt <small>(Make sure to include the reference number)</small></label>
+                                            <input type="file" class="form-control" id="gcash-receipt" name="gcash-receipt"><br>
                                         </div>
                                     </form>
                                 </div>
