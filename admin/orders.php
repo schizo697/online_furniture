@@ -18,8 +18,23 @@ if (isset($_POST['decline'])) {
 //  confirm action
 if (isset($_POST['confirm'])) {
     $order_code = $_POST['confirm'];
+    
+    // Update order status to confirmed (osid = 2)
     $update_query = "UPDATE orders SET osid = '2' WHERE order_code = '$order_code'";
     mysqli_query($conn, $update_query);
+    
+    // Reduce product quantities in furniture table
+    $reduce_qty_query = "UPDATE furniture
+                         INNER JOIN orders ON furniture.pid = orders.pid
+                         SET furniture.quantity = furniture.quantity - orders.qty
+                         WHERE orders.order_code = '$order_code'";
+    mysqli_query($conn, $reduce_qty_query);
+
+    // Update product status to "Not Available" if quantity is zero or less
+    $update_status_query = "UPDATE furniture
+                            SET status = 'Not Available'
+                            WHERE quantity <= 0";
+    mysqli_query($conn, $update_status_query);
 }
 ?>
 
@@ -107,7 +122,7 @@ if (isset($_POST['confirm'])) {
                                         <td><?php echo $date; ?></td>
                                         <td>
                                             <div class="form-button-action">
-                                            <form action="view_order.php" method="GET" style="display: inline;">
+                                                <form action="view_order.php" method="GET" style="display: inline;">
                                                     <input type="hidden" name="order_code" value="<?php echo $order_code; ?>">
                                                     <button type="submit" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-info">
                                                         <i class="fas fa-eye"></i>

@@ -368,7 +368,7 @@ if(isset($_SESSION['uid'])){
             var subtotal = parseFloat("<?php echo $subtotal; ?>");
             var shippingFee = 100;
 
-            if (city === 'gensan' || city === 'general santos city' city === 'general santos') {
+            if (city === 'gensan' || city === 'general santos city' || city === 'general santos') {
                 shippingFee = 0;
             }
 
