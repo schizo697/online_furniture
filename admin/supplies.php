@@ -35,7 +35,7 @@ if (!isset($_SESSION['uid'])) {
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Supplies List</h4>
                             <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
-                                <i class="fa fa-plus"></i> Add Product
+                                <i class="fa fa-plus"></i> Add Supplies
                             </button>
                         </div>
                     </div>
@@ -57,8 +57,19 @@ if (!isset($_SESSION['uid'])) {
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
-                                                        <label>Name</label>
-                                                        <input id="addProductName" type="text" class="form-control" placeholder="Product Name" />
+                                                    <label>Supplier</label>
+                                <select id="supplier" class="form-control" required>
+                                    <option value="" selected disabled>Select Supplier</option>
+                                    <?php
+                                    $sql = "SELECT * FROM supplier";
+                                    $result = mysqli_query($conn, $sql);
+                                    if (mysqli_num_rows($result) > 0) {
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            echo '<option value="' . $row['sid'] . '">' . $row['firstname'] . ' ' . $row['lastname'] . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12">
@@ -82,18 +93,21 @@ if (!isset($_SESSION['uid'])) {
                             <table id="add-row" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Supplier Name</th>
+                                       <th>Company Name</th>
+                                        <th>Product Name</th>
+                                        <th>Product</th>
                                         <th>Quantity</th>
+                                        <th>Date & Time of Delivery</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>1</td>
+                                       
+                                        <td></td>
                                         <td></td>
                                         <td>Supplier 1</td>
+                                        <td></td>
                                         <td>3</td>
                                         <td>
                                             <div class="form-button-action">
@@ -101,7 +115,7 @@ if (!isset($_SESSION['uid'])) {
                                                     <i class="fa fa-edit"></i>
                                                 </button>
                                                 <button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
-                                                    <i class="fa fa-times"></i>
+                                                    <i class="fa fa-trash"></i>
                                                 </button>
                                             </div>
                                         </td>

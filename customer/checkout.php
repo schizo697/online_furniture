@@ -229,13 +229,7 @@ if(isset($_SESSION['uid'])){
                                                 <th scope="row"><img src="../admin/assets/img/<?php echo $img; ?>" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
                                                 <td>
                                                     <h5 class="font-size-16 text-truncate"><a href="#" class="text-dark"><?php echo $pname; ?></a></h5>
-                                                    <p class="text-muted mb-0">
-                                                        <i class="bx bxs-star text-warning"></i>
-                                                        <i class="bx bxs-star text-warning"></i>
-                                                        <i class="bx bxs-star text-warning"></i>
-                                                        <i class="bx bxs-star text-warning"></i>
-                                                        <i class="bx bxs-star-half text-warning"></i>
-                                                    </p>
+                                            
                                                     <p class="text-muted mb-0 mt-1">₱<?php echo $price . ' * ' . $qty;?></p>
                                                 </td>
                                                 <td>₱<?php echo $total; ?></td>

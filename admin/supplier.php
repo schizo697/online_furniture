@@ -274,7 +274,7 @@ if (!isset($_SESSION['uid'])) {
                                         <th>Full Name</th>
                                         <th>Address</th>
                                         <th>Phone Number</th>
-                                        <th>Type of User</th>
+                                        <th>Email</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
                                 </thead>

@@ -196,7 +196,7 @@ if (!isset($_SESSION['uid'])) {
     </div>
 
     <!-- Footer -->
-    <!-- <?php include('includes/footer.php'); ?> -->
+    <?php include('includes/footer.php'); ?>
 
     <!-- Scripts -->
     <script src="assets/js/core/jquery-3.7.1.min.js"></script>
@@ -317,7 +317,6 @@ if (!isset($_SESSION['uid'])) {
     }
 </script>
 
-    window.onload = checkExistParam; 
-    </script>
+  
 </body>
 </html>

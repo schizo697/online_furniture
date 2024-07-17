@@ -164,7 +164,7 @@ if(isset($_POST['updateproduct'])) {
     <?php include('includes/header.php'); ?>
 
     <!-- Main Content -->
-    <div class="container" style = "display: flex;">
+    <div class="container">
         <div class="page-inner">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
@@ -172,11 +172,11 @@ if(isset($_POST['updateproduct'])) {
                 </div>
                 <div class="ms-md-auto py-2 py-md-0"></div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <h4 class="card-title">List of Customize</h4>
+                            <h4 class="card-title">List of Customize Product</h4>
                             <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
                                 <i class="fa fa-plus"></i> Add Product Customize
                             </button>
@@ -278,7 +278,107 @@ if(isset($_POST['updateproduct'])) {
                             </div>
                         </form>
 
- 
+                        <!-- Edit Product Modal -->
+                        <form action="" method="POST" enctype="multipart/form-data">
+                            <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header border-0">
+                                            <h5 class="modal-title">
+                                                <span class="fw-mediumbold"> Edit</span>
+                                                <span class="fw-light"> Product </span>
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="editPid" id="editPid">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Furniture Type</label>
+                                                        <select name="editFid" id="editFid" class="form-control" required>                                   
+                                                            <?php
+                                                                $name_query = "SELECT * FROM furniture_type";
+                                                                $r = mysqli_query($conn, $name_query);
+                                                                while ($row = mysqli_fetch_array($r)) {
+                                                                    echo "<option value='{$row['fid']}'>{$row['type']}</option>";
+                                                                }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Product Name</label>
+                                                        <input name="editPname" id="editPname" type="text" class="form-control" placeholder="" />                                 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Price</label>
+                                                        <input name="editPrice" id="editPrice" type="textarea" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Description</label>
+                                                        <!-- <input name="editDescription" id="editDescription" type="textarea" class="form-control" placeholder="" /> -->
+                                                        <textarea name="editDescription" id="editDescription" class="form-control" placeholder=""></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Height</label>
+                                                        <input name="editHeight" id="editHeight" type="number" class="form-control" placeholder="in cm" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Width</label>
+                                                        <input name="editWidth" id="editWidth" type="number" class="form-control" placeholder="in cm" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Length</label>
+                                                        <input name="editLength" id="editLength" type="number" class="form-control" placeholder="in cm" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Color</label>
+                                                        <input name="editColor" id="editColor" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Quantity</label>
+                                                        <input name="editQuantity" id="editQuantity" type="number" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Status</label>
+                                                        <input name="editStatus" id="editStatus" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Image</label>
+                                                        <input type="file" name="editImage" id="editImage" style="border: solid gray 1px; padding: 6px; width: 80%; border-radius: 4px">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="submit" name="updateproduct" class="btn btn-primary">Update</button>
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
 
                         <!-- Table -->
                         <div class="table-responsive">
@@ -293,7 +393,6 @@ if(isset($_POST['updateproduct'])) {
                                         <th>Height</th>
                                         <th>Width</th>
                                         <th>Length</th>
-                                        <th>Foot Parts</th>
                                         <th>Status</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
@@ -329,7 +428,6 @@ if(isset($_POST['updateproduct'])) {
                                         <td><?php echo $height ?>cm</td>
                                         <td><?php echo $width ?>cm</td>
                                         <td><?php echo $length ?>cm</td>
-                                        <td></td>
                                         <td><?php echo $status ?></td>
                                         <td>
                                         <div class="form-button-action">
@@ -347,7 +445,7 @@ if(isset($_POST['updateproduct'])) {
                                             <form action="" method="POST" style="display: inline;">
                                                 <input type="hidden" name="remove_pid" value="<?php echo $pid; ?>">
                                                 <button type="submit" name="remove_product" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
-                                                    <i class="fa fa-times"></i>
+                                                    <i class="fa fa-trash"></i>
                                                 </button>
                                             </form>
                                         </div>

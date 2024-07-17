@@ -445,7 +445,7 @@ if(isset($_POST['updateproduct'])) {
                                             <form action="" method="POST" style="display: inline;">
                                                 <input type="hidden" name="remove_pid" value="<?php echo $pid; ?>">
                                                 <button type="submit" name="remove_product" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
-                                                    <i class="fa fa-times"></i>
+                                                    <i class="fa fa-trash"></i>
                                                 </button>
                                             </form>
                                         </div>

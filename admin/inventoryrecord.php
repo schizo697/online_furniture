@@ -41,7 +41,7 @@ if (!isset($_SESSION['uid'])) {
                                         <th>Product Name</th>
                                         <th>Available</th>
                                         <th>Sold</th>
-                                        <th>Total Quantity</th>
+                                        <!-- <th>Total Quantity</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -66,7 +66,7 @@ if (!isset($_SESSION['uid'])) {
                                         <td><?php echo $pname ?></td>
                                         <td><?php echo $quantity ?></td>
                                         <td><?php echo isset($sold) ? $sold : 0; ?></td>
-                                        <td><?php echo $total ?></td>
+                                        <!-- <td><?php echo $total ?></td> -->
                                     </tr>
                                     <?php
                                         }

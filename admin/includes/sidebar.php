@@ -55,6 +55,7 @@
                         <span class="sub-item">Product Category </span>
                       </a>
                     </li> -->
+                    
                     <li>
                       <a href="product_listing.php">
                         <span class="sub-item">Product</span>
@@ -63,6 +64,11 @@
                     <li>
                       <a href="components/gridsystem.html">
                         <span class="sub-item">Stock Level</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="furniture_type.php">
+                        <span class="sub-item">Furniture Type</span>
                       </a>
                     </li>
                     <li>
@@ -127,11 +133,7 @@
                 </a>
                 <div class="collapse" id="customization">
                   <ul class="nav nav-collapse">
-                    <li>
-                      <a href="furniture_type.php">
-                        <span class="sub-item">Furniture Type</span>
-                      </a>
-                    </li>
+                    
                     <li>
                       <a href="customize.php">
                         <span class="sub-item">Customize Options</span>

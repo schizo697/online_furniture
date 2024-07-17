@@ -343,7 +343,7 @@ if (!isset($_SESSION['uid'])) {
                                     $sql = "SELECT uid, username, email, firstname, lastname, gender, contact, address, levelid, status
                                     FROM useraccount 
                                     JOIN userinfo ON useraccount.infoid = userinfo.infoid 
-                                    WHERE useraccount.status = 1 AND useraccount.levelid != 4";
+                                    WHERE useraccount.status = 1 AND useraccount.levelid IN (1, 2)";
                                     $result = mysqli_query($conn, $sql);
 
                                     if ($result && mysqli_num_rows($result) > 0) {
@@ -366,9 +366,7 @@ if (!isset($_SESSION['uid'])) {
                                                 case 2:
                                                     $type = 'Staff';
                                                     break;
-                                                case 3:
-                                                    $type = 'Customer';
-                                                    break;
+                                               
                                                 default:
                                                     $type = 'Unknown';
                                                     break;
@@ -385,7 +383,7 @@ if (!isset($_SESSION['uid'])) {
                                                     data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>" data-account-email="<?php echo $email?>">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="#" class="btn btn-link btn-primary archive-button" data-bs-toggle="modal" data-bs-target="#archivemodal" data-account-id="<?php echo $uid?>">
+                                                <a href="#" class="btn btn-link btn-danger archive-button" data-bs-toggle="modal" data-bs-target="#archivemodal" data-account-id="<?php echo $uid?>">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>
