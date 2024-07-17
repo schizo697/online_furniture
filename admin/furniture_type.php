@@ -13,7 +13,6 @@ if (!isset($_SESSION['uid'])) {
 <html lang="en">
 <head>
     <?php include('includes/topbar.php'); ?>
-
 </head>
 <body>
     <?php include('includes/sidebar.php')?>
@@ -42,25 +41,50 @@ if (!isset($_SESSION['uid'])) {
                     </div>
                     <div class="card-body">
                     <?php
-                        include '../conn.php';
-
                         if(isset($_POST['addType'])) {
                             $type = $_POST['type'];
 
                             $sql = "INSERT INTO furniture_type (type) VALUES ('$type')";
                              
                             if(mysqli_query($conn, $sql)) {
-                                $url = "furniture_type.php?success=true";
-                                echo '<script>window.location.href= "' . $url . '";</script>';
+                                echo '<script>window.location.href= "furniture_type.php?success=true";</script>';
                                 exit(); 
                             } else {
-                                $url = "furniture_type.php?error=true";
-                                echo '<script>window.location.href="' . $url . '";</script';
+                                echo '<script>window.location.href="furniture_type.php?error=true";</script>';
+                                exit();
+                            }  
+                        }
+
+                        if(isset($_POST['editType'])) {
+                            $id = $_POST['id'];
+                            $type = $_POST['type'];
+
+                            $sql = "UPDATE furniture_type SET type='$type' WHERE fid='$id'";
+                             
+                            if(mysqli_query($conn, $sql)) {
+                                echo '<script>window.location.href= "furniture_type.php?success=true";</script>';
+                                exit(); 
+                            } else {
+                                echo '<script>window.location.href="furniture_type.php?error=true";</script>';
+                                exit();
+                            }  
+                        }
+
+                        if(isset($_POST['archiveType'])) {
+                            $id = $_POST['id'];
+
+                            $sql = "DELETE FROM furniture_type WHERE fid='$id'";
+                             
+                            if(mysqli_query($conn, $sql)) {
+                                echo '<script>window.location.href= "furniture_type.php?success=true";</script>';
+                                exit(); 
+                            } else {
+                                echo '<script>window.location.href="furniture_type.php?error=true";</script>';
                                 exit();
                             }  
                         }
                     ?>
-                        <!-- Modal -->
+                        <!-- Add Modal -->
                         <form action="" method="POST">
                         <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -73,7 +97,6 @@ if (!isset($_SESSION['uid'])) {
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form>
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
@@ -82,10 +105,41 @@ if (!isset($_SESSION['uid'])) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
                                     </div>
                                     <div class="modal-footer border-0">
                                         <button type="submit" name="addType" class="btn btn-primary">Add</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+
+                        <!-- Edit Modal -->
+                        <form action="" method="POST">
+                        <div class="modal fade" id="editRowModal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title">
+                                            <span class="fw-mediumbold"> Edit</span>
+                                            <span class="fw-light"> Furniture </span>
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Type of Furniture</label>
+                                                        <input id="editType" name="type" type="text" class="form-control" placeholder="" />
+                                                        <input id="editId" name="id" type="hidden" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <button type="submit" name="editType" class="btn btn-primary">Save</button>
                                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
@@ -97,6 +151,7 @@ if (!isset($_SESSION['uid'])) {
                             <table id="add-row" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
+                                        <th>ID</th>
                                         <th>Type of Furniture</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
@@ -108,16 +163,18 @@ if (!isset($_SESSION['uid'])) {
 
                                     if ($result && mysqli_num_rows($result) > 0) {
                                         while ($row = mysqli_fetch_assoc($result)) {
+                                            $id = $row['fid'];
                                             $type = $row['type'];
                                 ?>
                                     <tr>
-                                        <td><?php echo $type ?></td>
+                                        <td><?php echo $id; ?></td>
+                                        <td><?php echo $type; ?></td>
                                         <td>
                                             <div class="form-button-action">
-                                                <button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">
+                                                <button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg" onclick="editType('<?php echo $id; ?>', '<?php echo $type; ?>')">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
-                                                <button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
+                                                <button type="button" data-bs-toggle="tooltip" title="Archive" class="btn btn-link btn-danger" onclick="archiveType('<?php echo $id; ?>')">
                                                     <i class="fa fa-times"></i>
                                                 </button>
                                             </div>
@@ -126,7 +183,7 @@ if (!isset($_SESSION['uid'])) {
                                     <?php
                                         }
                                     } else {
-                                        echo "No records found";
+                                        echo "<tr><td colspan='2'>No records found</td></tr>";
                                     }
                                     ?>
                                 </tbody>
@@ -194,6 +251,20 @@ if (!isset($_SESSION['uid'])) {
                 $("#addRowModal").modal("hide");
             });
         });
+
+        function editType(id, type) {
+            $('#editId').val(id);
+            $('#editType').val(type);
+            $('#editRowModal').modal('show');
+        }
+
+        function archiveType(id) {
+            if(confirm("Are you sure you want to archive this type?")) {
+                $.post('', {archiveType: true, id: id}, function(response) {
+                    window.location.href = "furniture_type.php?success=true";
+                });
+            }
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -213,6 +284,38 @@ if (!isset($_SESSION['uid'])) {
             showModal();
         }
     }
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function editType(id, type) {
+        $('#editId').val(id);
+        $('#editType').val(type);
+        $('#editRowModal').modal('show');
+    }
+
+    function archiveType(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are about to archive this type!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, archive it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('', { archiveType: true, id: id }, function(response) {
+                    Swal.fire({
+                        title: 'Archived!',
+                        text: 'The furniture type has been archived.',
+                        icon: 'success'
+                    }).then(() => {
+                        window.location.href = "furniture_type.php?success=true";
+                    });
+                });
+            }
+        });
+    }
+</script>
 
     window.onload = checkExistParam; 
     </script>

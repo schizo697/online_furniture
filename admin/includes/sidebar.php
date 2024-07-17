@@ -95,7 +95,7 @@
                       </a>
                     </li>
                     <li>
-                      <a href="reservation.php">
+                      <a href="sales_record.php">
                         <span class="sub-item">Sales Record</span>
                       </a>
                     </li>
