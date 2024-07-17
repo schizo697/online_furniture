@@ -7,12 +7,14 @@ $pid = explode(',', $_POST['pid']);
 $payMethod = $_POST['payMethod'];
 $totalorder = $_POST['totalorder'];
 $date_of_order = date('Y-m-d');
+$gcashrec = $_POST['gcashrec'];
 
 function generateOrderId() {
     return rand(10000, 99999);
 }
 
 $order_code = generateOrderId();
+$payid = uniqid('', true);
 
 foreach ($pid as $prodid) {
     $cartqty = "SELECT qty FROM cart WHERE pid = $prodid AND uid = $uid";
@@ -21,23 +23,28 @@ foreach ($pid as $prodid) {
     if($cartqtyres && mysqli_num_rows($cartqtyres) > 0){
         while($qtyrow = mysqli_fetch_assoc($cartqtyres)){
             $quantity = $qtyrow['qty'];
-    
-            $order = "INSERT INTO orders (order_code, pid, uid, qty, mop, date, osid, total) 
-                      VALUES ('$order_code', '$prodid', '$uid', '$quantity', '$payMethod', '$date_of_order', '1', '$totalorder')";
-            $orderres = mysqli_query($conn, $order);
-    
-            if($orderres){
-                $update_furniture = "UPDATE furniture SET quantity = quantity - $quantity WHERE pid = '$prodid'";
-                $update_furnitureres = mysqli_query($conn, $update_furniture);
-    
-                if(!$update_furnitureres){
-                    echo 'Error updating furniture qty';
-                    exit();
-                } 
-            } else {
-                echo 'Error inserting order';
-                exit();
+
+            if ($payMethod == 'cod') {
+                $order = "INSERT INTO orders (order_code, pid, uid, qty, date, osid) 
+                            VALUES ('$order_code', '$prodid', '$uid', '$quantity', '$date_of_order', '1')";
+                $orderres = mysqli_query($conn, $order);
+
+                if ($orderres) {
+                    $payment = "INSERT INTO payment (paymentid, order_code, mop, total, amountpaid, status) 
+                            VALUES ('$payid', '$order_code', '$payMethod', '$totalorder', '0', 'pending')";
+                    $paymentres = mysqli_query($conn, $payment);
+            
+                        $update_furniture = "UPDATE furniture SET quantity = quantity - $quantity WHERE pid = '$prodid'";
+                        $update_furnitureres = mysqli_query($conn, $update_furniture);
+            
+                        if(!$update_furnitureres){
+                            echo 'Error updating furniture qty';
+                            exit();
+                        } 
+                    
+                }
             }
+              
         }
     }
 }
