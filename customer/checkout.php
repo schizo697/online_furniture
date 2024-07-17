@@ -154,18 +154,8 @@ if(isset($_SESSION['uid'])){
                                             </div>
                                         </div>
                                         <div id="gcash-upload" style="display:none;">
-                                        <?php 
-                                            $sql = "SELECT * FROM paymentoption
-                                                    WHERE status = 'Active'";
-                                            $result = mysqli_query($conn, $sql);
-
-                                            if ($result && mysqli_num_rows($result) > 0) {
-                                                $row = mysqli_fetch_assoc($result)
-                                        ?>
-                                            <label class="form-label" for="gcash-receipt">Send to this number: <?php echo $row['accountnumber'];?> | <?php echo $row['accountname']; ?> </label><br>
-                                            <?php } ?>
-                                            <label class="form-label" for="gcash-receipt">Upload Gcash Receipt <small>(Make sure to include the reference number)</small></label>
-                                            <input type="file" class="form-control" id="gcash-receipt" name="gcash-receipt"><br>
+                                            <label class="form-label" for="gcash-receipt">Send to this number and Upload Gcash Receipt</label>
+                                            <input type="file" class="form-control" id="gcash-receipt" name="gcash-receipt" accept=".png, .jpg, .jpeg">
                                         </div>
                                     </form>
                                 </div>
@@ -331,35 +321,30 @@ if(isset($_SESSION['uid'])){
         var uid = document.getElementById('uid').value;
         var qty = document.getElementById('qty').value;
         var totalorder = document.getElementById('totalorder').value;
-
         var payMethod = document.querySelector('input[name="pay-method"]:checked').value;
-        var gcashrec = document.querySelector('input[name="gcash-receipt"]').value;
+        var gcashrec = document.getElementById('gcash-receipt').files[0];
 
-        var formData = document.createElement('form');
-        formData.method = 'POST';
-        formData.action = 'place_order.php';
+        var formData = new FormData();
+        formData.append('pid', pid);
+        formData.append('uid', uid);
+        formData.append('qty', qty);
+        formData.append('totalorder', totalorder);
+        formData.append('payMethod', payMethod);
+        formData.append('gcashrec', gcashrec);
 
-        var inputs = [
-            { name: 'pid', value: pid },
-            { name: 'uid', value: uid },
-            { name: 'qty', value: qty },
-            { name: 'totalorder', value: totalorder },
-            { name: 'payMethod', value: payMethod },
-            { name: 'gcashrec', value: gcashrec }
-        ];
-
-        inputs.forEach(function(input) {
-            var inputField = document.createElement('input');
-            inputField.type = 'hidden';
-            inputField.name = input.name;
-            inputField.value = input.value;
-            formData.appendChild(inputField);
-        });
-
-        document.body.appendChild(formData);
-        formData.submit();
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'place_order.php', true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                window.location.href = 'purchase.php?success=true';
+            } else {
+                alert('An error occurred!');
+            }
+        };
+        xhr.send(formData);
     });
 </script>
+
 <script>
     $(document).ready(function() {
         // Function to update shipping fee, subtotal, and total based on the city
