@@ -157,8 +157,22 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="mb-2">
-                                            <label for="city" class="form-label">City <span class="required-asterisk">*</span></label>
-                                            <input type="text" name="city" id="city" class="form-control form-control-lg bg-light fs-6" placeholder="City" required>
+                                            <label for="city" class="form-label">City/Municipality<span class="required-asterisk">*</span></label>
+                                            <select name="city" id="city" class="form-control form-control-lg bg-light fs-6" required>
+                                                <option selected disabled>Select...</option>
+                                                <option value="Banga">Banga</option>
+                                                <option value="General Santos">General Santos</option>
+                                                <option value="Glan">Glan</option>
+                                                <option value="Kiamba">Kiamba</option>
+                                                <option value="Koronadal">Koronadal</option>
+                                                <option value="Maitum">Maitum</option>
+                                                <option value="Norala">Norala</option>
+                                                <option value="Polomolok">Polomolok</option>
+                                                <option value="Surallah">Surallah</option>
+                                                <option value="Tantangan">Tantangan</option>
+                                                <option value="Tupi">Tupi</option>
+                                            </select>
+                                            <!-- <input type="text" name="city" id="city" class="form-control form-control-lg bg-light fs-6" placeholder="City" required> -->
                                         </div>
                                     </div>
                                     <div class="col-md-6">
