@@ -151,7 +151,6 @@ if (!isset($_SESSION['uid'])) {
                             <table id="add-row" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Type of Furniture</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
@@ -167,7 +166,6 @@ if (!isset($_SESSION['uid'])) {
                                             $type = $row['type'];
                                 ?>
                                     <tr>
-                                        <td><?php echo $id; ?></td>
                                         <td><?php echo $type; ?></td>
                                         <td>
                                             <div class="form-button-action">
