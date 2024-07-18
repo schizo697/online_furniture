@@ -111,7 +111,7 @@
                       </a>
                     </li>
                     <li>
-                      <a href="components/panels.html">
+                      <a href="payment.php">
                         <span class="sub-item">Payment</span>
                       </a>
                     </li>
