@@ -13,6 +13,7 @@ if (!isset($_SESSION['uid'])) {
     include '../conn.php';
 
     if(isset($_POST['adduser'])) {
+        $cbname = $_POST['cbname'];
         $firstname = $_POST['firstname'];
         $lastname = $_POST['lastname'];
         $email = $_POST['email'];
@@ -20,7 +21,8 @@ if (!isset($_SESSION['uid'])) {
         $address = $_POST['address'];
         $contact = $_POST['contact'];
 
-        $sql = "INSERT INTO supplier (firstname, lastname, contact, address, gender, email, levelid, status) VALUES ('$firstname', '$lastname', '$contact', '$address', '$gender', '$email', 4, 1)";
+        $sql = "INSERT INTO supplier (cbname, firstname, lastname, contact, address, gender, email, levelid, status) 
+                    VALUES ('$cbname', '$firstname', '$lastname', '$contact', '$address', '$gender', '$email', 4, 1)";
         $result = mysqli_query($conn, $sql);
 
         if($result) {
@@ -38,6 +40,7 @@ if (!isset($_SESSION['uid'])) {
 <!-- handle edit user -->
     <?php
       if(isset($_POST['btnSave'])){
+        $cbname = $_POST['cbname'];
         $user_id = $_POST['userid'];
         $firstname = $_POST['firstname'];
         $lastname = $_POST['lastname'];
@@ -45,7 +48,7 @@ if (!isset($_SESSION['uid'])) {
         $address = $_POST['address'];
         $email = $_POST['email'];
 
-        $infoupdate = "UPDATE supplier SET firstname = '$firstname', lastname = '$lastname', contact = '$contact', address = '$address', email = '$email' WHERE sid = '$user_id'";
+        $infoupdate = "UPDATE supplier SET cbname = '$cbname', firstname = '$firstname', lastname = '$lastname', contact = '$contact', address = '$address', email = '$email' WHERE sid = '$user_id'";
         $inforesult = mysqli_query($conn, $infoupdate);
     
         if($inforesult) {
@@ -105,15 +108,15 @@ if (!isset($_SESSION['uid'])) {
                                 if(isset($_POST['btnArchive'])){
                                     $user_id = $_POST['userid'];
 
-                                    $statusupdate = "UPDATE useraccount SET status = 0 WHERE uid = '$user_id'";
+                                    $statusupdate = "UPDATE supplier SET status = 0 WHERE sid = '$user_id'";
                                     $statusresult = mysqli_query($conn, $statusupdate);
 
                                     if($statusresult){
-                                        $url = "user_management.php?archive=true";
+                                        $url = "supplier.php?archive=true";
                                         echo '<script>window.location.href="' . $url . '"</script>';
                                         exit();
                                     } else {
-                                        $url = "user_management.php?error=true";
+                                        $url = "supplier.php?error=true";
                                         echo '<script>window.location.href="' . $url . '";</script';
                                         exit();
                                     }
@@ -156,6 +159,12 @@ if (!isset($_SESSION['uid'])) {
                                                     <div class="form-group form-group-default">
                                                         <label>User ID</label>
                                                         <input name="userid" id="userID" type="text" class="form-control" placeholder="" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Company/Business Name</label>
+                                                        <input name="cbname" id="editCbName" type="text" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 pe-0">
@@ -216,6 +225,12 @@ if (!isset($_SESSION['uid'])) {
                                         <p class="small">Fill all the necessary information</p>
                                         <form>
                                             <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Company/Business Name</label>
+                                                        <input name="cbname" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-6 pe-0">
                                                     <div class="form-group form-group-default">
                                                         <label>First Name</label>
@@ -271,21 +286,23 @@ if (!isset($_SESSION['uid'])) {
                             <table id="add-row" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Full Name</th>
-                                        <th>Address</th>
-                                        <th>Phone Number</th>
+                                        <th>Business Name</th>
+                                        <th>Representative Name</th>
                                         <th>Email</th>
+                                        <th>Phone Number</th>
+                                        <th>Address</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 <?php 
-                                    $sql = "SELECT * FROM supplier";
+                                    $sql = "SELECT * FROM supplier WHERE status = 1";
                                     $result = mysqli_query($conn, $sql);
 
                                     if ($result && mysqli_num_rows($result) > 0) {
                                         while ($row = mysqli_fetch_assoc($result)) {
                                             $uid = $row['sid'];
+                                            $cbname = $row['cbname'];
                                             $firstname = $row['firstname'];
                                             $lastname = $row['lastname'];
                                             $email = $row['email'];
@@ -296,14 +313,15 @@ if (!isset($_SESSION['uid'])) {
                                             $level = $row['levelid'];
                                         ?>
                                     <tr>                                    
+                                        <td><?php echo $cbname ?></td>
                                         <td><?php echo $name ?></td>
-                                        <td><?php echo $address ?></td>                              
-                                        <td><?php echo $contact ?></td>
                                         <td><?php echo $email ?></td>
+                                        <td><?php echo $contact ?></td>
+                                        <td><?php echo $address ?></td>                              
                                         <td>
                                             <div class="form-button-action">
                                                 <a href="#" class="btn btn-link btn-success edit-button" data-bs-toggle="modal" data-bs-target="#editmodal" data-account-id="<?php echo $uid?>" data-account-fname="<?php echo $firstname?>" data-account-lname="<?php echo $lastname?>"
-                                                    data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>" data-account-email="<?php echo $email?>">
+                                                    data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>" data-account-email="<?php echo $email?>" data-account-cbname="<?php echo $cbname?>">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a href="#" class="btn btn-link btn-primary archive-button" data-bs-toggle="modal" data-bs-target="#archivemodal" data-account-id="<?php echo $uid?>">
@@ -353,6 +371,7 @@ $(document).ready(function() {
         var contact = $(this).data('account-contact');
         var address = $(this).data('account-address');
         var email = $(this).data('account-email');
+        var cbname = $(this).data('account-cbname');
 
         $('#userID').val(userID);
         $('#editFirstName').val(fname);
@@ -360,6 +379,7 @@ $(document).ready(function() {
         $('#editContact').val(contact);
         $('#editAddress').val(address);
         $('#editEmail').val(email);
+        $('#editCbName').val(cbname);
     });
 });
 </script>

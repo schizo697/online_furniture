@@ -9,6 +9,35 @@ if (!isset($_SESSION['uid'])) {
 }
 ?>
 
+<!-- handle add user -->
+<?php
+    include '../conn.php';
+
+    if(isset($_POST['addsupplies'])) {
+        $supplier = $_POST['supplier'];
+        $pname = $_POST['pname'];
+        $quantity = $_POST['quantity'];
+        $delivery = $_POST['delivery'];
+        $user = $_POST['user'];
+        $unit = $_POST['unit'];
+
+
+        $sql = "INSERT INTO supplies (sid, item, quantity, unit, deliverydate, approvedby, status) 
+                    VALUES ('$supplier', '$pname', '$quantity', '$unit', '$delivery', '$user', 1)";
+        $result = mysqli_query($conn, $sql);
+
+        if($result) {
+            $url = "supplies.php?success=true";
+            echo '<script>window.location.href= "' . $url . '";</script>';
+            exit(); 
+        } else {
+            $url = "supplies.php?error=true";
+            echo '<script>window.location.href="' . $url . '";</script';
+            exit();
+        }  
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,45 +75,88 @@ if (!isset($_SESSION['uid'])) {
                                 <div class="modal-content">
                                     <div class="modal-header border-0">
                                         <h5 class="modal-title">
-                                            <span class="fw-mediumbold"> New</span>
-                                            <span class="fw-light"> Product </span>
+                                            <span class="fw-mediumbold"> Add</span>
+                                            <span class="fw-light"> New </span>
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p class="small">Create a new product using this form, make sure you fill them all</p>
-                                        <form>
+                                        <form action="" method="POST">
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
                                                     <label>Supplier</label>
-                                <select id="supplier" class="form-control" required>
-                                    <option value="" selected disabled>Select Supplier</option>
-                                    <?php
-                                    $sql = "SELECT * FROM supplier";
-                                    $result = mysqli_query($conn, $sql);
-                                    if (mysqli_num_rows($result) > 0) {
-                                        while ($row = mysqli_fetch_assoc($result)) {
-                                            echo '<option value="' . $row['sid'] . '">' . $row['firstname'] . ' ' . $row['lastname'] . '</option>';
-                                        }
-                                    }
-                                    ?>
-                                </select>
+                                                    <select id="supplier" name="supplier" class="form-control" required>
+                                                        <option value="" selected disabled>Select...</option>
+                                                        <?php
+                                                        $sql = "SELECT * FROM supplier WHERE status = 1";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        if (mysqli_num_rows($result) > 0) {
+                                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                                echo '<option value="' . $row['sid'] . '">' . $row['firstname'] . ' ' . $row['lastname'] . '</option>';
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <div class="form-group form-group-default">
-                                                        <label>Supplier</label>
-                                                        <input id="addDescription" type="text" class="form-control" placeholder="Product Description" />
+                                                        <label>Product Name</label>
+                                                        <input id="pname" name="pname" type="text" class="form-control" placeholder="" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Quantity</label>
+                                                        <input id="quantity" name="quantity" type="number" class="form-control" placeholder="" required />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Measurement</label>
+                                                        <select name="unit" class="form-control" required>
+                                                            <option selected disabled>Select...</option>
+                                                            <option value="pcs">pcs</option>
+                                                            <option value="kilo">kilo</option>
+                                                            <option value="cm">cm</option>
+                                                            <option value="box">box</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Date & Time of Delivery</label>
+                                                        <input id="delivery" name="delivery" type="datetime-local" class="form-control"  required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group form-group-default">
+                                                    <label>Approved/Received by:</label>
+                                                    <select id="user" name="user" class="form-control" required>
+                                                        <option value="" selected disabled>Select...</option>
+                                                        <?php
+                                                        $sql = "SELECT * FROM useraccount
+                                                                    JOIN userinfo ON userinfo.infoid = useraccount.infoid
+                                                                    WHERE useraccount.levelid != 3 AND useraccount.status = 1";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        if (mysqli_num_rows($result) > 0) {
+                                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                                echo '<option value="' . $row['uid'] . '">' . $row['firstname'] . ' ' . $row['lastname'] . '</option>';
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </select>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
+                                        
                                     </div>
                                     <div class="modal-footer border-0">
-                                        <button type="button" id="addRowButton" class="btn btn-primary">Add</button>
+                                        <button type="submit" id="addsupplies" name="addsupplies" class="btn btn-primary">Add</button>
                                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                                     </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -93,33 +165,61 @@ if (!isset($_SESSION['uid'])) {
                             <table id="add-row" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                       <th>Company Name</th>
-                                        <th>Product Name</th>
+                                       <th>Company</th>
+                                        <th>Supplier</th>
                                         <th>Product</th>
                                         <th>Quantity</th>
                                         <th>Date & Time of Delivery</th>
+                                        <th>Approved By:</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <?php 
+                                    $sql = "SELECT *, supplier.cbname,  CONCAT(supplier.firstname, ' ', supplier.lastname) AS supplier, CONCAT(userinfo.firstname, ' ', userinfo.lastname) AS user FROM supplies
+                                                JOIN useraccount ON useraccount.uid = supplies.approvedby
+                                                JOIN userinfo ON userinfo.infoid = useraccount.infoid
+                                                JOIN supplier ON supplier.sid = supplies.sid
+                                                WHERE supplies.status = 1";
+                                    $result = mysqli_query($conn, $sql);
+
+                                    if ($result && mysqli_num_rows($result) > 0) {
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            $supid = $row['supid'];
+                                            $sid = $row['sid'];
+                                            $item = $row['item'];
+                                            $date = $row['deliverydate'];
+                                            $quantity = $row['quantity'];
+                                            $unit = $row['unit'];
+                                            $name = $row['user'];
+                                            $supplier = $row['supplier'];
+                                            $cbname = $row['cbname'];
+                                        ?>
                                     <tr>
-                                       
-                                        <td></td>
-                                        <td></td>
-                                        <td>Supplier 1</td>
-                                        <td></td>
-                                        <td>3</td>
+                                        <td><?php echo $cbname ?></td>
+                                        <td><?php echo $supplier ?></td>
+                                        <td><?php echo $item ?></td>
+                                        <td><?php echo $quantity , ' ', $unit?></td>
+                                        <td><?php echo $date ?></td>
+                                        <td><?php echo $name ?></td>
                                         <td>
                                             <div class="form-button-action">
-                                                <button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
+                                                <a href="#" class="btn btn-link btn-success edit-button" data-bs-toggle="modal" data-bs-target="#editmodal" data-account-id="<?php echo $uid?>" data-account-fname="<?php echo $firstname?>" data-account-lname="<?php echo $lastname?>"
+                                                    data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>" data-account-email="<?php echo $email?>" data-account-cbname="<?php echo $cbname?>">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-link btn-primary archive-button" data-bs-toggle="modal" data-bs-target="#archivemodal" data-account-id="<?php echo $uid?>">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
+                                    <?php
+                                        }
+                                    } else {
+                                        echo "No records found";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -167,52 +267,69 @@ if (!isset($_SESSION['uid'])) {
             $("#add-row").DataTable({
                 pageLength: 5,
             });
-
-            // Image preview functionality
-            $("#addImage").change(function() {
-                readURL(this);
-            });
-
-            function readURL(input) {
-                if (input.files && input.files[0]) {
-                    var reader = new FileReader();
-                    reader.onload = function (e) {
-                        $('#imagePreview').attr('src', e.target.result);
-                        $('#imagePreview').show();
-                    };
-                    reader.readAsDataURL(input.files[0]);
-                }
-            }
-
-            var action = 
-                '<td><div class="form-button-action">' +
-                '<button type="button" data-bs-toggle="tooltip" title="Edit Task" class="btn btn-link btn-primary btn-lg">' +
-                '<i class="fa fa-edit"></i></button> ' +
-                '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">' +
-                '<i class="fa fa-times"></i></button></div></td>';
-
-            $("#addRowButton").click(function () {
-                var id = $("#addID").val();
-                var image = $("#imagePreview").attr('src');
-                var productName = $("#addProductName").val();
-                var description = $("#addDescription").val();
-                var quantity = $("#addQuantity").val();
-                var price = $("#addPrice").val();
-                var status = $("#addStatus").val();
-
-                $("#add-row").dataTable().fnAddData([
-                    id,
-                    '<img src="' + image + '" alt="Product Image" style="max-width: 100px; height: auto;" />',
-                    productName,
-                    description,
-                    quantity,
-                    price,
-                    status,
-                    action,
-                ]);
-                $("#addRowModal").modal("hide");
-            });
         });
     </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+$(document).ready(function() {
+    $('.archive-button').click(function() {
+        var userid = $(this).data('account-id');
+        $('#userid').val(userid);
+    });
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    $('.edit-button').click(function() {
+        var userID = $(this).data('account-id');
+        var fname = $(this).data('account-fname');
+        var lname = $(this).data('account-lname'); 
+        var gender = $(this).data('account-gender');
+        var contact = $(this).data('account-contact');
+        var address = $(this).data('account-address');
+        var email = $(this).data('account-email');
+        var cbname = $(this).data('account-cbname');
+
+        $('#userID').val(userID);
+        $('#editFirstName').val(fname);
+        $('#editLastName').val(lname);
+        $('#editContact').val(contact);
+        $('#editAddress').val(address);
+        $('#editEmail').val(email);
+        $('#editCbName').val(cbname);
+    });
+});
+</script>
+
+<script>
+    function showAlert(type, message) {
+        Swal.fire({
+            icon: type,
+            text: message,
+        });
+    }
+
+    function checkURLParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('exist') && urlParams.get('exist') === 'true') {
+            showAlert('warning', 'Username Already Exists');
+        } else if (urlParams.has('success') && urlParams.get('success') === 'true') {
+            showAlert('success', 'Supplies added successfully');
+        } else if (urlParams.has('error') && urlParams.get('error') === 'true') {
+            showAlert('error', 'Something went wrong!');
+        } else if (urlParams.has('update') && urlParams.get('update') === 'true') {
+            showAlert('success', 'Supplies updated successfully');
+        } else if (urlParams.has('errorpassword') && urlParams.get('errorpassword') === 'true') {
+            showAlert('error', 'Password do not match');
+        } else if (urlParams.has('archive') && urlParams.get('archive') === 'true') {
+            showAlert('success', 'Supplies has been archived');
+        }
+    }
+
+    window.onload = checkURLParams;
+</script>
 </body>
 </html>
