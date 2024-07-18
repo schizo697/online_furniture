@@ -108,7 +108,7 @@
                                                 <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="<?php echo $row['pid'];?>">
                                                     <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
                                                 </button>
-                                                <a href="view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                <a href="customer/view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
                                                     <i class="fa fa-eye me-2 text-primary"></i> View
                                                 </a>
                                             </div>
@@ -185,18 +185,30 @@
                 var pid = $(this).data('pid');
 
                 $.ajax({
-                    url: 'add_to_cart.php',
+                    url: 'customer/add_to_cart.php',
                     type: 'POST',
                     data: {
                         pid: pid,
                     },
                     success: function(response){
-                        Swal.fire({
-                            icon: 'success',
-                            text: response,
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
+                        var result = JSON.parse(response);
+                        if (result.status === 'not_logged_in') {
+                            window.location.href = 'login.php';
+                        } else if (result.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                text: result.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                text: result.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
                     },
                     error: function(xhr, status, error){
                         console.error('AJAX Error: ' + status + ' ' + error);

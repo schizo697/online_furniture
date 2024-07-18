@@ -98,7 +98,7 @@ include 'conn.php';
                         <?php 
                         if(!isset($_SESSION['uid'])){
                             ?> 
-                            <a href="../login.php" class="btn btn-outline-primary me-4">Login</a>
+                            <a href="login.php" class="btn btn-outline-primary me-4">Login</a>
                             <?php
                         }
                         ?>
