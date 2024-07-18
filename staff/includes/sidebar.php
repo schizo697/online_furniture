@@ -60,7 +60,7 @@
                       </a>
                     </li>
                     <li>
-                      <a href="components/panels.html">
+                      <a href="inventoryrecord.php">
                         <span class="sub-item">Inventory Record</span>
                       </a>
                     </li>
@@ -84,12 +84,12 @@
                 <div class="collapse" id="transaction">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="registered_user.php">
+                      <a href="orders.php">
                         <span class="sub-item">Ordering</span>
                       </a>
                     </li>
                     <li>
-                      <a href="reservation.php">
+                      <a href="sales_record.php">
                         <span class="sub-item">Sales Record</span>
                       </a>
                     </li>
