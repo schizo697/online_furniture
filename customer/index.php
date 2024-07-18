@@ -95,32 +95,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            $('.add-to-cart').click(function(){
-                var pid = $(this).data('pid');
-
-                $.ajax({
-                    url: 'add_to_cart.php',
-                    type: 'POST',
-                    data: {
-                        pid: pid,
-                    },
-                    success: function(response){
-                        Swal.fire({
-                            icon: 'success',
-                            text: response,
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    },
-                    error: function(xhr, status, error){
-                        console.error('AJAX Error: ' + status + ' ' + error);
-                        console.error(xhr);
-                    }
-                });
-            });
-        });
-    </script>
+    
 </body>
 </html>
