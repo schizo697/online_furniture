@@ -2,6 +2,15 @@
 session_start();
 include '../conn.php';
 
+if (!isset($_SESSION['uid'])) {
+    ?>
+    <script>
+        window.location.href = '../login.php';
+    </script>
+    <?php
+    exit();
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_SESSION['uid'])) {
         $uid = $_SESSION['uid'];
