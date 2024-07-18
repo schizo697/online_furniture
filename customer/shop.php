@@ -57,123 +57,133 @@
     <h1 class="text-center text-white display-6">Shop</h1>
 </div>
 <!-- End Page Header -->
-
-<!-- Main Content -->
-<div class="container-fluid product py-5">
-    <div class="container py-5">
-        <h1 class="mb-4">Furniture Shop</h1>
-        <div class="row g-4">
-            <div class="col-lg-12">
+   <!-- Products Shop Start -->
+   <div class="container-fluid product py-5">
+        <div class="container py-5">
+            <div class="tab-class text-center">
                 <div class="row g-4">
-                    <div class="col-xl-3">
-                        <div class="input-group w-100 mx-auto d-flex">
-                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                        </div>
+                    <div class="col-lg-4 text-start">
+                        <h1>Our Products</h1>
                     </div>
-                    <div class="col-6"></div>
-                    <div class="col-xl-3">
-                        <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                            <label for="fruits">Default Sorting:</label>
-                            <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
-                                <option value="volvo">Nothing</option>
-                                <option value="saab">Popularity</option>
-                            </select>
-                        </div>
+                    <!-- TAB -->
+                    <div class="col-lg-8 text-end">
+                        <ul class="nav nav-pills d-inline-flex text-center mb-5">
+                            <li class="nav-item">
+                                <a class="d-flex m-2 py-2 bg-light rounded-pill active" data-bs-toggle="pill" href="#tab-1">
+                                    <span class="text-dark" style="width: 130px;">All Products</span>
+                                </a>
+                            </li>
+                            <?php
+                            include "../conn.php";
+                            
+                            // Fetch furniture types
+                            $getTypesQuery = "SELECT DISTINCT type FROM furniture_type";
+                            $fetchTypes = $conn->query($getTypesQuery);
+                            
+                            // Display each type as a tab
+                            while($typeRow = mysqli_fetch_assoc($fetchTypes)) {
+                                $type = $typeRow['type'];
+                                $tabID = strtolower(str_replace(' ', '-', $type)); // Generate tab ID from type
+                                
+                                echo '<li class="nav-item">';
+                                echo '<a class="d-flex m-2 py-2 bg-light rounded-pill" data-bs-toggle="pill" href="#'.$tabID.'">';
+                                echo '<span class="text-dark" style="width: 130px;">'.$type.'</span>';
+                                echo '</a>';
+                                echo '</li>';
+                            }
+                            ?>
+                        </ul>
                     </div>
                 </div>
-                <div class="row g-4">
-                    <div class="col-lg-3">
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane fade show p-0 active">
                         <div class="row g-4">
-                            <div class="col-lg-12">
-                                <div class="mb-3">
-                                    <h4>Categories</h4>
-                                    <ul class="list-unstyled product-categorie">
-                                        <li>
-                                            <div class="d-flex justify-content-between product-name">
-                                                <a href="#">Couch</a>
-                                                <span>(2)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between product-name">
-                                                <a href="#">Bed</a>
-                                                <span>(5)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between product-name">
-                                                <a href="#">Chair</a>
-                                                <span>(2)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between product-name">
-                                                <a href="#">Table</a>
-                                                <span>(8)</span>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="row g-4 justify-content-center">
-                            <!-- Product Items -->
                             <?php 
-                                include "../conn.php";
-                                
-                                $getlisting = "SELECT * FROM furniture 
-                                            JOIN furniture_type ON furniture.fid = furniture_type.fid WHERE furniture.status = 'Active'";
-                                $fetch = $conn->query($getlisting);
-                            ?>               
-                            <?php 
-                                while($row = mysqli_fetch_assoc($fetch)){ 
+                            $getlisting = "SELECT * FROM furniture 
+                                           JOIN furniture_type ON furniture.fid = furniture_type.fid WHERE furniture.status = 'Active'";
+                            $fetch = $conn->query($getlisting);
+                            
+                            while($row = mysqli_fetch_assoc($fetch)) { 
                             ?>
-                            <div class="col-md-6 col-lg-6 col-xl-4">
-                                <div class="rounded border border-secondary position-relative product-item text-center">
-                                    <div class="product-img">
-                                    <img src="<?php echo "../admin/assets/img/".$row['image']; ?>" class="img-fluid w-100 rounded-top" alt="">
-                                    </div>
-                                    <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;"><?php echo $row ['type']; ?></div>
-                                    <div class="p-4 border-top-0 rounded-bottom">
-                                    <h4><?php echo $row['pname']; ?></h4>
-                                    <p><?php echo $row['description']; ?></p>
-                                    <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $row['price']; ?></p>
-                                        <div class="button-group">
-                                        <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="<?php echo $row['pid'];?>">
-                                            <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
-                                        </button>
-                                            <a href="view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-eye me-2 text-primary"></i> View</a>
+                                <div class="col-md-6 col-lg-4 col-xl-3">  
+                                    <div class="rounded border border-secondary position-relative product-item text-center">
+                                        <div class="product-img">
+                                            <img src="<?php echo "../admin/assets/img/".$row['image']; ?>" class="img-fluid w-100 rounded-top" alt="">
+                                        </div>
+                                        <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;"><?php echo $row['type']; ?></div>
+                                        <div class="p-4 border-top-0 rounded-bottom">
+                                            <h4><?php echo $row['pname']; ?></h4>
+                                            <!-- <p><?php echo $row['description']; ?></p> -->
+                                            <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $row['price']; ?></p>
+                                            <div class="button-group">
+                                                <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="<?php echo $row['pid'];?>">
+                                                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                                </button>
+                                                <a href="view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                    <i class="fa fa-eye me-2 text-primary"></i> View
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            
                             <?php } ?>
                         </div>
-                        <!-- Pagination -->
-                        <div class="col-12">
-                            <div class="pagination d-flex justify-content-center mt-5">
-                                <a href="#" class="rounded">&laquo;</a>
-                                <a href="#" class="active rounded">1</a>
-                                <a href="#" class="rounded">2</a>
-                                <a href="#" class="rounded">3</a>
-                                <a href="#" class="rounded">4</a>
-                                <a href="#" class="rounded">5</a>
-                                <a href="#" class="rounded">6</a>
-                                <a href="#" class="rounded">&raquo;</a>
-                            </div>
-                        </div>
                     </div>
+                    <!-- Additional tabs (based on furniture types) -->
+                    <?php
+                    // Reset the query to fetch again for tab content
+                    $fetch->data_seek(0);
+                    
+                    // Fetch furniture types again for separate queries per tab
+                    $fetchTypes->data_seek(0);
+                    
+                    while($typeRow = mysqli_fetch_assoc($fetchTypes)) {
+                        $type = $typeRow['type'];
+                        $tabID = strtolower(str_replace(' ', '-', $type)); // Generate tab ID from type
+                        
+                        echo '<div id="'.$tabID.'" class="tab-pane fade show p-0">';
+                        echo '<div class="row g-4">';
+                        
+                        // Query to fetch products of specific type
+                        $getProductsByType = "SELECT * FROM furniture 
+                                             JOIN furniture_type ON furniture.fid = furniture_type.fid 
+                                             WHERE furniture.status = 'Active' AND furniture_type.type = '$type'";
+                        $fetchProductsByType = $conn->query($getProductsByType);
+                        
+                        // Display products of this type
+                        while($productRow = mysqli_fetch_assoc($fetchProductsByType)) {
+                            echo '<div class="col-md-6 col-lg-4 col-xl-3">';  
+                            echo '<div class="rounded border border-secondary position-relative product-item text-center">';
+                            echo '<div class="product-img">';
+                            echo '<img src="../admin/assets/img/'.$productRow['image'].'" class="img-fluid w-100 rounded-top" alt="">';
+                            echo '</div>';
+                            echo '<div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">'.$productRow['type'].'</div>';
+                            echo '<div class="p-4 border-top-0 rounded-bottom">';
+                            echo '<h4>'.$productRow['pname'].'</h4>';
+                            // Add description if needed
+                            echo '<p class="text-dark fs-5 fw-bold mb-2">₱'.$productRow['price'].'</p>';
+                            echo '<div class="button-group">';
+                            echo '<button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="'.$productRow['pid'].'">';
+                            echo '<i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart';
+                            echo '</button>';
+                            echo '<a href="view_product.php?id='.$productRow['pid'].'" class="btn border border-secondary rounded-pill px-3 text-primary">';
+                            echo '<i class="fa fa-eye me-2 text-primary"></i> View';
+                            echo '</a>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                        
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                    ?>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- End Main Content -->
-
+    <!-- Products Shop End -->
 <script>
     $(document).ready(function(){
         $('.add-to-cart').click(function(){
@@ -209,6 +219,7 @@
 <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
 
 <!-- JavaScript Libraries -->
+ 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
