@@ -36,6 +36,29 @@ if (!isset($_SESSION['uid'])) {
             exit();
         }  
     }
+    // edit
+    if (isset($_POST['editSupply'])) {
+        $supid = $_POST['supid'];
+        $supplier = $_POST['supplier'];
+        $pname = $_POST['pname'];
+        $quantity = $_POST['quantity'];
+        $delivery = $_POST['delivery'];
+        $user = $_POST['user'];
+        $unit = $_POST['unit'];
+    
+        $sql = "UPDATE supplies 
+                SET sid = '$supplier', item = '$pname', quantity = '$quantity', unit = '$unit', deliverydate = '$delivery', approvedby = '$user'
+                WHERE supid = '$supid'";
+    
+        $result = mysqli_query($conn, $sql);
+    
+        if ($result) {
+            header("Location: supplies.php?update=true");
+        } else {
+            header("Location: supplies.php?error=true");
+        }
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -160,6 +183,122 @@ if (!isset($_SESSION['uid'])) {
                                 </div>
                             </div>
                         </div>
+                            <!-- Edit Modal -->
+                            <div class="modal fade" id="editmodal" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header border-0">
+                                            <h5 class="modal-title">
+                                                <span class="fw-mediumbold"> Edit</span>
+                                                <span class="fw-light"> Supply </span>
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="editForm" action="editsupply.php" method="POST">
+                                                <input type="hidden" id="editSupId" name="supid">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group form-group-default">
+                                                            <label>Supplier</label>
+                                                            <select id="editSupplier" name="supplier" class="form-control" required>
+                                                                <option value="" selected disabled>Select...</option>
+                                                                <?php
+                                                                $sql = "SELECT * FROM supplier WHERE status = 1";
+                                                                $result = mysqli_query($conn, $sql);
+                                                                if (mysqli_num_rows($result) > 0) {
+                                                                    while ($row = mysqli_fetch_assoc($result)) {
+                                                                        echo '<option value="' . $row['sid'] . '">' . $row['firstname'] . ' ' . $row['lastname'] . '</option>';
+                                                                    }
+                                                                }
+                                                                ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group form-group-default">
+                                                            <label>Product Name</label>
+                                                            <input id="editPname" name="pname" type="text" class="form-control" placeholder="" required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group form-group-default">
+                                                            <label>Quantity</label>
+                                                            <input id="editQuantity" name="quantity" type="number" class="form-control" placeholder="" required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group form-group-default">
+                                                            <label>Measurement</label>
+                                                            <select id="editUnit" name="unit" class="form-control" required>
+                                                                <option value="pcs">pcs</option>
+                                                                <option value="kilo">kilo</option>
+                                                                <option value="cm">cm</option>
+                                                                <option value="box">box</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group form-group-default">
+                                                            <label>Date & Time of Delivery</label>
+                                                            <input id="editDelivery" name="delivery" type="datetime-local" class="form-control" required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group form-group-default">
+                                                            <label>Approved/Received by:</label>
+                                                            <select id="editUser" name="user" class="form-control" required>
+                                                                <option value="" selected disabled>Select...</option>
+                                                                <?php
+                                                                $sql = "SELECT * FROM useraccount
+                                                                        JOIN userinfo ON userinfo.infoid = useraccount.infoid
+                                                                        WHERE useraccount.levelid != 3 AND useraccount.status = 1";
+                                                                $result = mysqli_query($conn, $sql);
+                                                                if (mysqli_num_rows($result) > 0) {
+                                                                    while ($row = mysqli_fetch_assoc($result)) {
+                                                                        echo '<option value="' . $row['uid'] . '">' . $row['firstname'] . ' ' . $row['lastname'] . '</option>';
+                                                                    }
+                                                                }
+                                                                ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="submit" id="editSupply" name="editSupply" class="btn btn-primary">Save Changes</button>
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Archive Modal -->
+                                    <div class="modal fade" id="archivemodal" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header border-0">
+                                                    <h5 class="modal-title">
+                                                        <span class="fw-mediumbold"> Archive</span>
+                                                        <span class="fw-light"> Supply </span>
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="archiveForm" action="archivesupply.php" method="POST">
+                                                        <input type="hidden" id="archiveSupId" name="supid">
+                                                        <p>Are you sure you want to archive this supply?</p>
+                                                </div>
+                                                <div class="modal-footer border-0">
+                                                    <button type="submit" id="archiveSupply" name="archiveSupply" class="btn btn-primary">Yes, Archive</button>
+                                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
 
                         <div class="table-responsive">
                             <table id="add-row" class="display table table-striped table-hover">
@@ -204,13 +343,18 @@ if (!isset($_SESSION['uid'])) {
                                         <td><?php echo $name ?></td>
                                         <td>
                                             <div class="form-button-action">
-                                                <a href="#" class="btn btn-link btn-success edit-button" data-bs-toggle="modal" data-bs-target="#editmodal" data-account-id="<?php echo $uid?>" data-account-fname="<?php echo $firstname?>" data-account-lname="<?php echo $lastname?>"
-                                                    data-account-gender="<?php echo $gender?>" data-account-contact="<?php echo $contact?>" data-account-address="<?php echo $address?>" data-account-type="<?php echo $type?>" data-account-email="<?php echo $email?>" data-account-cbname="<?php echo $cbname?>">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="#" class="btn btn-link btn-primary archive-button" data-bs-toggle="modal" data-bs-target="#archivemodal" data-account-id="<?php echo $uid?>">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                            <a href="#" class="btn btn-link btn-success edit-button" data-bs-toggle="modal" data-bs-target="#editmodal"
+                                                data-sup-id="<?php echo $supid ?>" data-supplier="<?php echo $sid ?>" data-pname="<?php echo $item ?>"
+                                                data-quantity="<?php echo $quantity ?>" data-unit="<?php echo $unit ?>" data-delivery="<?php echo $date ?>"
+                                                data-user="<?php echo $uid ?>">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                            <a href="#" class="btn btn-link btn-primary archive-button" data-sup-id="<?php echo $supid ?>">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+
+
                                             </div>
                                         </td>
                                     </tr>
@@ -271,6 +415,78 @@ if (!isset($_SESSION['uid'])) {
     </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+$(document).ready(function() {
+    $('.archive-button').click(function() {
+        var supid = $(this).data('sup-id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to restore this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, archive it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'archivesupply.php',
+                    data: { archiveSupply: true, supid: supid },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire(
+                                'Archived!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                window.location.href = "supplies.php?archive=true";
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function() {
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong!',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    $('.edit-button').click(function() {
+        var supid = $(this).data('sup-id');
+        var supplier = $(this).data('supplier');
+        var pname = $(this).data('pname');
+        var quantity = $(this).data('quantity');
+        var unit = $(this).data('unit');
+        var delivery = $(this).data('delivery');
+        var user = $(this).data('user');
+
+        $('#editSupId').val(supid);
+        $('#editSupplier').val(supplier);
+        $('#editPname').val(pname);
+        $('#editQuantity').val(quantity);
+        $('#editUnit').val(unit);
+        $('#editDelivery').val(delivery);
+        $('#editUser').val(user);
+    });
+});
+</script>
 
 <script>
 $(document).ready(function() {
