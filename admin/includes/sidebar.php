@@ -106,11 +106,6 @@
                       </a>
                     </li>
                     <li>
-                      <a href="components/gridsystem.html">
-                        <span class="sub-item">Sales Report</span>
-                      </a>
-                    </li>
-                    <li>
                       <a href="payment.php">
                         <span class="sub-item">Payment</span>
                       </a>
