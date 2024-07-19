@@ -619,6 +619,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
     <?php include('includes/footer.php'); ?>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function showAlert(type, message) {
+            Swal.fire({
+                icon: type,
+                text: message,
+            });
+        }
+
+        function checkURLParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success') && urlParams.get('success') === 'true') {
+                showAlert('success', 'Order return successfully!');
+            } else if (urlParams.has('success') && urlParams.get('success') === 'false') {
+                showAlert('error', 'Something went wrong!');
+            } 
+        }
+        window.onload = checkURLParams;
+    </script>
+
     <script>
         $(document).on('click', '.cancel_btn', function () {
             var orderCode = $(this).data('order-code');
