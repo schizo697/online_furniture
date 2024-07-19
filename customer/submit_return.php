@@ -8,47 +8,93 @@ if (isset($_SESSION['uid'])) {
         $order_code = $_POST['order_code'];
         $reason = $_POST['reason'];
         $desc = $_POST['description'];
+        $status = $_POST['return_status'];
 
+        // Check if a file was uploaded and there were no errors
         if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
             $uploadDir = 'return/';
-            
             $fileTmpPath = $_FILES['image']['tmp_name'];
             $fileName = $_FILES['image']['name'];
             $fileSize = $_FILES['image']['size'];
             $fileType = $_FILES['image']['type'];
             $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif']; // Define allowed file types
+            $maxFileSize = 5 * 1024 * 1024; // 5MB
 
-            // Generate a unique filename using a combination of a unique ID and the original file extension
-            $newFileName = uniqid('img_', true) . '.' . $fileExtension;
-            $uploadFile = $uploadDir . $newFileName;
+            // Check file extension and size
+            if (in_array($fileExtension, $allowedExtensions) && $fileSize <= $maxFileSize) {
+                $newFileName = uniqid('img_', true) . '.' . $fileExtension;
+                $uploadFile = $uploadDir . $newFileName;
 
-            if (move_uploaded_file($fileTmpPath, $uploadFile)) {
-                $return = "INSERT INTO order_return (order_code, reason, description, img) VALUES ('$order_code', '$reason', '$desc', '$newFileName')";
-                $returnres = mysqli_query($conn, $return);
-                
-                if ($returnres) {
-                    $order_update = "UPDATE orders SET osid = 4 WHERE order_code = '$order_code'";
-                    $order_updateres = mysqli_query($conn, $order_update);
-                    ?>
-                    <script>
-                        window.location.href = 'purchase.php?order_code=<?php echo $order_code ?>&success=true';
-                    </script>
-                    <?php
-                    exit;
+                // Move uploaded file to the destination directory
+                if (move_uploaded_file($fileTmpPath, $uploadFile)) {
+                    // Prepare the SQL statement
+                    $stmt = $conn->prepare("INSERT INTO order_return (order_code, reason, description, img, return_status) VALUES (?, ?, ?, ?, 'Pending')");
+                    $stmt->bind_param("ssss", $order_code, $reason, $desc, $newFileName);
+
+                    if ($stmt->execute()) {
+                        $stmt->close();
+
+                        // Update order status
+                        $stmt = $conn->prepare("UPDATE orders SET osid = 4 WHERE order_code = ?");
+                        $stmt->bind_param("s", $order_code);
+                        if ($stmt->execute()) {
+                            $stmt->close();
+                            ?>
+                            <script>
+                                window.location.href = 'purchase.php';
+                            </script>
+                            <?php
+                            exit;
+                        } else {
+                            $stmt->close();
+                            ?>
+                            <script>
+                                alert('Error updating order status.');
+                                window.location.href = 'purchase.php';
+                            </script>
+                            <?php
+                            exit;
+                        }
+                    } else {
+                        $stmt->close();
+                        ?>
+                        <script>
+                            alert('Error submitting return request.');
+                            window.location.href = 'purchase.php';
+                        </script>
+                        <?php
+                        exit;
+                    }
                 } else {
-                    ?>
-                    <script>
-                        window.location.href = 'purchase.php?order_code=<?php echo $order_code ?>&success=false';
-                    </script>
-                    <?php
-                    exit;
+                    echo "Possible file upload attack!";
                 }
             } else {
-                echo "Possible file upload attack!\n";
+                ?>
+                <script>
+                    alert('Invalid file type or file size too large.');
+                    window.history.back();
+                </script>
+                <?php
+                exit;
             }
+        } else {
+            // Handle case when no file is uploaded
+            ?>
+            <script>
+                alert('No file uploaded or there was an error with the upload.');
+                window.history.back();
+            </script>
+            <?php
+            exit;
         }
-        
-        // You can now proceed with other processing like saving the return request details to the database
     }
+} else {
+    ?>
+    <script>
+        window.location.href = '../login.php';
+    </script>
+    <?php
+    exit();
 }
 ?>

@@ -75,6 +75,10 @@ if (!isset($_SESSION['uid'])) {
                                         <label for="image" class="form-label">Upload Image</label>
                                         <input type="file" class="form-control" id="image" name="image">
                                     </div>
+                                    <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                </div>
                                     <button type="submit" name="btnSubmit" class="btn btn-success">Submit Return Request</button>
                                 </form>
                             </div>
@@ -125,7 +129,7 @@ if (!isset($_SESSION['uid'])) {
             descriptionDiv.style.display = "none";
         });
      </script>
-
+<br><br>
     <?php include('includes/footer.php'); ?>
 
     <!-- Back to Top Button -->

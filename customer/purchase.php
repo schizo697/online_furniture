@@ -262,83 +262,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                         </div>
                     </div>
 
-                        <!-- Return Orders Tab -->
+                       <!-- Return Orders Tab -->
                         <div class="tab-pane fade" id="return" role="tabpanel" aria-labelledby="return-tab">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2>Shopping Cart - Return/Refund</h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">Order Code</th>
-                                                <th class="text-center">Product Name & Details</th>
-                                                <th class="text-right">Product Price</th>
-                                                <th class="text-center">Quantity</th>
-                                                <th class="text-right">Total Price</th>
-                                                <th class="text-center">Date Order</th>
-                                                <th class="text-center">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php
-                                            $orders_query = "SELECT * FROM orders 
-                                                JOIN furniture ON orders.pid = furniture.pid 
-                                                WHERE orders.osid = '4' AND orders.uid = ?";
-                                            $stmt = $conn->prepare($orders_query);
-                                            $stmt->bind_param("i", $_SESSION['uid']);
-                                            $stmt->execute();
-                                            $order_res = $stmt->get_result();
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>Shopping Cart - Return/Refund</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Order Code</th>
+                                                    <th class="text-center">Product Name & Details</th>
+                                                    <th class="text-right">Product Price</th>
+                                                    <th class="text-center">Quantity</th>
+                                                    <th class="text-right">Total Price</th>
+                                                    <th class="text-center">Date Order</th>
+                                                    <th class="text-center">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                $orders_query = "SELECT orders.*, furniture.*, order_return.return_status 
+                                                                FROM orders 
+                                                                JOIN furniture ON orders.pid = furniture.pid 
+                                                                LEFT JOIN order_return ON orders.order_code = order_return.order_code
+                                                                WHERE orders.osid IN (4, 2, 5,6) AND orders.uid = ?";
+                                                $stmt = $conn->prepare($orders_query);
+                                                $stmt->bind_param("i", $_SESSION['uid']);
+                                                $stmt->execute();
+                                                $order_res = $stmt->get_result();
 
-                                            if ($order_res && $order_res->num_rows > 0) {
-                                                $orders = [];
-                                                while ($order_row = $order_res->fetch_assoc()) {
-                                                    $order_code = $order_row['order_code'];
-                                                    if (!isset($orders[$order_code])) {
-                                                        $orders[$order_code] = [
-                                                            'product_details' => [],
-                                                            'total' => 0,
-                                                            'date' => $order_row['date']
+                                                if ($order_res && $order_res->num_rows > 0) {
+                                                    $orders = [];
+                                                    while ($order_row = $order_res->fetch_assoc()) {
+                                                        $order_code = $order_row['order_code'];
+                                                        if (!isset($orders[$order_code])) {
+                                                            $orders[$order_code] = [
+                                                                'product_details' => [],
+                                                                'total' => 0,
+                                                                'date' => $order_row['date'],
+                                                                'return_status' => $order_row['return_status'] // Added this line
+                                                            ];
+                                                        }
+                                                        $orders[$order_code]['product_details'][] = [
+                                                            'pname' => $order_row['pname'],
+                                                            'price' => $order_row['price'],
+                                                            'qty' => $order_row['qty']
                                                         ];
+                                                        $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
                                                     }
-                                                    $orders[$order_code]['product_details'][] = [
-                                                        'pname' => $order_row['pname'],
-                                                        'price' => $order_row['price'],
-                                                        'qty' => $order_row['qty']
-                                                    ];
-                                                    $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
-                                                }
 
-                                                foreach ($orders as $order_code => $order) {
-                                                    $product_details_str = '';
-                                                    $total_price_str = '';
-                                                    $qty_str = '';
-                                                    foreach ($order['product_details'] as $product) {
-                                                        $product_details_str .= $product['pname'] . '<br>';
-                                                        $total_price_str .= $product['price'] . '<br>';
-                                                        $qty_str .= $product['qty'] . '<br>';
-                                                    }
-                                            ?>
-                                            <tr>
-                                                <td><?php echo $order_code; ?></td>
-                                                <td><?php echo $product_details_str; ?></td>
-                                                <td><?php echo $total_price_str; ?></td>
-                                                <td><?php echo $qty_str; ?></td>
-                                                <td><?php echo $order['total']; ?></td>
-                                                <td><?php echo $order['date']; ?></td>
-                                                    <td>
-                                                    <!-- <a href="product_view.php?order_code=<?php echo $order_code ?>"
-                                                        class="btn btn-warning btn-sm">
-                                                        <i class="fas fa-eye"></i> View
-                                                    </a>
-                                                    <button type="button" class="btn btn-success btn-sm buy_again_btn" 
-                                                    data-order-code="<?php echo $order_code; ?>">
-                                                    Buy Again
-                                                </button> -->
-
-                                                    </td>
+                                                    foreach ($orders as $order_code => $order) {
+                                                        $product_details_str = '';
+                                                        $total_price_str = '';
+                                                        $qty_str = '';
+                                                        foreach ($order['product_details'] as $product) {
+                                                            $product_details_str .= $product['pname'] . '<br>';
+                                                            $total_price_str .= number_format($product['price'], 2) . '<br>'; 
+                                                            $qty_str .= $product['qty'] . '<br>';
+                                                        }
+                                                ?>
+                                                <tr>
+                                                    <td class="text-center"><?php echo $order_code; ?></td>
+                                                    <td><?php echo $product_details_str; ?></td>
+                                                    <td class="text-right"><?php echo $total_price_str; ?></td>
+                                                    <td class="text-center"><?php echo $qty_str; ?></td>
+                                                    <td class="text-right"><?php echo number_format($order['total'], 2); ?></td> 
+                                                    <td class="text-center"><?php echo $order['date']; ?></td>
+                                                    <td class="text-center"><?php echo $order['return_status']; ?></td>
                                                 </tr>
                                                 <?php
                                                     }
@@ -347,12 +340,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                 }
                                                 ?>
                                             </tbody>
-
-                                    </table>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+
 
                     <!-- Cancelled Orders Tab -->
                     <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
@@ -546,28 +539,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
             </div>
         </div>
     </div>
-      <!-- Cancel Modal -->
-      <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="cancelOrderForm" method="post" action="cancel_order.php">
-                        <input type="hidden" id="cancel_order_code" name="order_code" value="">
-                        <p>Are you sure you want to cancel this order?</p>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-danger">Cancel Order</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Cancel Modal -->
+  
 
     <!-- Return Modal -->
     <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
@@ -639,26 +611,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
         window.onload = checkURLParams;
     </script>
 
-    <script>
-        $(document).on('click', '.cancel_btn', function () {
-            var orderCode = $(this).data('order-code');
-            $('#cancel_order_code').val(orderCode);
-            $('#cancelModal').modal('show');
-        });
+<script>
+    $(document).on('click', '.cancel_btn', function () {
+        var orderCode = $(this).data('order-code');
+        $('#cancel_order_code').val(orderCode);
+        $('#cancelModal').modal('show');
+    });
 
-        $(document).on('click', '.return_btn', function () {
-            var orderCode = $(this).data('order-code');
-            $('#return_order_code').val(orderCode);
-            $('#returnModal').modal('show');
-        });
+    $(document).on('click', '.return_btn', function () {
+        var orderCode = $(this).data('order-code');
+        $('#return_order_code').val(orderCode);
+        $('#returnModal').modal('show');
+    });
 
-        $(document).on('click', '.refund_btn', function () {
-            var orderCode = $(this).data('order-code');
-            $('#refund_order_code').val(orderCode);
-            $('#refundModal').modal('show');
-        });
-    </script>
-    <script>
+    $(document).on('click', '.refund_btn', function () {
+        var orderCode = $(this).data('order-code');
+        $('#refund_order_code').val(orderCode);
+        $('#refundModal').modal('show');
+    });
+</script>
+
+<script>
     $(document).ready(function() {
         $('.cancel_btn').click(function() {
             var orderCode = $(this).data('order-code');

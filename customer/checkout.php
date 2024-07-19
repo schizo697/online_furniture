@@ -328,7 +328,7 @@ if(isset($_SESSION['uid'])){
         xhr.open('POST', 'place_order.php', true);
         xhr.onload = function() {
             if (xhr.status === 200) {
-                window.location.href = 'purchase.php?success=true';
+                window.location.href = 'purchase.php';
             } else {
                 alert('An error occurred!');
             }
