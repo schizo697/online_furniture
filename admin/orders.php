@@ -11,9 +11,20 @@ if (!isset($_SESSION['uid'])) {
 // Handle decline action
 if (isset($_POST['decline'])) {
     $order_code = mysqli_real_escape_string($conn, $_POST['decline']);
-    $update_query = "UPDATE orders SET osid = '0' WHERE order_code = '$order_code'";
-    if (!mysqli_query($conn, $update_query)) {
+    
+    // Restore product quantities in furniture table
+    $restore_qty_query = "UPDATE furniture
+                          INNER JOIN orders ON furniture.pid = orders.pid
+                          SET furniture.quantity = furniture.quantity + orders.qty
+                          WHERE orders.order_code = '$order_code'";
+    if (!mysqli_query($conn, $restore_qty_query)) {
         echo "Error updating record: " . mysqli_error($conn);
+    } else {
+        // Update order status to declined (osid = 0)
+        $update_query = "UPDATE orders SET osid = '0' WHERE order_code = '$order_code'";
+        if (!mysqli_query($conn, $update_query)) {
+            echo "Error updating record: " . mysqli_error($conn);
+        }
     }
 }
 
@@ -25,24 +36,9 @@ if (isset($_POST['confirm'])) {
     $update_query = "UPDATE orders SET osid = '2' WHERE order_code = '$order_code'";
     if (!mysqli_query($conn, $update_query)) {
         echo "Error updating record: " . mysqli_error($conn);
-    } else {
-        // Reduce product quantities in furniture table
-        $reduce_qty_query = "UPDATE furniture
-                             INNER JOIN orders ON furniture.pid = orders.pid
-                             SET furniture.quantity = furniture.quantity - orders.qty
-                             WHERE orders.order_code = '$order_code'";
-        if (!mysqli_query($conn, $reduce_qty_query)) {
-            echo "Error updating record: " . mysqli_error($conn);
-        }
-
-        // Update product status to "Not Available" if quantity is zero or less
-        $update_status_query = "UPDATE furniture
-                                SET status = 'Not Available'
-                                WHERE quantity <= 0";
-        if (!mysqli_query($conn, $update_status_query)) {
-            echo "Error updating record: " . mysqli_error($conn);
-        }
     }
+
+    // Note: Removed the quantity reduction logic
 }
 ?>
 
@@ -50,6 +46,7 @@ if (isset($_POST['confirm'])) {
 <html lang="en">
 <head>
     <?php include('includes/topbar.php'); ?>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <?php include('includes/sidebar.php'); ?>
@@ -84,7 +81,6 @@ if (isset($_POST['confirm'])) {
                                         <th>GCash Receipt</th> 
                                         <th>Date of Order</th>
                                         <th>Action</th>
-                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -117,7 +113,6 @@ if (isset($_POST['confirm'])) {
                                                 $mop = htmlspecialchars($order_row['mop']);
                                                 $date = htmlspecialchars($order_row['order_date']);
                                                 $gcash_receipt = isset($order_row['gcash_receipt']) ? htmlspecialchars($order_row['gcash_receipt']) : ''; 
-
                                 ?>
                                     <tr>                                     
                                         <td><?php echo $order_code; ?></td>
@@ -132,7 +127,6 @@ if (isset($_POST['confirm'])) {
                                             <?php endif; ?>
                                         </td>
                                         <td><?php echo $date; ?></td>
-                                        
                                         <td>
                                             <div class="form-button-action">
                                                 <form action="view_order.php" method="GET" style="display: inline;">
@@ -141,21 +135,14 @@ if (isset($_POST['confirm'])) {
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 </form>
-                                                <form action="" method="POST" style="display: inline;">
-                                                    <input type="hidden" name="confirm" value="<?php echo $order_code; ?>">
-                                                    <button type="submit" data-bs-toggle="tooltip" title="Confirm" class="btn btn-link btn-primary">
-                                                        <i class="fas fa-check-square"></i>
-                                                    </button>
-                                                </form>
-                                                <form action="" method="POST" style="display: inline;">
-                                                    <input type="hidden" name="decline" value="<?php echo $order_code; ?>">
-                                                    <button type="submit" data-bs-toggle="tooltip" title="Decline" class="btn btn-link btn-danger">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button" class="btn btn-link btn-primary" onclick="confirmOrder('<?php echo $order_code; ?>')">
+                                                    <i class="fas fa-check-square"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-link btn-danger" onclick="declineOrder('<?php echo $order_code; ?>')">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
                                             </div>
                                         </td>
-                                      
                                     </tr>
                                 <?php
                                             }
@@ -217,6 +204,58 @@ if (isset($_POST['confirm'])) {
             pageLength: 5,
         });
     });
+
+    function confirmOrder(orderCode) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to confirm this order?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, confirm it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit the form to confirm the order
+                let form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '';
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'confirm';
+                input.value = orderCode;
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+
+    function declineOrder(orderCode) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to decline this order?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, decline it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit the form to decline the order
+                let form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '';
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'decline';
+                input.value = orderCode;
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
 </script>
 
 </html>
