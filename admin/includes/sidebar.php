@@ -76,11 +76,11 @@
                         <span class="sub-item">Inventory Record</span>
                       </a>
                     </li>
-                    <li>
+                    <!-- <li>
                       <a href="components/notifications.html">
                         <span class="sub-item">Inventory Report</span>
                       </a>
-                    </li>   
+                    </li>    -->
                   </ul>
                 </div>
               </li>
@@ -105,11 +105,11 @@
                         <span class="sub-item">Sales Record</span>
                       </a>
                     </li>
-                    <li>
+                    <!-- <li>
                       <a href="components/gridsystem.html">
                         <span class="sub-item">Sales Report</span>
                       </a>
-                    </li>
+                    </li> -->
                     <li>
                       <a href="payment.php">
                         <span class="sub-item">Payment</span>
@@ -197,12 +197,17 @@
                   <ul class="nav nav-collapse">
                     <li>
                       <a href="sidebar-style-2.html">
-                        <span class="sub-item">Report 1</span>
+                        <span class="sub-item">Users List</span>
                       </a>
                     </li>
                     <li>
                       <a href="icon-menu.html">
-                        <span class="sub-item">Report 2</span>
+                        <span class="sub-item">Inventory Report</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="icon-menu.html">
+                        <span class="sub-item">Sales Report</span>
                       </a>
                     </li>
                   </ul>
