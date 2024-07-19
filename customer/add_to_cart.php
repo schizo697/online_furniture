@@ -3,13 +3,13 @@ session_start();
 include('../conn.php');
 
 // Function to send JSON response
-function sendJsonResponse($status, $message) {
-    echo json_encode(['status' => $status, 'message' => $message]);
+function sendJsonResponse() {
+    echo json_encode([]);
     exit();
 }
 
 if (!isset($_SESSION['uid'])) {
-    sendJsonResponse('not_logged_in', 'User is not logged in.');
+    sendJsonResponse();
 }
 
 $uid = $_SESSION['uid'];
@@ -31,9 +31,9 @@ if ($cart_check_res->num_rows > 0) {
     $update_stmt = $conn->prepare($cart_update_query);
     $update_stmt->bind_param("iii", $qty, $pid, $uid);
     if ($update_stmt->execute()) {
-        sendJsonResponse('success', 'Product quantity updated in cart.');
+        sendJsonResponse();
     } else {
-        sendJsonResponse('error', 'Failed to update cart.');
+        sendJsonResponse();
     }
 } else {
     // Product not in cart, insert new entry
@@ -41,9 +41,9 @@ if ($cart_check_res->num_rows > 0) {
     $insert_stmt = $conn->prepare($cart_insert_query);
     $insert_stmt->bind_param("ii", $pid, $uid);
     if ($insert_stmt->execute()) {
-        sendJsonResponse('success', 'Product added to cart.');
+        sendJsonResponse();
     } else {
-        sendJsonResponse('error', 'Failed to add product to cart.');
+        sendJsonResponse();
     }
 }
 

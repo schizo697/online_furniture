@@ -109,6 +109,7 @@
                                         <div class="p-4 border-top-0 rounded-bottom">
                                             <h4><?php echo $row['pname']; ?></h4>
                                             <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $row['price']; ?></p>
+                                            <p class="text-dark fs-5 fw-bold mb-2">Available Stock: <?php echo $row['quantity']; ?></p>
                                             <div class="button-group">
                                                 <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="<?php echo $row['pid'];?>">
                                                     <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
@@ -145,30 +146,33 @@
                         $fetchProductsByType = $conn->query($getProductsByType);
 
                         // Display products of this type
-                        while($productRow = mysqli_fetch_assoc($fetchProductsByType)) {
-                            echo '<div class="col-md-6 col-lg-4 col-xl-3">';  
-                            echo '<div class="rounded border border-secondary position-relative product-item text-center">';
-                            echo '<div class="product-img">';
-                            echo '<img src="../admin/assets/img/'.$productRow['image'].'" class="img-fluid w-100 rounded-top" alt="">';
-                            echo '</div>';
-                            echo '<div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">'.$productRow['type'].'</div>';
-                            echo '<div class="p-4 border-top-0 rounded-bottom">';
-                            echo '<h4>'.$productRow['pname'].'</h4>';
-                            // Add description if needed
-                            echo '<p class="text-dark fs-5 fw-bold mb-2">₱'.$productRow['price'].'</p>';
-                            echo '<div class="button-group">';
-                            echo '<button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="'.$productRow['pid'].'">';
-                            echo '<i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart';
-                            echo '</button>';
-                            echo '<a href="view_product.php?id='.$productRow['pid'].'" class="btn border border-secondary rounded-pill px-3 text-primary">';
-                            echo '<i class="fa fa-eye me-2 text-primary"></i> View';
-                            echo '</a>';
-                            echo '</div>';
-                            echo '</div>';
-                            echo '</div>';
-                            echo '</div>';
+                        while ($productRow = mysqli_fetch_assoc($fetchProductsByType)) {
+                            ?>
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <div class="rounded border border-secondary position-relative product-item text-center">
+                                    <div class="product-img">
+                                        <img src="../admin/assets/img/<?php echo $productRow['image']; ?>" class="img-fluid w-100 rounded-top" alt="">
+                                    </div>
+                                    <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
+                                        <?php echo $productRow['type']; ?>
+                                    </div>
+                                    <div class="p-4 border-top-0 rounded-bottom">
+                                        <h4><?php echo $productRow['pname']; ?></h4>
+                                        <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $productRow['price']; ?></p>
+                                        <p class="text-dark fs-5 fw-bold mb-2">Available Stock: <?php echo $productRow['quantity']; ?></p>
+                                        <div class="button-group">
+                                            <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="<?php echo $productRow['pid']; ?>">
+                                                <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                            </button>
+                                            <a href="view_product.php?id=<?php echo $productRow['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                <i class="fa fa-eye me-2 text-primary"></i> View
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
                         }
-
                         echo '</div>';
                         echo '</div>';
                     }
@@ -185,36 +189,46 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function(){
-            $('.add-to-cart').click(function(){
-                var pid = $(this).data('pid');
+    $(document).ready(function(){
+        $('.add-to-cart').click(function(){
+            var pid = $(this).data('pid');
 
-                $.ajax({
-                    url: 'add_to_cart.php',
-                    type: 'POST',
-                    data: {
-                        pid: pid,
-                    },
-                    success: function(response){
-                        Swal.fire({
-                            icon: 'success',
-                            text: response,
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    },
-                    error: function(xhr, status, error){
-                        Swal.fire({
-                            icon: 'error',
-                            text: 'An error occurred. Please try again.',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        console.error('AJAX Error: ' + status + ' ' + error);
-                    }
-                });
+            Swal.fire({
+                icon: 'question',
+                text: 'Add this product to your cart?',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, add it!',
+                cancelButtonText: 'No, cancel!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'add_to_cart.php',
+                        type: 'POST',
+                        data: {
+                            pid: pid,
+                        },
+                        success: function(response){
+                            Swal.fire({
+                                icon: 'success',
+                                text: 'Product added to cart.',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        },
+                        error: function(xhr, status, error){
+                            Swal.fire({
+                                icon: 'error',
+                                text: 'An error occurred. Please try again.',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            console.error('AJAX Error: ' + status + ' ' + error);
+                        }
+                    });
+                }
             });
         });
-    </script>
+    });
+</script>
 </body>
 </html>
