@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                     </div>
                                     
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editAccount" style="margin-left: 290px"> Edit </button>
-                                    <a href="../login.php?logout=true">
+                                    <a href="../index.php?logout=true">
                                         <button type="button" class="btn btn-danger">Logout</button>
                                     </a>
                                 </form>

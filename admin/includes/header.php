@@ -207,7 +207,7 @@ if (isset($_SESSION['uid'])) {
                       <li>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="profile.php">My Profile</a>
-                        <a href="../login.php?logout=true">
+                        <a href="../index.php?logout=true">
                           <button type="button" class="dropdown-item">Logout</button>
                         </a>
                       </li>
