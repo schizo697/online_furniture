@@ -24,10 +24,8 @@ if(isset($_SESSION['uid'])){
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <br>
 <div class="container">
-
     <div class="row">
         <div class="col-xl-8">
-
             <div class="card">
                 <div class="card-body">
                     <ol class="activity-checkout mb-0 px-4 mt-3">
