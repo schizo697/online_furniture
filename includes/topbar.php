@@ -54,8 +54,8 @@ include 'conn.php';
         <div class="container topbar bg-primary d-none d-lg-block">
             <div class="d-flex justify-content-between">
                 <div class="top-info ps-2">
-                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">123 Street, New York</a></small>
-                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">Email@Example.com</a></small>
+                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">General Santos City</a></small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">mpmfurniture@gmail.com</a></small>
                 </div>
                 <img src="img/Logo1.png" alt="Logo" class="logo">
             </div>
@@ -71,11 +71,11 @@ include 'conn.php';
                     <div class="navbar-nav mx-auto">
                         <a href="index.php" class="nav-item nav-link active">Home</a>
                         <a href="shop.php" class="nav-item nav-link">Shop</a>
-                        <a href="customize.php" class="nav-item nav-link">Customized</a>
-                        <a href="purchase.php" class="nav-item nav-link">My Purchase</a>
+                        <a href="#" class="nav-item nav-link">About Us</a>
+                        <!-- <a href="login.php" class="nav-item nav-link">My Purchase</a> -->
                     </div>
                     <div class="d-flex m-3 me-0">
-                       <?php
+                       <!-- <?php
                        if (isset($_SESSION['uid'])) {
                            $stmt = $conn->prepare("SELECT COUNT(DISTINCT pid) AS product_count FROM cart WHERE uid = ?");
                            $stmt->bind_param("i", $_SESSION['uid']);
@@ -94,14 +94,10 @@ include 'conn.php';
                         </a>
                         <a href="profile.php" class="my-auto me-4">
                             <i class="fas fa-user fa-2x"></i>
-                        </a>
-                        <?php 
-                        if(!isset($_SESSION['uid'])){
-                            ?> 
+                        </a> -->
+
                             <a href="login.php" class="btn btn-outline-primary me-4">Login</a>
-                            <?php
-                        }
-                        ?>
+                           
                     </div>
                 </div>
             </nav>

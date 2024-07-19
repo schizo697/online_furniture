@@ -105,10 +105,12 @@
                                             <!-- <p><?php echo $row['description']; ?></p> -->
                                             <p class="text-dark fs-5 fw-bold mb-2">₱<?php echo $row['price']; ?></p>
                                             <div class="button-group">
-                                                <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-pid="<?php echo $row['pid'];?>">
+                                                <a href = "login.php">
+                                                <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart">
                                                     <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
                                                 </button>
-                                                <a href="customer/view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                </a>
+                                                <a href="view_product.php?id=<?php echo $row['pid']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
                                                     <i class="fa fa-eye me-2 text-primary"></i> View
                                                 </a>
                                             </div>
