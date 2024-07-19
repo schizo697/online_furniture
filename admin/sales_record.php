@@ -58,7 +58,7 @@ $order_res = fetchSalesRecords($conn);
                             <table id="order-table" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Product ID</th>
+                                   
                                         <th>Product Name</th>
                                         <th>Image</th>
                                         <th>Total Quantity Sold</th>
@@ -76,7 +76,7 @@ $order_res = fetchSalesRecords($conn);
                                             $total_price = $order_row['total_price'];
                                     ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($pid); ?></td>
+                                      
                                         <td>
                                             <img src="assets/img/<?php echo htmlspecialchars($images[0]); ?>" alt="Product Image" style="max-width: 100px;">
                                         </td>
