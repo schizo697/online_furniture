@@ -29,14 +29,14 @@ if (!isset($_SESSION['uid'])) {
                 <div class="card">
                     <div class="card-body">
                         <?php
-                        if (isset($_GET['order_code'])) {
-                            $order_code = $_GET['order_code'];
+                        if (isset($_GET['order_id'])) {
+                            $order_id = $_GET['order_id'];
                             $query = "SELECT orders.*, furniture.pname, furniture.price, furniture.image 
                                       FROM orders
                                       JOIN furniture ON orders.pid = furniture.pid
-                                      WHERE orders.order_code = ? AND orders.uid = ?";
+                                      WHERE orders.order_id = ? AND orders.uid = ?";
                             $stmt = $conn->prepare($query);
-                            $stmt->bind_param("ii", $order_code, $_SESSION['uid']);
+                            $stmt->bind_param("ii", $order_id, $_SESSION['uid']);
                             $stmt->execute();
                             $result = $stmt->get_result();
 
@@ -56,7 +56,7 @@ if (!isset($_SESSION['uid'])) {
                                     </div>
                                 </div>
                                 <form action="submit_return.php" method="post" enctype="multipart/form-data" class="mt-4">
-                                    <input type="hidden" name="order_code" value="<?php echo $order_code; ?>">
+                                    <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
                                     <div class="mb-2">
                                         <label for="reason" class="form-label">Reason for Return</label>
                                         <select class="form-control" id="reason" name="reason" required>

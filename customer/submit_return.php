@@ -5,10 +5,10 @@ include '../conn.php';
 if (isset($_SESSION['uid'])) {
     $uid = $_SESSION['uid'];
     if (isset($_POST['btnSubmit'])) {
-        $order_code = $_POST['order_code'];
+        $order_id = $_POST['order_id'];
         $reason = $_POST['reason'];
         $desc = $_POST['description'];
-        $status = $_POST['return_status'];
+        $status = 'Pending'; // Assuming you want to set the status as 'Pending' initially
 
         // Check if a file was uploaded and there were no errors
         if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
@@ -29,15 +29,15 @@ if (isset($_SESSION['uid'])) {
                 // Move uploaded file to the destination directory
                 if (move_uploaded_file($fileTmpPath, $uploadFile)) {
                     // Prepare the SQL statement
-                    $stmt = $conn->prepare("INSERT INTO order_return (order_code, reason, description, img, return_status) VALUES (?, ?, ?, ?, 'Pending')");
-                    $stmt->bind_param("ssss", $order_code, $reason, $desc, $newFileName);
+                    $stmt = $conn->prepare("INSERT INTO order_return (order_id, reason, description, img, return_status) VALUES (?, ?, ?, ?, ?)");
+                    $stmt->bind_param("sssss", $order_id, $reason, $desc, $newFileName, $status);
 
                     if ($stmt->execute()) {
                         $stmt->close();
 
                         // Update order status
-                        $stmt = $conn->prepare("UPDATE orders SET osid = 4 WHERE order_code = ?");
-                        $stmt->bind_param("s", $order_code);
+                        $stmt = $conn->prepare("UPDATE orders SET osid = 4 WHERE order_id = ?");
+                        $stmt->bind_param("i", $order_id);
                         if ($stmt->execute()) {
                             $stmt->close();
                             ?>

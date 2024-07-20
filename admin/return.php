@@ -10,62 +10,81 @@ if (!isset($_SESSION['uid'])) {
 
 // Handle decline action
 if (isset($_POST['decline'])) {
-    $order_code = $_POST['order_code'];
+    $order_id = $_POST['order_id'];
     $admin_response = $_POST['admin_response']; // Get the admin response from the form
     
-    // Restore product quantities in furniture table
-    $restore_qty_query = "UPDATE furniture
-                          INNER JOIN orders ON furniture.pid = orders.pid
-                          SET furniture.quantity = furniture.quantity + orders.qty
-                          WHERE orders.order_code = ?";
-    $stmt = $conn->prepare($restore_qty_query);
-    $stmt->bind_param("s", $order_code);
-    if (!$stmt->execute()) {
-        echo "Error updating record: " . $stmt->error;
-    } else {
-        // Update order status to declined (osid = 5)
-        $update_order_query = "UPDATE orders SET osid = '5' WHERE order_code = ?";
-        $stmt = $conn->prepare($update_order_query);
-        $stmt->bind_param("s", $order_code);
+    $conn->begin_transaction(); // Start transaction
+
+    try {
+        // Restore product quantities in furniture table
+        $restore_qty_query = "UPDATE furniture
+                              INNER JOIN orders ON furniture.pid = orders.pid
+                              SET furniture.quantity = furniture.quantity + orders.qty
+                              WHERE orders.order_id = ?";
+        $stmt = $conn->prepare($restore_qty_query);
+        $stmt->bind_param("s", $order_id);
         if (!$stmt->execute()) {
-            echo "Error updating order status: " . $stmt->error;
-        } else {
-            // Update return status to Not Approve and save admin response
-            $update_return_query = "UPDATE order_return SET return_status = 'Not Approve', admin_response = ? WHERE order_code = ?";
-            $stmt = $conn->prepare($update_return_query);
-            $stmt->bind_param("ss", $admin_response, $order_code);
-            if (!$stmt->execute()) {
-                echo "Error updating return status: " . $stmt->error;
-            } else {
-                echo "Order declined successfully.";
-            }
+            throw new Exception("Error updating record: " . $stmt->error);
         }
+
+        // Update order status to declined (osid = 5)
+        $update_order_query = "UPDATE orders SET osid = '5' WHERE order_id = ?";
+        $stmt = $conn->prepare($update_order_query);
+        $stmt->bind_param("s", $order_id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error updating order status: " . $stmt->error);
+        }
+
+        // Update return status to Not Approve and save admin response
+        $update_return_query = "UPDATE order_return SET return_status = 'Not Approve', admin_response = ? WHERE order_id = ?";
+        $stmt = $conn->prepare($update_return_query);
+        $stmt->bind_param("ss", $admin_response, $order_id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error updating return status: " . $stmt->error);
+        }
+
+        $conn->commit(); // Commit transaction
+        echo "Order declined successfully.";
+
+    } catch (Exception $e) {
+        $conn->rollback(); // Rollback transaction
+        echo $e->getMessage();
     }
+
     $stmt->close();
 }
 
 // Handle confirm action
 if (isset($_POST['confirm'])) {
-    $order_code = $_POST['order_code'];
+    $order_id = $_POST['order_id'];
     $admin_response = $_POST['admin_response']; // Get the admin response from the form
-    
-    // Update order status to confirmed (osid = 6)
-    $update_order_query = "UPDATE orders SET osid = '6' WHERE order_code = ?";
-    $stmt = $conn->prepare($update_order_query);
-    $stmt->bind_param("s", $order_code);
-    if (!$stmt->execute()) {
-        echo "Error updating order status: " . $stmt->error;
-    } else {
-        // Update return status to Approved and save admin response
-        $update_return_query = "UPDATE order_return SET return_status = 'Approved', admin_response = ? WHERE order_code = ?";
-        $stmt = $conn->prepare($update_return_query);
-        $stmt->bind_param("ss", $admin_response, $order_code);
+
+    $conn->begin_transaction(); // Start transaction
+
+    try {
+        // Update order status to confirmed (osid = 6)
+        $update_order_query = "UPDATE orders SET osid = '6' WHERE order_id = ?";
+        $stmt = $conn->prepare($update_order_query);
+        $stmt->bind_param("s", $order_id);
         if (!$stmt->execute()) {
-            echo "Error updating return status: " . $stmt->error;
-        } else {
-            echo "Order confirmed successfully.";
+            throw new Exception("Error updating order status: " . $stmt->error);
         }
+
+        // Update return status to Approved and save admin response
+        $update_return_query = "UPDATE order_return SET return_status = 'Approved', admin_response = ? WHERE order_id = ?";
+        $stmt->bind_param("ss", $admin_response, $order_id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error updating return status: " . $stmt->error);
+        }
+
+        $conn->commit(); // Commit transaction
+        echo "Order confirmed successfully.";
+
+    } catch (Exception $e) {
+        $conn->rollback(); // Rollback transaction
+        echo $e->getMessage();
     }
+
     $stmt->close();
 }
 ?>
@@ -112,13 +131,13 @@ if (isset($_POST['confirm'])) {
                                 </thead>
                                 <tbody>
                                     <?php 
-                                    $orders_query = "SELECT orders.order_code, CONCAT(userinfo.firstname, ' ', userinfo.lastname) AS customer_name, furniture.pname AS product_name,
+                                    $orders_query = "SELECT orders.order_id, CONCAT(userinfo.firstname, ' ', userinfo.lastname) AS customer_name, furniture.pname AS product_name,
                                                         orders.qty AS quantity, orders.total AS total_amount, orders.mop, orders.date AS order_date, gcash_rec.receipt AS gcash_receipt, order_return.reason AS return_reason, order_return.description AS return_description,
                                                         order_return.img AS img, order_return.return_status AS return_status
                                                     FROM 
                                                         orders 
-                                                    LEFT JOIN gcash_rec ON orders.order_code = gcash_rec.order_code 
-                                                    LEFT JOIN order_return ON orders.order_code = order_return.order_code
+                                                    LEFT JOIN gcash_rec ON orders.order_id = gcash_rec.order_code 
+                                                    LEFT JOIN order_return ON orders.order_id = order_return.order_id
                                                     LEFT JOIN userinfo ON orders.uid = userinfo.infoid 
                                                     LEFT JOIN furniture ON orders.pid = furniture.pid 
                                                     WHERE 
@@ -128,7 +147,7 @@ if (isset($_POST['confirm'])) {
                                     if ($order_res) {
                                         if ($order_res->num_rows > 0) {
                                             while ($order_row = $order_res->fetch_assoc()) {
-                                                $order_code = htmlspecialchars($order_row['order_code']);
+                                                $order_id = htmlspecialchars($order_row['order_id']);
                                                 $customer_name = htmlspecialchars($order_row['customer_name']);
                                                 $product_names = htmlspecialchars($order_row['product_name']);
                                                 $total_amount = htmlspecialchars($order_row['total_amount']);
@@ -137,7 +156,7 @@ if (isset($_POST['confirm'])) {
                                                 $return_img = htmlspecialchars($order_row['img']);
                                     ?>
                                     <tr>
-                                        <td><?php echo $order_code; ?></td>
+                                        <td><?php echo $order_id; ?></td>
                                         <td><?php echo $customer_name; ?></td>
                                         <td><?php echo $product_names; ?></td>
                                         <td><?php echo $total_amount; ?></td>
@@ -147,15 +166,15 @@ if (isset($_POST['confirm'])) {
                                         <td>
                                             <div class="form-button-action">
                                                 <form action="view_order.php" method="GET" style="display: inline;">
-                                                    <input type="hidden" name="order_code" value="<?php echo $order_code; ?>">
+                                                    <input type="hidden" name="order_code" value="<?php echo $order_id; ?>">
                                                     <button type="submit" data-bs-toggle="tooltip" title="View" class="btn btn-link btn-info">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 </form>
-                                                <button type="button" class="btn btn-link btn-primary" onclick="confirmOrder('<?php echo $order_code; ?>')">
+                                                <button type="button" class="btn btn-link btn-primary" onclick="confirmOrder('<?php echo $order_id; ?>')">
                                                     <i class="fas fa-check-square"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-link btn-danger" onclick="declineOrder('<?php echo $order_code; ?>')">
+                                                <button type="button" class="btn btn-link btn-danger" onclick="declineOrder('<?php echo $order_id; ?>')">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </div>
@@ -193,7 +212,7 @@ if (isset($_POST['confirm'])) {
                         <label for="adminConfirmResponse" class="form-label">Reason for Confirm</label>
                         <textarea class="form-control" id="adminConfirmResponse" name="admin_response" required></textarea>
                     </div>
-                    <input type="hidden" id="confirmOrderCode" name="order_code">
+                    <input type="hidden" id="confirmOrderCode" name="order_id">
                     <input type="hidden" name="confirm" value="1">
                 </div>
                 <div class="modal-footer">
@@ -219,7 +238,7 @@ if (isset($_POST['confirm'])) {
                         <label for="adminDeclineResponse" class="form-label">Reason for Decline</label>
                         <textarea class="form-control" id="adminDeclineResponse" name="admin_response" required></textarea>
                     </div>
-                    <input type="hidden" id="declineOrderCode" name="order_code">
+                    <input type="hidden" id="declineOrderCode" name="order_id">
                     <input type="hidden" name="decline" value="1">
                 </div>
                 <div class="modal-footer">
@@ -274,99 +293,21 @@ if (isset($_POST['confirm'])) {
         });
     });
 
-    function confirmOrder(orderCode) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you want to confirm this Refund/Return order?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, confirm it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Show the modal for confirm reason
-                $('#confirmOrderCode').val(orderCode);
-                $('#confirmModal').modal('show');
-            }
+    function confirmOrder(orderId) {
+        document.getElementById('confirmOrderCode').value = orderId;
+        var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'), {
+            keyboard: false
         });
+        confirmModal.show();
     }
 
-    function declineOrder(orderCode) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you want to decline this Refund/Return order?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, decline it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Show the modal for decline reason
-                $('#declineOrderCode').val(orderCode);
-                $('#declineModal').modal('show');
-            }
+    function declineOrder(orderId) {
+        document.getElementById('declineOrderCode').value = orderId;
+        var declineModal = new bootstrap.Modal(document.getElementById('declineModal'), {
+            keyboard: false
         });
+        declineModal.show();
     }
-
-    // Handle confirm form submission
-    $('#confirmForm').on('submit', function(e) {
-        e.preventDefault();
-
-        $.ajax({
-            type: 'POST',
-            url: '', // The same page or separate PHP file to handle confirm
-            data: $(this).serialize(),
-            success: function(response) {
-                Swal.fire({
-                    title: 'Confirmed!',
-                    text: 'The order has been confirmed.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    location.reload();
-                });
-            },
-            error: function(xhr, status, error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'There was an error confirming the order.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    });
-
-    // Handle decline form submission
-    $('#declineForm').on('submit', function(e) {
-        e.preventDefault();
-
-        $.ajax({
-            type: 'POST',
-            url: '', // The same page or separate PHP file to handle decline
-            data: $(this).serialize(),
-            success: function(response) {
-                Swal.fire({
-                    title: 'Declined!',
-                    text: 'The order has been declined.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    location.reload();
-                });
-            },
-            error: function(xhr, status, error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'There was an error declining the order.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    });
 </script>
 
 </html>
