@@ -16,8 +16,8 @@ if (!isset($_SESSION['uid'])) {
     <!-- Add other head elements here -->
 </head>
 <body>
-    <!-- Page Header -->
-    <div class="container-fluid page-header py-5">
+      <!-- Page Header -->
+      <div class="container-fluid page-header py-5">
         <h1 class="text-center text-white display-6">Return/Refund</h1>
     </div>
     <!-- End Page Header -->
@@ -36,7 +36,7 @@ if (!isset($_SESSION['uid'])) {
                                       JOIN furniture ON orders.pid = furniture.pid
                                       WHERE orders.order_code = ? AND orders.uid = ?";
                             $stmt = $conn->prepare($query);
-                            $stmt->bind_param("si", $order_code, $_SESSION['uid']);
+                            $stmt->bind_param("ii", $order_code, $_SESSION['uid']);
                             $stmt->execute();
                             $result = $stmt->get_result();
 
@@ -44,7 +44,7 @@ if (!isset($_SESSION['uid'])) {
                                 $order = $result->fetch_assoc();
                         ?>
                         <div class="row">
-                        <div class="col-md-8">
+                            <div class="col-md-8">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <img src="../admin/assets/img/<?php echo $order['image']; ?>" class="img-fluid" alt="Product Image">
@@ -67,10 +67,7 @@ if (!isset($_SESSION['uid'])) {
                                             <option value="other">Other</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3" id="descriptionDiv">
-                                        <label for="description" class="form-label">Description</label>
-                                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                                    </div>
+                                
                                     <div class="mb-3">
                                         <label for="image" class="form-label">Upload Image</label>
                                         <input type="file" class="form-control" id="image" name="image">
@@ -103,7 +100,7 @@ if (!isset($_SESSION['uid'])) {
                             }
                             $stmt->close();
                         } else {
-                            echo '<div class="alert alert-danger">No order code provided.</div>';
+                            echo '<div class="alert alert-danger">No order ID provided.</div>';
                         }
                         ?>
                     </div>
@@ -113,7 +110,7 @@ if (!isset($_SESSION['uid'])) {
         <!-- end row -->
     </div>
     <!-- End Main Content -->
-     <script>
+    <!-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const Selectedres = document.getElementById("reason");
             const descriptionDiv = document.getElementById("descriptionDiv");
@@ -128,7 +125,7 @@ if (!isset($_SESSION['uid'])) {
 
             descriptionDiv.style.display = "none";
         });
-     </script>
+    </script> -->
 <br><br>
     <?php include('includes/footer.php'); ?>
 

@@ -273,22 +273,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center">Order Code</th>
+                                                    <th class="text-right">Order Code</th>
                                                     <th class="text-center">Product Name & Details</th>
                                                     <th class="text-right">Product Price</th>
                                                     <th class="text-center">Quantity</th>
                                                     <th class="text-right">Total Price</th>
                                                     <th class="text-center">Date Order</th>
                                                     <th class="text-center">Status</th>
+                                                    <th class="text-center">Response</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php
-                                                $orders_query = "SELECT orders.*, furniture.*, order_return.return_status 
-                                                                FROM orders 
-                                                                JOIN furniture ON orders.pid = furniture.pid 
-                                                                LEFT JOIN order_return ON orders.order_code = order_return.order_code
-                                                                WHERE orders.osid IN (4, 2, 5,6) AND orders.uid = ?";
+                                                $orders_query = "SELECT orders.*, furniture.*, order_return.*, orders.osid AS new_osid
+                                                                    FROM orders
+                                                                    JOIN furniture ON orders.pid = furniture.pid
+                                                                    LEFT JOIN order_return ON orders.order_code = order_return.order_code
+                                                                    WHERE orders.osid IN (4, 2, 5, 6) AND orders.uid = ?";
                                                 $stmt = $conn->prepare($orders_query);
                                                 $stmt->bind_param("i", $_SESSION['uid']);
                                                 $stmt->execute();
@@ -303,7 +304,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                                 'product_details' => [],
                                                                 'total' => 0,
                                                                 'date' => $order_row['date'],
-                                                                'return_status' => $order_row['return_status'] // Added this line
+                                                                'return_status' => $order_row['return_status'],
+                                                                'admin_response' => $order_row['admin_response'],
                                                             ];
                                                         }
                                                         $orders[$order_code]['product_details'][] = [
@@ -332,6 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                     <td class="text-right"><?php echo number_format($order['total'], 2); ?></td> 
                                                     <td class="text-center"><?php echo $order['date']; ?></td>
                                                     <td class="text-center"><?php echo $order['return_status']; ?></td>
+                                                    <td class="text-center"><?php echo $order['admin_response']; ?></td>
                                                 </tr>
                                                 <?php
                                                     }
@@ -438,154 +441,126 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                             </div>
                         </div>
                     </div>
-                    <!-- Completed Orders Tab -->
-                    <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2>Shopping Cart - Completed</h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">Order Code</th>
-                                                <th class="text-center">Product Name & Details</th>
-                                                <th class="text-right">Product Price</th>
-                                                <th class="text-center">Quantity</th>
-                                                <th class="text-right">Total Price</th>
-                                                <th class="text-center">Date Order</th>
-                                                <th class="text-center">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                     
-                                        <?php
-                                            $orders_query = "SELECT * FROM orders 
-                                                JOIN furniture ON orders.pid = furniture.pid 
-                                                WHERE orders.osid = '3' AND orders.uid = ?";
-                                            $stmt = $conn->prepare($orders_query);
-                                            $stmt->bind_param("i", $_SESSION['uid']);
-                                            $stmt->execute();
-                                            $order_res = $stmt->get_result();
+               <!-- Completed Orders Tab -->
+<div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+    <div class="card">
+        <div class="card-header">
+            <h2>Shopping Cart - Completed</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Order Code</th>
+                            <th class="text-center">Product Name & Details</th>
+                            <th class="text-right">Product Price</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-right">Total Price</th>
+                            <th class="text-center">Date Order</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                                            if ($order_res && $order_res->num_rows > 0) {
-                                                $orders = [];
-                                                while ($order_row = $order_res->fetch_assoc()) {
-                                                    $order_code = $order_row['order_code'];
-                                                    if (!isset($orders[$order_code])) {
-                                                        $orders[$order_code] = [
-                                                            'product_details' => [],
-                                                            'total' => 0,
-                                                            'date' => $order_row['date']
-                                                        ];
-                                                    }
-                                                    $orders[$order_code]['product_details'][] = [
-                                                        'pname' => $order_row['pname'],
-                                                        'price' => $order_row['price'],
-                                                        'qty' => $order_row['qty']
-                                                    ];
-                                                    $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
-                                                }
+                    <?php
+                        $orders_query = "SELECT * FROM orders 
+                            JOIN furniture ON orders.pid = furniture.pid 
+                            WHERE orders.osid = '3' AND orders.uid = ?";
+                        $stmt = $conn->prepare($orders_query);
+                        $stmt->bind_param("i", $_SESSION['uid']);
+                        $stmt->execute();
+                        $order_res = $stmt->get_result();
 
-                                                foreach ($orders as $order_code => $order) {
-                                                    $product_details_str = '';
-                                                    $total_price_str = '';
-                                                    $qty_str = '';
-                                                    foreach ($order['product_details'] as $product) {
-                                                        $product_details_str .= $product['pname'] . '<br>';
-                                                        $total_price_str .= $product['price'] . '<br>';
-                                                        $qty_str .= $product['qty'] . '<br>';
-                                                    }
-                                            ?>
-                                            <tr>
-                                                <td><?php echo $order_code; ?></td>
-                                                <td><?php echo $product_details_str; ?></td>
-                                                <td><?php echo $total_price_str; ?></td>
-                                                <td><?php echo $qty_str; ?></td>
-                                                <td><?php echo $order['total']; ?></td>
-                                                <td><?php echo $order['date']; ?></td>
-                                                <td>
-                                                <a href="product_view.php?order_code=<?php echo $order_code ?>"
-                                                        class="btn btn-warning btn-sm">
-                                                        <i class="fas fa-eye"></i> View
-                                                    </a>
-                                                    <!-- <button type="button" class="btn btn-danger btn-sm return_btn"
-                                                        data-bs-toggle="modal" data-order-code="<?php echo $order_code; ?>">
-                                                        Return
-                                                    </button> -->
-                                                    <a href="return.php?order_code=<?php echo $order_code ?>"
-                                                        class="btn btn-warning btn-sm">
-                                                        <i class="fas fa-box"></i> Return
-                                                    </a>
-                                                  
-                                                </td>
-                                            </tr>
-                                            <?php
-                                                }
-                                            } else {
-                                                echo '<tr><td colspan="7" class="text-center">No orders completed found.</td></tr>';
-                                            }
-                                            ?>
-                                        </tbody>
+                        if ($order_res && $order_res->num_rows > 0) {
+                            while ($order_row = $order_res->fetch_assoc()) {
+                                $order_code = $order_row['order_code'];
+                                $product_name = $order_row['pname'];
+                                $product_price = $order_row['price'];
+                                $quantity = $order_row['qty'];
+                                $total_price = $product_price * $quantity;
+                                $date_order = $order_row['date'];
+                    ?>
+                    <tr>
+                        <td class="text-center"><?php echo $order_code; ?></td>
+                        <td class="text-center"><?php echo $product_name; ?></td>
+                        <td class="text-right"><?php echo number_format($product_price, 2); ?></td>
+                        <td class="text-center"><?php echo $quantity; ?></td>
+                        <td class="text-right"><?php echo number_format($total_price, 2); ?></td>
+                        <td class="text-center"><?php echo $date_order; ?></td>
+                        <td class="text-center">
+                            <a href="product_view.php?order_code=<?php echo $order_code ?>" class="btn btn-warning btn-sm">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="return.php?order_code=<?php echo $order_row['order_code'] ?>" class="btn btn-warning btn-sm">
+                                <i class="fas fa-box"></i> Return
+                            </a>
+                        </td>
+                    </tr>
+                    <?php
+                            }
+                        } else {
+                            echo '<tr><td colspan="7" class="text-center">No orders completed found.</td></tr>';
+                        }
+                    ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Tabs -->
 
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                </div>
-                <!-- End Tabs -->
             </div>
         </div>
     </div>
   
-
-    <!-- Return Modal -->
-    <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="returnOrderForm" method="post" action="return_order.php">
-                        <input type="hidden" id="return_order_code" name="order_code" value="">
-                        <p>Are you sure you want to return this order?</p>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-danger">Return Order</button>
-                        </div>
-                    </form>
-                </div>
+<!-- Return Modal -->
+<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="returnOrderForm" method="post" action="return_order.php">
+                    <input type="hidden" id="return_order_code" name="order_code" value="">
+                    <p>Are you sure you want to return this order?</p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Return Order</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    <!-- End Return Modal -->
+</div>
+<!-- End Return Modal -->
 
-    <!-- Refund Modal -->
-    <div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="refundModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="refundModalLabel">Refund Order</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="refundOrderForm" method="post" action="refund_order.php">
-                        <input type="hidden" id="refund_order_code" name="order_code" value="">
-                        <p>Are you sure you want to refund this order?</p>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-danger">Refund Order</button>
-                        </div>
-                    </form>
-                </div>
+<!-- Refund Modal -->
+<div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="refundModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="refundModalLabel">Refund Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="refundOrderForm" method="post" action="refund_order.php">
+                    <input type="hidden" id="refund_order_code" name="order_code" value="">
+                    <p>Are you sure you want to refund this order?</p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Refund Order</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    <!-- End Refund Modal -->
+</div>
+<!-- End Refund Modal -->
 
 <br><br>
     <?php include('includes/footer.php'); ?>

@@ -10,7 +10,8 @@ if (!isset($_SESSION['uid'])) {
 
 // Handle decline action
 if (isset($_POST['decline'])) {
-    $order_code = $_POST['decline'];
+    $order_code = $_POST['order_code'];
+    $admin_response = $_POST['admin_response']; // Get the admin response from the form
     
     // Restore product quantities in furniture table
     $restore_qty_query = "UPDATE furniture
@@ -29,12 +30,14 @@ if (isset($_POST['decline'])) {
         if (!$stmt->execute()) {
             echo "Error updating order status: " . $stmt->error;
         } else {
-            // Update return status to Not Approve
-            $update_return_query = "UPDATE order_return SET return_status = 'Not Approve' WHERE order_code = ?";
+            // Update return status to Not Approve and save admin response
+            $update_return_query = "UPDATE order_return SET return_status = 'Not Approve', admin_response = ? WHERE order_code = ?";
             $stmt = $conn->prepare($update_return_query);
-            $stmt->bind_param("s", $order_code);
+            $stmt->bind_param("ss", $admin_response, $order_code);
             if (!$stmt->execute()) {
                 echo "Error updating return status: " . $stmt->error;
+            } else {
+                echo "Order declined successfully.";
             }
         }
     }
@@ -43,7 +46,8 @@ if (isset($_POST['decline'])) {
 
 // Handle confirm action
 if (isset($_POST['confirm'])) {
-    $order_code = $_POST['confirm'];
+    $order_code = $_POST['order_code'];
+    $admin_response = $_POST['admin_response']; // Get the admin response from the form
     
     // Update order status to confirmed (osid = 6)
     $update_order_query = "UPDATE orders SET osid = '6' WHERE order_code = ?";
@@ -52,19 +56,19 @@ if (isset($_POST['confirm'])) {
     if (!$stmt->execute()) {
         echo "Error updating order status: " . $stmt->error;
     } else {
-        // Update return status to Approved
-        $update_return_query = "UPDATE order_return SET return_status = 'Approved check email/text' WHERE order_code = ?";
+        // Update return status to Approved and save admin response
+        $update_return_query = "UPDATE order_return SET return_status = 'Approved', admin_response = ? WHERE order_code = ?";
         $stmt = $conn->prepare($update_return_query);
-        $stmt->bind_param("s", $order_code);
+        $stmt->bind_param("ss", $admin_response, $order_code);
         if (!$stmt->execute()) {
             echo "Error updating return status: " . $stmt->error;
+        } else {
+            echo "Order confirmed successfully.";
         }
     }
     $stmt->close();
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -174,6 +178,58 @@ if (isset($_POST['confirm'])) {
             </div>
         </div>
     </div>
+    
+<!-- Modal for Confirm Reason -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="confirmForm" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="adminConfirmResponse" class="form-label">Reason for Confirm</label>
+                        <textarea class="form-control" id="adminConfirmResponse" name="admin_response" required></textarea>
+                    </div>
+                    <input type="hidden" id="confirmOrderCode" name="order_code">
+                    <input type="hidden" name="confirm" value="1">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Decline Reason -->
+<div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="declineModalLabel">Decline Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="declineForm" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="adminDeclineResponse" class="form-label">Reason for Decline</label>
+                        <textarea class="form-control" id="adminDeclineResponse" name="admin_response" required></textarea>
+                    </div>
+                    <input type="hidden" id="declineOrderCode" name="order_code">
+                    <input type="hidden" name="decline" value="1">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Decline</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
     <?php include('includes/footer.php'); ?>
     <?php include('includes/tables.php'); ?>
@@ -229,17 +285,9 @@ if (isset($_POST['confirm'])) {
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit the form to confirm the order
-                let form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '';
-                let input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'confirm';
-                input.value = orderCode;
-                form.appendChild(input);
-                document.body.appendChild(form);
-                form.submit();
+                // Show the modal for confirm reason
+                $('#confirmOrderCode').val(orderCode);
+                $('#confirmModal').modal('show');
             }
         });
     }
@@ -255,20 +303,70 @@ if (isset($_POST['confirm'])) {
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit the form to decline the order
-                let form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '';
-                let input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'decline';
-                input.value = orderCode;
-                form.appendChild(input);
-                document.body.appendChild(form);
-                form.submit();
+                // Show the modal for decline reason
+                $('#declineOrderCode').val(orderCode);
+                $('#declineModal').modal('show');
             }
         });
     }
+
+    // Handle confirm form submission
+    $('#confirmForm').on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '', // The same page or separate PHP file to handle confirm
+            data: $(this).serialize(),
+            success: function(response) {
+                Swal.fire({
+                    title: 'Confirmed!',
+                    text: 'The order has been confirmed.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error confirming the order.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+    // Handle decline form submission
+    $('#declineForm').on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '', // The same page or separate PHP file to handle decline
+            data: $(this).serialize(),
+            success: function(response) {
+                Swal.fire({
+                    title: 'Declined!',
+                    text: 'The order has been declined.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error declining the order.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
 </script>
 
 </html>
