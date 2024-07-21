@@ -169,98 +169,99 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                             </div>
                         </div>
                     </div>
-                    <!-- To Receive Orders Tab -->
-                    <div class="tab-pane fade" id="to-receive" role="tabpanel" aria-labelledby="to-receive-tab">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2>Shopping Cart - To Receive</h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">Order Code</th>
-                                                <th class="text-center">Product Name & Details</th>
-                                                <th class="text-right">Product Price</th>
-                                                <th class="text-center">Quantity</th>
-                                                <th class="text-right">Total Price</th>
-                                                <th class="text-center">Date Order</th>
-                                                <th class="text-center">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php
-                                            $orders_query = "SELECT * FROM orders 
-                                                JOIN furniture ON orders.pid = furniture.pid 
-                                                WHERE orders.osid = '2' AND orders.uid = ?";
-                                            $stmt = $conn->prepare($orders_query);
-                                            $stmt->bind_param("i", $_SESSION['uid']);
-                                            $stmt->execute();
-                                            $order_res = $stmt->get_result();
+                   <!-- To Receive Orders Tab -->
+<div class="tab-pane fade" id="to-receive" role="tabpanel" aria-labelledby="to-receive-tab">
+    <div class="card">
+        <div class="card-header">
+            <h2>Shopping Cart - To Receive</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Order Code</th>
+                            <th class="text-center">Product Name & Details</th>
+                            <th class="text-right">Product Price</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-right">Total Price</th>
+                            <th class="text-center">Date Ordered</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $orders_query = "SELECT * FROM orders 
+                            JOIN furniture ON orders.pid = furniture.pid 
+                            JOIN shipping ON orders.order_code = shipping.order_code
+                            WHERE orders.osid = '2' AND orders.uid = ?";
+                        $stmt = $conn->prepare($orders_query);
+                        $stmt->bind_param("i", $_SESSION['uid']);
+                        $stmt->execute();
+                        $order_res = $stmt->get_result();
 
-                                            if ($order_res && $order_res->num_rows > 0) {
-                                                $orders = [];
-                                                while ($order_row = $order_res->fetch_assoc()) {
-                                                    $order_code = $order_row['order_code'];
-                                                    if (!isset($orders[$order_code])) {
-                                                        $orders[$order_code] = [
-                                                            'product_details' => [],
-                                                            'total' => 0,
-                                                            'date' => $order_row['date']
-                                                        ];
-                                                    }
-                                                    $orders[$order_code]['product_details'][] = [
-                                                        'pname' => $order_row['pname'],
-                                                        'price' => $order_row['price'],
-                                                        'qty' => $order_row['qty']
-                                                    ];
-                                                    $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
-                                                }
+                        if ($order_res && $order_res->num_rows > 0) {
+                            $orders = [];
+                            while ($order_row = $order_res->fetch_assoc()) {
+                                $order_code = $order_row['order_code'];
+                                if (!isset($orders[$order_code])) {
+                                    $orders[$order_code] = [
+                                        'product_details' => [],
+                                        'total' => 0,
+                                        'date' => $order_row['date'],
+                                        'shipping_status' => $order_row['shipping_status'], // Added shipping_status
+                                        'expected_date' => $order_row['expected_date'] // Added expected_date
+                                    ];
+                                }
+                                $orders[$order_code]['product_details'][] = [
+                                    'pname' => $order_row['pname'],
+                                    'price' => $order_row['price'],
+                                    'qty' => $order_row['qty']
+                                ];
+                                $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
+                            }
 
-                                                foreach ($orders as $order_code => $order) {
-                                                    $product_details_str = '';
-                                                    $total_price_str = '';
-                                                    $qty_str = '';
-                                                    foreach ($order['product_details'] as $product) {
-                                                        $product_details_str .= $product['pname'] . '<br>';
-                                                        $total_price_str .= $product['price'] . '<br>';
-                                                        $qty_str .= $product['qty'] . '<br>';
-                                                    }
-                                            ?>
-                                            <tr>
-                                                <td><?php echo $order_code; ?></td>
-                                                <td><?php echo $product_details_str; ?></td>
-                                                <td><?php echo $total_price_str; ?></td>
-                                                <td><?php echo $qty_str; ?></td>
-                                                <td><?php echo $order['total']; ?></td>
-                                                <td><?php echo $order['date']; ?></td>
-                                                <td>
-                                                <a href="product_view.php?order_code=<?php echo $order_code ?>"
-                                                        class="btn btn-warning btn-sm">
-                                                        <i class="fas fa-eye"></i> View
-                                                    </a>
-                                                    <button type="button" class="btn btn-success btn-sm received_btn" data-order-id="<?php echo htmlspecialchars($order_code); ?>">
-                                                    <i class="fas fa-check"></i> Received
-                                                </button>
-                                                
-
-
-                                                </td>
-                                            </tr>
-                                            <?php
-                                                }
-                                            } else {
-                                                echo '<tr><td colspan="7" class="text-center">No orders to receive found.</td></tr>';
-                                            }
-                                            ?>
-                                        </tbody>
-
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                            foreach ($orders as $order_code => $order) {
+                                $product_details_str = '';
+                                $total_price_str = '';
+                                $qty_str = '';
+                                foreach ($order['product_details'] as $product) {
+                                    $product_details_str .= $product['pname'] . '<br>';
+                                    $total_price_str .= $product['price'] . '<br>';
+                                    $qty_str .= $product['qty'] . '<br>';
+                                }
+                        ?>
+                        <tr>
+                            <td class="text-center"><?php echo htmlspecialchars($order_code); ?></td>
+                            <td><?php echo $product_details_str; ?></td>
+                            <td class="text-right"><?php echo $total_price_str; ?></td>
+                            <td class="text-center"><?php echo $qty_str; ?></td>
+                            <td class="text-right"><?php echo number_format($order['total'], 2); ?></td>
+                            <td class="text-center"><?php echo htmlspecialchars($order['date']); ?></td>
+                            <td class="text-center"><?php echo htmlspecialchars($order['shipping_status']); ?>, <?php echo htmlspecialchars($order['expected_date']); ?></td>
+                            <td class="text-center">
+                                <a href="product_view.php?order_code=<?php echo urlencode($order_code); ?>"
+                                    class="btn btn-warning btn-sm">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <button type="button" class="btn btn-success btn-sm received_btn" data-order-id="<?php echo htmlspecialchars($order_code); ?>">
+                                    <i class="fas fa-check"></i> Received
+                                </button>
+                            </td>
+                        </tr>
+                        <?php
+                            }
+                        } else {
+                            echo '<tr><td colspan="8" class="text-center">No orders to receive found.</td></tr>';
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
                        <!-- Return Orders Tab -->
                         <div class="tab-pane fade" id="return" role="tabpanel" aria-labelledby="return-tab">

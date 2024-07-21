@@ -154,6 +154,12 @@
                 </a>
               </li>
               <li class="nav-item">
+                <a href="shipping.php">
+                  <i class="fas fa-truck"></i>
+                  <p>Shipping</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="#">
                   <i class="fas fa-star"></i>
                   <p>Reviews & Rating</p>
@@ -161,7 +167,7 @@
               </li>
               <li class="nav-item">
                 <a href="return.php">
-                  <i class="fas fa-money-bill"></i>
+                  <i class="fas fa-box"></i>
                   <p>Return & Refund</p>
                 </a>
               </li>
@@ -196,17 +202,17 @@
                 <div class="collapse" id="sidebarLayouts">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="sidebar-style-2.html">
+                      <a href="user_list.php">
                         <span class="sub-item">Users List</span>
                       </a>
                     </li>
                     <li>
-                      <a href="icon-menu.html">
+                      <a href="inventory_report.php">
                         <span class="sub-item">Inventory Report</span>
                       </a>
                     </li>
                     <li>
-                      <a href="icon-menu.html">
+                      <a href="sales_report.php">
                         <span class="sub-item">Sales Report</span>
                       </a>
                     </li>
