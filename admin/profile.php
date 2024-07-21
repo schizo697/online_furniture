@@ -31,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 <head>
     <?php include('includes/topbar.php'); ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
 </head>
 <body>
     <?php include('includes/sidebar.php')?>
@@ -108,7 +107,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                     </div>
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editAccount">Edit</button>
 
-                                    <button type="submit" class="btn btn-danger" formaction="logout.php">Logout</button>
+                                    <a href="../login.php?logout=true">
+                                        <button type="button" class="btn btn-danger">Logout</button>
+                                    </a>
                                 </form>
                         <?php
                             }
@@ -132,23 +133,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="small mb-1" for="editFirstName">First name</label>
-                            <input class="form-control" name="firstname" type="text" placeholder="Enter your first name" value="<?php echo $row['firstname'] ?>">
+                            <input class="form-control" name="firstname" type="text" placeholder="Enter your first name" value="<?php echo isset($row['firstname']) ? $row['firstname'] : ''; ?>">
                         </div>
                         <div class="mb-3">
                             <label class="small mb-1" for="editLastName">Last name</label>
-                            <input class="form-control" name="lastname" type="text" placeholder="Enter your last name" value="<?php echo $row['lastname'] ?>">
+                            <input class="form-control" name="lastname" type="text" placeholder="Enter your last name" value="<?php echo isset($row['lastname']) ? $row['lastname'] : ''; ?>">
                         </div>
                         <div class="mb-3">
                             <label class="small mb-1" for="editGender">Gender</label>
-                            <input class="form-control" name="gender" type="text" placeholder="Enter your gender" value="<?php echo $row['gender'] ?>">
+                            <input class="form-control" name="gender" type="text" placeholder="Enter your gender" value="<?php echo isset($row['gender']) ? $row['gender'] : ''; ?>">
                         </div>
                         <div class="mb-3">
                             <label class="small mb-1" for="editPhone">Phone number</label>
-                            <input class="form-control" name="contact" type="tel" placeholder="Enter your phone number" value="<?php echo $row['contact'] ?>">
+                            <input class="form-control" name="contact" type="tel" placeholder="Enter your phone number" value="<?php echo isset($row['contact']) ? $row['contact'] : ''; ?>">
                         </div>
                         <div class="mb-3">
                             <label class="small mb-1" for="editAddress">Address</label>
-                            <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo $row['address'] ?>">
+                            <input class="form-control" name="address" type="text" placeholder="Enter your address" value="<?php echo isset($row['address']) ? $row['address'] : ''; ?>">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -159,7 +160,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
             </div>
         </div>
     </div>
+<!-- JavaScript Libraries -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/lightbox/js/lightbox.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
     <!-- Footer -->
     <!-- <?php include('includes/footer.php'); ?> -->
 </body>
