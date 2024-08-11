@@ -1,6 +1,27 @@
 <?php 
-if(isset($_SESSION['uid'])){
-    $uid = $_SESSION['uid'];
+session_start(); // Ensure session is started
+
+// Include your database connection
+include('../conn.php');
+
+// Check if user is logged in
+if (!isset($_SESSION['uid'])) {
+    header("Location: ../login.php");
+    exit();
+}
+
+$uid = $_SESSION['uid'];
+
+// Fetch payment option details
+$sql = "SELECT accountnumber, accountname FROM paymentoption WHERE status = 'Active'";
+$result = $conn->query($sql);
+if ($result && $result->num_rows > 0) {
+    $paymentOption = $result->fetch_assoc();
+    $accountNumber = htmlspecialchars($paymentOption['accountnumber'], ENT_QUOTES, 'UTF-8');
+    $accountName = htmlspecialchars($paymentOption['accountname'], ENT_QUOTES, 'UTF-8');
+} else {
+    $accountNumber = '';
+    $accountName = '';
 }
 ?>
 <!DOCTYPE html>
@@ -152,9 +173,13 @@ if(isset($_SESSION['uid'])){
                                             </div>
                                         </div>
                                         <div id="gcash-upload" style="display:none;">
-                                            <label class="form-label" for="gcash-receipt">Send to this number and Upload Gcash Receipt</label>
+                                            <label class="form-label" for="gcash-receipt">
+                                                Send to this number (<?php echo $accountNumber; ?>) and Upload Gcash Receipt
+                                            </label>
+                                            <p>Account Name: <?php echo $accountName; ?></p>
                                             <input type="file" class="form-control" id="gcash-receipt" name="gcash-receipt" accept=".png, .jpg, .jpeg">
                                         </div>
+
                                     </form>
                                 </div>
                             </div>

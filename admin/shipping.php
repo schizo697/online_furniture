@@ -65,7 +65,7 @@ if (!isset($_SESSION['uid'])) {
                                                     LEFT JOIN gcash_rec ON orders.order_code = gcash_rec.order_code 
                                                     LEFT JOIN userinfo ON orders.uid = userinfo.infoid 
                                                     LEFT JOIN furniture ON orders.pid = furniture.pid 
-                                                    WHERE orders.osid = 2 
+                                                    WHERE orders.osid = 7 
                                                     GROUP BY orders.order_code";
                                     $order_res = mysqli_query($conn, $orders_query);
 

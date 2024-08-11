@@ -182,6 +182,7 @@ if(isset($_POST['updateproduct'])) {
                             </button>
                         </div>
                     </div>
+                    
                     <div class="card-body">
                         <!-- Add Product Modal -->
                         <form action="" method="POST" enctype="multipart/form-data">

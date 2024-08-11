@@ -33,7 +33,7 @@ if (isset($_POST['confirm'])) {
     $order_code = mysqli_real_escape_string($conn, $_POST['confirm']);
     
     // Update order status to confirmed (osid = 2)
-    $update_query = "UPDATE orders SET osid = '2' WHERE order_code = '$order_code'";
+    $update_query = "UPDATE orders SET osid = '7' WHERE order_code = '$order_code'";
     if (!mysqli_query($conn, $update_query)) {
         echo "Error updating record: " . mysqli_error($conn);
     }

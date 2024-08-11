@@ -7,182 +7,181 @@
         exit();
     }
     ?>
-  <style>
+    <style>
+        /* Existing Styles */
         * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
 
-body {
-    background-color: #FFFFFF;
-}
+        body {
+            background-color: #FFFFFF;
+        }
 
+        header {
+            display: flex;
+            align-items: center;
+            background-color: #FF7F50;
+            padding: 10px;
+        }
 
+        .back-button {
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #FFF;
+        }
 
-header {
-    display: flex;
-    align-items: center;
-    background-color: #FF7F50;
-    padding: 10px;
-}
+        h1 {
+            flex-grow: 1;
+            text-align: center;
+            color: #FFF;
+        }
 
-.back-button {
-    font-size: 24px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #FFF;
-}
+        main {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
 
-h1 {
-    flex-grow: 1;
-    text-align: center;
-    color: #FFF;
-}
+        .tabs {
+            width: 25%;
+            background-color: #FFF;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px; /* Add padding for dropdown */
+        }
 
-main {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
-}
+        /* Dropdown Button Style */
+        .dropdown {
+            margin-bottom: 20px;
+        }
 
-.properties, .preview, .summary {
-    background-color: #FFF;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+        .dropdown select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #CCC;
+        }
 
-.properties {
-    width: 25%;
-}
+        .tab-links {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
 
-.properties h2 {
-    margin-bottom: 10px;
-}
+        .tab-links button {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            background-color: #FFA07A;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 8px 8px 0 0;
+        }
 
-.color-picker,
-.adjustment,
-.design {
-    margin-bottom: 20px;
-}
+        .tab-links button.active {
+            background-color: #FF7F50;
+        }
 
-.color-picker label,
-.adjustment label,
-.design label {
-    display: block;
-    margin-bottom: 5px;
-}
+        .tab-content {
+            padding: 20px;
+            display: none;
+        }
 
-.color-picker input[type="color"],
-.color-picker input[type="text"],
-.adjustment input[type="number"],
-.design select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #CCC;
-    border-radius: 4px;
-}
+        .tab-content.active {
+            display: block;
+        }
 
-.adjust-buttons {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
+        .preview {
+            width: 40%;
+            text-align: center;
+            background-color: #FFF;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-.adjust-buttons button {
-    width: 30px;
-    height: 30px;
-    background-color: #1E90FF;
-    border: none;
-    border-radius: 50%;
-    color: #FFF;
-    font-size: 18px;
-    cursor: pointer;
-}
+        .preview img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
 
-.preview {
-    width: 40%;
-    text-align: center;
-}
+        .summary {
+            width: 35%;
+            background-color: #FFF;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-.preview img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 10px;
-}
+        .summary table {
+            width: 100%;
+            margin-bottom: 10px;
+            border-collapse: collapse;
+        }
 
-.tools {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
+        .summary th,
+        .summary td {
+            border: 1px solid #CCC;
+            padding: 10px;
+            text-align: left;
+        }
 
-.tool-button {
-    font-size: 24px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #1E90FF;
-}
+        .summary th {
+            background-color: #FFA07A;
+            color: #FFF;
+        }
 
-.summary {
-    width: 35%;
-}
+        .cost {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 24px;
+            margin: 20px 0;
+        }
 
-.summary table {
-    width: 100%;
-    margin-bottom: 10px;
-    border-collapse: collapse;
-}
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
 
-.summary th,
-.summary td {
-    border: 1px solid #CCC;
-    padding: 10px;
-    text-align: left;
-}
+        .add-cart,
+        .place-order {
+            flex-grow: 1;
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-.summary th {
-    background-color: #FFA07A;
-    color: #FFF;
-}
+        .add-cart {
+            background-color: #1E90FF;
+            color: #FFF;
+        }
 
-.cost {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 24px;
-    margin: 20px 0;
-}
+        .place-order {
+            background-color: #FFA07A;
+            color: #FFF;
+        }
 
-.actions {
-    display: flex;
-    gap: 10px;
-}
-
-.add-cart,
-.place-order {
-    flex-grow: 1;
-    padding: 15px;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.add-cart {
-    background-color: #1E90FF;
-    color: #FFF;
-}
-
-.place-order {
-    background-color: #FFA07A;
-    color: #FFF;
-}
-
+        .tab-content label,
+        .tab-content input,
+        .tab-content select {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #CCC;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -195,82 +194,71 @@ main {
 
 <!-- Main Content -->
 <div class="container">
-  
-        <main>
-            <section class="properties">
+    <main>
+        <section class="tabs">
+            <!-- Dropdown for Type of Furniture -->
+            <div class="dropdown">
+                <label for="furnitureType">Type of Furniture:</label>
+                <select id="furnitureType" name="furnitureType">
+                    <option value="cabinet">Cabinet</option>
+                    <option value="table">Table</option>
+                    <option value="chair">Chair</option>
+                    <option value="bed">Bed</option>
+                </select>
+            </div>
+
+            <!-- Tab Links -->
+            <div class="tab-links">
+                <button class="active" onclick="openTab(event, 'Properties')">Properties</button>
+                <button onclick="openTab(event, 'Design')">Design</button>
+                <button onclick="openTab(event, 'FootPart')">Foot Part</button>
+            </div>
+            <div id="Properties" class="tab-content active">
                 <h2>Properties</h2>
-                <div class="color-picker">
-                    <label for="color">Color:</label>
-                    <input type="text" class="form-control" id="color" name="color" required>
-                </div>
-                <div class="adjustment">
-                    <label for="qty">Qty:</label>
-                    <div class="adjust-buttons">
-                       
-                        <input type="number" id="qty" value="1">
-                       
-                    </div>
-                </div>
-                <div class="adjustment">
-                    <label for="height">Height:</label>
-                    <div class="adjust-buttons">
-                       
-                        <input type="number" id="height" value="345">
-                       
-                    </div>
-                </div>
-                <div class="adjustment">
-                    <label for="width">Width:</label>
-                    <div class="adjust-buttons">
-                   
-                        <input type="number" id="width" value="285">
-                     
-                    </div>
-                </div>
-                <div class="adjustment">
-                    <label for="length">Length:</label>
-                    <div class="adjust-buttons">
-                       
-                        <input type="number" id="length" value="345">
-                       
-                    </div>
-                </div>
-                <div class="design">
-                    <label for="design">Design:</label>
-                    <input type="text" class="form-control" id="design" name="design" required>
-                </div>
-                <div class="material">
-                    <label for="material">Material:</label>
-                    <input type="text" class="form-control" id="material" name="material" required>
-                </div>
-                <div class="foot">
-                    <label for="material">Foot Parts:</label>
-                    <input type="text" class="form-control" id="foot" name="foot" required>
-                </div>
-            </section>
-            <section class="preview">
-                <img src="cabinet.jpg" alt="Cabinet Diagram">
-             
-            </section>
-            <section class="summary">
-              
-                <div class="cost">
-                    <span>Cost:</span>
-                    <span class="amount">₱11,000</span>
-                </div>
-                <div class="actions">
-                    <button class="add-cart">Add Cart</button>
-                    <button class="place-order">Place Order</button>
-                </div>
-            </section>
-        </main>
-    </div>
+                <label for="color">Color:</label>
+                <input type="text" id="color" name="color" required>
+                <label for="qty">Quantity:</label>
+                <input type="number" id="qty" value="1">
+                <label for="height">Height:</label>
+                <input type="number" id="height" value="345">
+                <label for="width">Width:</label>
+                <input type="number" id="width" value="285">
+                <label for="length">Length:</label>
+                <input type="number" id="length" value="345">
+            </div>
+            <div id="Design" class="tab-content">
+                <h2>Design</h2>
+                <label for="material">Material:</label>
+                <input type="text" id="material" name="material" required>
+            </div>
+            <div id="FootPart" class="tab-content">
+                <h2>Foot Part</h2>
+                <label for="foot">Foot Part:</label>
+                <select id="foot" name="foot" required>
+                    <option value="wheel">Wheel</option>
+                    <option value="plain">Plain</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="preview">
+            <img src="cabinet.jpg" alt="Cabinet Diagram">
+        </section>
+
+        <section class="summary">
+            <div class="cost">
+                <span>Cost:</span>
+                <span class="amount">₱11,000</span>
+            </div>
+            <div class="actions">
+                <button class="add-cart">Add Cart</button>
+                <button class="place-order">Place Order</button>
+            </div>
+        </section>
+    </main>
+</div>
 <br><br>
 <!-- End Main Content -->
-
-
-
-
 
 <?php include('includes/footer.php'); ?>
 
@@ -289,6 +277,24 @@ main {
 
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
+
+<script>
+    function openTab(event, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByTagName("button");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabName).style.display = "block";
+        document.getElementById(tabName).classList.add("active");
+        event.currentTarget.classList.add("active");
+    }
+</script>
 
 </body>
 </html>
