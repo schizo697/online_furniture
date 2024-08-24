@@ -2,7 +2,6 @@
 session_start();
 include('../conn.php');
 
-// Function to send JSON response
 function sendJsonResponse() {
     echo json_encode([]);
     exit();
@@ -15,38 +14,39 @@ if (!isset($_SESSION['uid'])) {
 $uid = $_SESSION['uid'];
 $pid = $_POST['pid'];
 
-// Check if the product is already in the cart
-$cart_check_query = "SELECT * FROM cart WHERE uid = ? AND pid = ?";
-$stmt = $conn->prepare($cart_check_query);
-$stmt->bind_param("ii", $uid, $pid);
-$stmt->execute();
-$cart_check_res = $stmt->get_result();
+$cart_check_query = "SELECT * FROM cart WHERE uid = $uid AND pid = $pid";
+$cart_check_res = mysqli_query($conn, $cart_check_query);
 
-if ($cart_check_res->num_rows > 0) {
-    // Product already in cart, update the quantity
-    $row = $cart_check_res->fetch_assoc();
+if (mysqli_num_rows($cart_check_res) > 0) {
+    $row = mysqli_fetch_assoc($cart_check_res);
     $qty = $row['qty'] + 1;
 
-    $cart_update_query = "UPDATE cart SET qty = ? WHERE pid = ? AND uid = ?";
-    $update_stmt = $conn->prepare($cart_update_query);
-    $update_stmt->bind_param("iii", $qty, $pid, $uid);
-    if ($update_stmt->execute()) {
+    $cart_update_query = "UPDATE cart SET qty = $qty WHERE pid = $pid AND uid = $uid";
+    if (mysqli_query($conn, $cart_update_query)) {
         sendJsonResponse();
     } else {
         sendJsonResponse();
     }
 } else {
-    // Product not in cart, insert new entry
-    $cart_insert_query = "INSERT INTO cart (pid, uid, qty) VALUES (?, ?, 1)";
-    $insert_stmt = $conn->prepare($cart_insert_query);
-    $insert_stmt->bind_param("ii", $pid, $uid);
-    if ($insert_stmt->execute()) {
-        sendJsonResponse();
-    } else {
-        sendJsonResponse();
+
+    $materials = "SELECT * FROM furniture WHERE pid = $pid";
+    $materials_res = mysqli_query($conn, $materials);
+
+    if(mysqli_num_rows($materials_res) > 0){
+        $materials_row = mysqli_fetch_assoc($materials_res);
+        $color = $materials_row['color'];
+        $height = $materials_row['height'];
+        $width = $materials_row['width'];
+        $length = $materials_row['length'];
+
+        $cart_insert_query = "INSERT INTO cart (pid, uid, qty, color, height, width, length) VALUES ($pid, $uid, 1, '$color', $height, $width, $length)";
+        if (mysqli_query($conn, $cart_insert_query)) {
+            sendJsonResponse();
+        } else {
+            sendJsonResponse();
+        }
     }
 }
 
-$stmt->close();
-$conn->close();
+mysqli_close($conn);
 ?>
