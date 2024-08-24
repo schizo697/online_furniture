@@ -9,7 +9,8 @@ if (!isset($_SESSION['uid'])) {
 }
 
 // Function to fetch sales records
-function fetchSalesRecords($conn) {
+function fetchSalesRecords($conn)
+{
     $query = "SELECT furniture.pid, furniture.pname, furniture.price, GROUP_CONCAT(furniture.image) AS images, SUM(orders.qty) AS total_quantity, SUM(furniture.price * orders.qty) AS total_price
               FROM furniture
               JOIN orders ON furniture.pid = orders.pid
@@ -24,6 +25,7 @@ $order_res = fetchSalesRecords($conn);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,6 +34,7 @@ $order_res = fetchSalesRecords($conn);
     <?php include('includes/topbar.php'); ?>
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
 </head>
+
 <body>
     <!-- Include your sidebar and header navigation -->
     <?php include('includes/sidebar.php'); ?>
@@ -74,18 +77,19 @@ $order_res = fetchSalesRecords($conn);
                                             $images = explode(',', $order_row['images']);
                                             $total_quantity = $order_row['total_quantity'];
                                             $total_price = $order_row['total_price'];
-                                    ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($pid); ?></td>
-                                        <td>
-                                            <img src="assets/img/<?php echo htmlspecialchars($images[0]); ?>" alt="Product Image" style="max-width: 100px;">
-                                        </td>
-                                        <td><?php echo htmlspecialchars($pname); ?></td>
-                                        
-                                        <td><?php echo htmlspecialchars($total_quantity); ?></td>
-                                        <td><?php echo htmlspecialchars($total_price); ?></td>
-                                    </tr>
-                                    <?php
+                                            ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($pid); ?></td>
+                                                <td>
+                                                    <img src="assets/img/<?php echo htmlspecialchars($images[0]); ?>"
+                                                        alt="Product Image" style="max-width: 100px;">
+                                                </td>
+                                                <td><?php echo htmlspecialchars($pname); ?></td>
+
+                                                <td><?php echo htmlspecialchars($total_quantity); ?></td>
+                                                <td><?php echo htmlspecialchars($total_price); ?></td>
+                                            </tr>
+                                            <?php
                                         }
                                     } else {
                                         // Display a message if no results are found
@@ -103,7 +107,7 @@ $order_res = fetchSalesRecords($conn);
 
     <!-- Footer and additional includes -->
     <!-- Include your footer here if needed -->
-    
+
     <!-- Scripts -->
     <script src="assets/js/core/jquery-3.7.1.min.js"></script>
     <script src="assets/js/core/popper.min.js"></script>
@@ -130,4 +134,5 @@ $order_res = fetchSalesRecords($conn);
         });
     </script>
 </body>
+
 </html>

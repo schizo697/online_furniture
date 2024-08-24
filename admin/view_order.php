@@ -67,7 +67,7 @@ if (isset($_GET['order_code'])) {
                                     <img src="assets/img/<?php echo htmlspecialchars($image); ?>" class="card-img-top" alt="Product Image" style="max-width: 100%; height: auto;">
                                     <div class="card-body">
                                         <h5 class="card-title"><?php echo htmlspecialchars($product_name); ?></h5>
-                                        <p class="card-text">Quantity: <?php echo htmlspecialchars($quantity); ?></p>
+                                        <p class="card-text">Quantity of Order: <?php echo htmlspecialchars($quantity); ?></p>
                                        
                                         <p class="card-text">Total: <?php echo htmlspecialchars($total); ?></p>
                                     </div>

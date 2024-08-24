@@ -12,6 +12,15 @@
         .required-asterisk {
             color: red;
         }
+ 
+        body {
+            background-image: url('img/background1.jpg');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+
     </style>
 </head>
 <body>
