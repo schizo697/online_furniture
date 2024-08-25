@@ -128,7 +128,11 @@
             </a>
             <div class="collapse" id="customization">
               <ul class="nav nav-collapse">
-
+                <li>
+                  <a href="materials.php">
+                    <span class="sub-item">Materials</span>
+                  </a>
+                </li>
                 <li>
                   <a href="customize.php">
                     <span class="sub-item">Customize Options</span>

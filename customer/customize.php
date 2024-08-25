@@ -210,24 +210,28 @@
             <!-- Tab Links -->
             <div class="tab-links">
                 <button class="active" onclick="openTab(event, 'Properties')">Properties</button>
-                <button onclick="openTab(event, 'Design')">Design</button>
+                <button onclick="openTab(event, 'Materials')">Materials</button>
                 <button onclick="openTab(event, 'FootPart')">Foot Part</button>
             </div>
             <div id="Properties" class="tab-content active">
                 <h2>Properties</h2>
-                <label for="color">Color:</label>
-                <input type="text" id="color" name="color" required>
-                <label for="qty">Quantity:</label>
-                <input type="number" id="qty" value="1">
-                <label for="height">Height:</label>
-                <input type="number" id="height" value="345">
-                <label for="width">Width:</label>
-                <input type="number" id="width" value="285">
-                <label for="length">Length:</label>
-                <input type="number" id="length" value="345">
+                <h6>Color:</h6>
+                <select id="color" name="color" required>
+                    <option value="" disabled selected>Select a color</option>
+                    <option value="red">Red</option>
+                </select>
+                <h6>Quantity:</h6>
+                <input type="text" id="qty" value="1" placeholder="Quantity" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                <h6>Height:</h6>
+                <input type="text" id="height" value="345" placeholder="Height" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                <h6>Width:</h6>
+                <input type="text" id="width" value="285" placeholder="Width" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                <h6>Length:</h6>
+                <input type="text" id="length" value="345" placeholder="Length" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+
             </div>
-            <div id="Design" class="tab-content">
-                <h2>Design</h2>
+            <div id="Materials" class="tab-content">
+                <h2>Materials</h2>
                 <label for="material">Material:</label>
                 <input type="text" id="material" name="material" required>
             </div>
