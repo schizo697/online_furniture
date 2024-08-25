@@ -128,6 +128,30 @@ if (!isset($_SESSION['uid'])) {
     </script> -->
 <br><br>
     <?php include('includes/footer.php'); ?>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.querySelector('form'); // Select the form
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to return the product?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, return it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); 
+                }
+            });
+        });
+    });
+</script>
 
     <!-- Back to Top Button -->
     <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>

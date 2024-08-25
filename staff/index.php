@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 include('../conn.php'); // Include database connection
 
@@ -11,73 +11,83 @@ if (!isset($_SESSION['uid'])) {
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<?php include('includes/topbar.php'); ?>
-<!-- Script para sa pie -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-<?php include('includes/sidebar.php')?>
-  <!-- Header -->
-  <?php include('includes/header.php'); ?>
 
-  <!-- Main Content -->
-  <div class="container">
-          <div class="page-inner">
-            <div
-              class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
-            >
-              <div>
-                <h3 class="fw-bold mb-3">Staff Dashboard</h3>
-                <h6 class="op-7 mb-2">MPM: Furniture Shop</h6>
-              </div>
-              <div class="ms-md-auto py-2 py-md-0">
-                <!-- <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
+<head>
+    <?php include('includes/topbar.php'); ?>
+    <!-- Script para sa pie -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <?php include('includes/sidebar.php') ?>
+    <!-- Header -->
+    <?php include('includes/header.php'); ?>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-inner">
+            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+                <div>
+                    <h3 class="fw-bold mb-3">Staff Dashboard</h3>
+                    <h6 class="op-7 mb-2">MPM: Furniture Shop</h6>
+                </div>
+                <div class="ms-md-auto py-2 py-md-0">
+                    <!-- <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
                 <a href="#" class="btn btn-primary btn-round">Add Customer</a> -->
-              </div>
+                </div>
             </div>
             <div class="row">
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
-                  <div class="card-body">
-                    <div class="row align-items-center">
-                      <div class="col-icon">
-                        <div
-                          class="icon-big text-center icon-info bubble-shadow-small"
-                        >
-                          <i class="fas fa-user-check"></i>
+                <div class="col-sm-6 col-md-3">
+                    <div class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-icon">
+                                    <div class="icon-big text-center icon-info bubble-shadow-small">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                </div>
+                                <?php
+                                // SQL query to count the number of suppliers
+                                $sql = "SELECT COUNT(*) AS customer_count FROM `useraccount` WHERE levelid = '3'";
+                                $result = mysqli_query($conn, $sql);
+                                $customer_count = 0;
+                                if ($result) {
+                                    $row = mysqli_fetch_assoc($result);
+                                    $customer_count = $row['customer_count'];
+                                } else {
+                                    echo "<p>Error fetching supplier data: " . mysqli_error($conn) . "</p>";
+                                }
+                                ?>
+                                <div class="col col-stats ms-3 ms-sm-0">
+                                    <div class="numbers">
+                                        <p class="card-category">Customers</p>
+                                        <h4 class="card-title"><?php echo $customer_count; ?></h4>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
-                        <div class="numbers">
-                          <p class="card-category">Customers</p>
-                          <h4 class="card-title">1303</h4>
-                        </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              <div class="col-sm-6 col-md-3">
+                <div class="col-sm-6 col-md-3">
                     <div class="card card-stats card-round">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-icon">
                                     <div class="icon-big text-center icon-success bubble-shadow-small">
-                                    <i class="fas fa-couch"></i>
+                                        <i class="fas fa-couch"></i>
                                     </div>
                                 </div>
-                                <?php 
-                                    // SQL query to count the number of suppliers
-                                    $sql = "SELECT COUNT(*) AS furniture_count FROM `furniture`";
-                                    $result = mysqli_query($conn, $sql);
-                                    $furniture_count = 0;
-                                    if ($result) {
-                                        $row = mysqli_fetch_assoc($result);
-                                        $furniture_count = $row['furniture_count'];
-                                    } else {
-                                        echo "<p>Error fetching supplier data: " . mysqli_error($conn) . "</p>";
-                                    }
+                                <?php
+                                // SQL query to count the number of suppliers
+                                $sql = "SELECT COUNT(*) AS furniture_count FROM `furniture`";
+                                $result = mysqli_query($conn, $sql);
+                                $furniture_count = 0;
+                                if ($result) {
+                                    $row = mysqli_fetch_assoc($result);
+                                    $furniture_count = $row['furniture_count'];
+                                } else {
+                                    echo "<p>Error fetching supplier data: " . mysqli_error($conn) . "</p>";
+                                }
                                 ?>
                                 <div class="col col-stats ms-3 ms-sm-0">
                                     <div class="numbers">
@@ -89,7 +99,7 @@ if (!isset($_SESSION['uid'])) {
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Code for Pie Chartss -->
                 <div class="col-sm-6 col-md-6">
                     <div class="card card-stats card-round">
@@ -143,8 +153,8 @@ if (!isset($_SESSION['uid'])) {
             </div>
 
             <!-- Pie Chart Script -->
-             <!-- Pending (Yellow) Delivered (Green) Returned (Red) -->
-            <script>               
+            <!-- Pending (Yellow) Delivered (Green) Returned (Red) -->
+            <script>
                 console.log('Pending: <?php echo $pending_count; ?>');
                 console.log('Delivered: <?php echo $delivered_count; ?>');
                 console.log('Returned: <?php echo $returned_count; ?>');
@@ -157,24 +167,24 @@ if (!isset($_SESSION['uid'])) {
                         datasets: [{
                             label: 'Order Status',
                             data: [
-                                <?php echo $pending_count; ?>, 
-                                <?php echo $delivered_count; ?>, 
+                                <?php echo $pending_count; ?>,
+                                <?php echo $delivered_count; ?>,
                                 <?php echo $returned_count; ?>
                             ],
                             backgroundColor: [
-                                'rgba(233, 244, 5, 63)', 
-                                'rgba(39, 221, 3, 110)', 
-                                'rgba(221, 10, 3, 2)' 
+                                'rgba(233, 244, 5, 63)',
+                                'rgba(39, 221, 3, 110)',
+                                'rgba(221, 10, 3, 2)'
                             ],
                             borderColor: [
-                                'rgba(233, 244, 5, 63)', 
-                                'rgba(39, 221, 3, 110)', 
-                                'rgba(221, 10, 3, 2)'  
+                                'rgba(233, 244, 5, 63)',
+                                'rgba(39, 221, 3, 110)',
+                                'rgba(221, 10, 3, 2)'
                             ],
                             borderWidth: 1
                         }]
                     },
-                    
+
                     options: {
                         responsive: true,
                         plugins: {
@@ -183,7 +193,7 @@ if (!isset($_SESSION['uid'])) {
                             },
                             tooltip: {
                                 callbacks: {
-                                    label: function(tooltipItem) {
+                                    label: function (tooltipItem) {
                                         return tooltipItem.label + ': ' + tooltipItem.raw;
                                     }
                                 }
@@ -195,10 +205,11 @@ if (!isset($_SESSION['uid'])) {
         </div>
     </div>
 
-  <!-- Footer -->
-  <?php include('includes/footer.php'); ?>
+    <!-- Footer -->
+    <?php include('includes/footer.php'); ?>
 
-  <!-- Scripts -->
-  <?php include('includes/script.php'); ?>
+    <!-- Scripts -->
+    <?php include('includes/script.php'); ?>
 </body>
+
 </html>
