@@ -74,7 +74,7 @@ if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
 
                             $escaped_username = mysqli_real_escape_string($conn, $username);
 
-                            $sql = "SELECT password, levelid, uid FROM useraccount WHERE username = '$escaped_username'";
+                            $sql = "SELECT * FROM useraccount WHERE username = '$escaped_username'";
                             $result = mysqli_query($conn, $sql);
 
                             if ($result && mysqli_num_rows($result) == 1) {
@@ -86,20 +86,42 @@ if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
                                     $_SESSION['uid'] = $row['uid'];
 
                                     $user_level = $row['levelid'];
+                                    $verified = $row['is_verified'];
 
-                                    if ($user_level == 1) {
+                                    if ($user_level == 1 && $verified == 'Yes') {
                                         header("Location: admin/index.php");
-                                    } elseif ($user_level == 2) {
+                                    } elseif ($user_level == 2 && $verified == 'Yes') {
                                         header("Location: staff/index.php");
-                                    } elseif ($user_level == 3) {
+                                    } elseif ($user_level == 3 && $verified == 'Yes') {
                                         header("Location: customer/index.php");
+                                    } else {
+                                        echo "<script>
+                                            Swal.fire({
+                                                position: 'center',
+                                                icon: 'error',
+                                                title: 'Your account is not verified!',
+                                            });
+                                            setTimeout(function() {
+                                                window.location.href = 'login.php';
+                                            }, 2000);
+                                        </script>";
                                     }
                                     exit();
                                 } else {
-                                    $error = "Username or password is incorrect";
+                                    echo "<script>
+                                            Swal.fire({
+                                                icon: 'error',
+                                                text: 'Incorrect Username or Password!',
+                                            });
+                                        </script>";
                                 }
                             } else {
-                                $error = "Incorrect Username or Password";
+                                echo "<script>
+                                            Swal.fire({
+                                                icon: 'error',
+                                                text: 'Incorrect Username or Password!',
+                                            });
+                                        </script>";
                             }
                         }
                     }
@@ -147,6 +169,7 @@ if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
     </div>
 
 </body>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<!-- Sweet Alert-->
+    <script src="main/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </html>

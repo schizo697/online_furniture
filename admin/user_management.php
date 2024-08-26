@@ -36,7 +36,7 @@ if (!isset($_SESSION['uid'])) {
             $sql = "INSERT INTO userinfo (firstname, lastname, contact, address, gender, email) VALUES ('$firstname', '$lastname', '$contact', '$address', '$gender', '$email')";
             if(mysqli_query($conn, $sql)) {
                 $info_id = mysqli_insert_id($conn);
-                $sql = "INSERT INTO useraccount (username, password, levelid, infoid, status) VALUES ('$username', '$encrypted_password', '$usertype', '$info_id', 1)";
+                $sql = "INSERT INTO useraccount (username, password, levelid, infoid, is_verified, status) VALUES ('$username', '$encrypted_password', '$usertype', '$info_id', 'Yes', 1)";
             
                     if(mysqli_query($conn, $sql)) {
                         $url = "user_management.php?success=true";
