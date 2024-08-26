@@ -11,7 +11,19 @@
             $fetch_code = $row['otp'];
             $update_status = mysqli_query($conn, "UPDATE useraccount SET is_verified = 'Yes' WHERE otp = '$fetch_code'");
             
-            echo " <script> alert ('Your email has been verified'); document.location.href = 'login.php'; </script>";
+            echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    text: 'Email verification successfully!',
+                    showConfirmButton: false
+                });
+                setTimeout(function() {
+                    window.location.href = 'login.php';
+                }, 2000); // 2 seconds delay
+            });
+            </script>";
         } 
         else {
             echo " <script> alert ('Incorrect Code'); document.location.href = 'verifyEmail.php'; </script>";  
@@ -42,7 +54,7 @@
                     <h2 class="text-center">Email Verification</h2>
                     
                     <div class="form-group">
-                        <input class="form-control" type="number" name="otp" placeholder="Enter otp code" required>
+                        <input class="form-control" type="text" name="otp" placeholder="Enter otp code" required pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                     </div>
                     <div class="form-group">
                         <input class="form-control button" type="submit" name="check-otp" value="Submit">

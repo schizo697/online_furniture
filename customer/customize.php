@@ -196,73 +196,236 @@
 <div class="container">
     <main>
         <section class="tabs">
-            <!-- Dropdown for Type of Furniture -->
-            <div class="dropdown">
-                <label for="furnitureType">Type of Furniture:</label>
-                <select id="furnitureType" name="furnitureType">
-                    <option value="cabinet">Cabinet</option>
-                    <option value="table">Table</option>
-                    <option value="chair">Chair</option>
-                    <option value="bed">Bed</option>
-                </select>
-            </div>
-
             <!-- Tab Links -->
             <div class="tab-links">
                 <button class="active" onclick="openTab(event, 'Properties')">Properties</button>
                 <button onclick="openTab(event, 'Materials')">Materials</button>
                 <button onclick="openTab(event, 'FootPart')">Foot Part</button>
             </div>
+            <?php
+            // Fetch the data from the database
+            // Note: Use prepared statements for security reasons in a real application
+            $pid = $_GET['pid'];
+            $furniture = "SELECT furniture_type.type, furniture.pname, furniture.image, furniture.price AS fprice, furniture.height, furniture.width, furniture.length, mats.mid, 
+            mats.material, mats.price AS mprice,mats_color.mcid, mats_color.color, mats_color.price AS mcprice,mats_fp.mfpid, mats_fp.fp, mats_fp.price AS mfpprice FROM mats 
+            JOIN mats_color ON mats.mcid = mats_color.mcid
+            JOIN mats_fp ON mats.mfpid = mats_fp.mfpid
+            JOIN furniture_type ON mats.ftype = furniture_type.fid
+            JOIN furniture ON furniture_type.fid = furniture.fid 
+            WHERE furniture.pid = '$pid'";
+            $furnitureres = mysqli_query($conn, $furniture);
+            if($furnitureres && mysqli_num_rows($furnitureres) > 0){
+                $colors = [];
+                $materials = [];
+                $foots = []; 
+                while($furniturerow = mysqli_fetch_assoc($furnitureres)){
+                    $pname = $furniturerow['pname'];
+                    $img = $furniturerow['image'];
+                    $fprice = $furniturerow['fprice'];
+                    $height = $furniturerow['height'];
+                    $width = $furniturerow['width'];
+                    $length = $furniturerow['length'];
+                    $material = $furniturerow['material'];
+                    $mprice = $furniturerow['mprice'];
+                    $color = $furniturerow['color'];
+                    $mcprice = $furniturerow['mcprice'];
+                    $fp = $furniturerow['fp'];
+                    $mfpprice = $furniturerow['mfpprice'];
+
+                    $colors[$color] = $mcprice;
+                    $materials[$material] = $mprice;
+                    $foots[$fp] = $mfpprice;
+                }
+            }
+            ?>
             <div id="Properties" class="tab-content active">
                 <h2>Properties</h2>
+                <h6>Quantity:</span></h6>
+                <input type="text" id="qty" value="1" placeholder="Quantity" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                <h6>Height:<span style="color: red; font-size: 12px;">(inches)</h6>
+                <input type="text" id="height" placeholder="<?php echo $height ?>" placeholder="Height" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                <h6>Width:<span style="color: red; font-size: 12px;">(inches)</h6>
+                <input type="text" id="width" placeholder="<?php echo $width ?>" placeholder="Width" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                <h6>Length:<span style="color: red; font-size: 12px;">(inches)</h6>
+                <input type="text" id="length" placeholder="<?php echo $length ?>" placeholder="Length" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                 <h6>Color:</h6>
                 <select id="color" name="color" required>
                     <option value="" disabled selected>Select a color</option>
-                    <option value="red">Red</option>
+                    <?php foreach ($colors as $color => $mcprice) : ?>
+                    <option value="<?php echo $color ?>" data-price="<?php echo $mcprice ?>"><?php echo $color ?></option>
+                    <?php endforeach; ?>
                 </select>
-                <h6>Quantity:</h6>
-                <input type="text" id="qty" value="1" placeholder="Quantity" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                <h6>Height:</h6>
-                <input type="text" id="height" value="345" placeholder="Height" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                <h6>Width:</h6>
-                <input type="text" id="width" value="285" placeholder="Width" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                <h6>Length:</h6>
-                <input type="text" id="length" value="345" placeholder="Length" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-
             </div>
             <div id="Materials" class="tab-content">
                 <h2>Materials</h2>
-                <label for="material">Material:</label>
-                <input type="text" id="material" name="material" required>
+                <h6>Materials:</h6>
+                <select id="mats" name="mats" required>
+                    <option value="" disabled selected>Select material</option>
+                    <?php foreach ($materials as $material => $mprice) : ?>       
+                    <option value="<?php echo $material ?>" data-price="<?php echo $mprice ?>"><?php echo $material ?></option>
+                    <?php endforeach ?>
+                </select>
             </div>
             <div id="FootPart" class="tab-content">
                 <h2>Foot Part</h2>
-                <label for="foot">Foot Part:</label>
+                <h6>Foot Part:</h6>
                 <select id="foot" name="foot" required>
-                    <option value="wheel">Wheel</option>
-                    <option value="plain">Plain</option>
+                    <option value="" disabled selected>Select foot part</option>
+                    <?php foreach ($foots as $fp => $mfpprice) : ?>
+                    <option value="<?php echo $fp ?>" data-price="<?php echo $mfpprice ?>"><?php echo $fp ?></option>
+                    <?php endforeach ?>
                 </select>
             </div>
         </section>
 
         <section class="preview">
-            <img src="cabinet.jpg" alt="Cabinet Diagram">
+            <img src="../admin/assets/img/<?php echo $img ?>" alt="<?php echo $img ?>">
         </section>
-
         <section class="summary">
             <div class="cost">
-                <span>Cost:</span>
-                <span class="amount">₱11,000</span>
+                <span><h3>Total</h3></span>
+                <span class="amount">₱<span id="totalPrice">0.00</span></span>
             </div>
-            <div class="actions">
-                <button class="add-cart">Add Cart</button>
-                <button class="place-order">Place Order</button>
-            </div>
+            <ul>
+                <li style="display: flex; justify-content: space-between;">
+                    <span><?php echo $pname ?></span>
+                    <span>₱<?php echo $fprice ?></span>
+                </li>
+                <span><strong>Material</strong></span>
+                <li style="display: flex; justify-content: space-between;">
+                    <span id="materialName"></span>
+                    <span id="materialPrice"></span>
+                </li>
+                <span><strong>Size</strong></span>
+                <li style="display: flex; justify-content: space-between;">
+                    <span id="sizeName"></span>
+                    <span id="sizePrice"></span>
+                </li>
+                <span><strong>Color</strong></span>
+                <li style="display: flex; justify-content: space-between;">
+                    <span id="colorName"></span>
+                    <span id="colorPrice"></span>
+                </li>
+                <span><strong>Foot Part</strong></span>
+                <li style="display: flex; justify-content: space-between;">
+                    <span id="footName"></span>
+                    <span id="footPrice"></span>
+                </li>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+            </ul>
+            <form action="">
+                <input type="hidden" name="pname" value="<?php echo $pname ?>">
+                <input type="hidden" name="fprice" value="<?php echo $fprice ?>">
+                <input type="hidden" name="materialPrice" value="">
+                <input type="hidden" name="sizePrice" value="">
+                <input type="hidden" name="colorPrice" value="">
+                <input type="hidden" name="footPrice" value="">
+                <input type="hidden" name="totalPrice" value="">
+                <div class="actions">
+                    <button class="add-cart">Add Cart</button>
+                    <button class="place-order">Place Order</button>
+                </div>
+            </form>
         </section>
     </main>
 </div>
 <br><br>
 <!-- End Main Content -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const furniturePrice = <?php echo $fprice ?>;
+    let materialPrice = 0;
+    let colorPrice = 0;
+    let footPrice = 0;
+    let sizePrice = 0;
+
+    function updateSizePrice() {
+        const width = parseFloat(document.getElementById('width').value) || 0;
+        const length = parseFloat(document.getElementById('length').value) || 0;
+        const height = parseFloat(document.getElementById('height').value) || 0;
+
+        // Determine size price based on conditions
+        if (width >= 61 && length > 80 && height > 16) {
+            sizePrice = 1000;
+        } else if (width <= 60 && length < 80 && height <= 16) {
+            sizePrice = 500;
+        } else {
+            sizePrice = 0; // Default value if none of the conditions are met
+            if (width >= 61 && length === 80) {
+                sizePrice += 1000;
+            } else if (width === 60 && length === 80) {
+                sizePrice += 500;
+            }
+            if (height >= 25) {
+                sizePrice += 500;
+            } else if (height <= 24) {
+                sizePrice += 250;
+            }
+        }
+
+        // Update size display
+        document.getElementById('sizeName').innerText = `Height: ${height} inches, Width: ${width} inches, Length: ${length} inches`;
+        document.getElementById('sizePrice').innerText = '₱' + sizePrice.toFixed(2);
+    }
+
+    function updatePrice() {
+        const quantity = parseInt(document.getElementById('qty').value) || 1;
+        const totalPrice = (furniturePrice + materialPrice + colorPrice + footPrice + sizePrice) * quantity;
+        console.log('Updating total price to: ₱' + totalPrice.toFixed(2));  // Debugging line
+        document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
+    }
+
+    document.getElementById('color').addEventListener('change', (event) => {
+        const selectedOption = event.target.options[event.target.selectedIndex];
+        colorPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+        document.getElementById('colorName').innerText = event.target.value;
+        document.getElementById('colorPrice').innerText = '₱' + colorPrice.toFixed(2);
+        updatePrice();
+    });
+
+    document.getElementById('mats').addEventListener('change', (event) => {
+        const selectedOption = event.target.options[event.target.selectedIndex];
+        materialPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+        document.getElementById('materialName').innerText = event.target.value;
+        document.getElementById('materialPrice').innerText = '₱' + materialPrice.toFixed(2);
+        updatePrice();
+    });
+
+    document.getElementById('foot').addEventListener('change', (event) => {
+        const selectedOption = event.target.options[event.target.selectedIndex];
+        footPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+        document.getElementById('footName').innerText = event.target.value;
+        document.getElementById('footPrice').innerText = '₱' + footPrice.toFixed(2);
+        updatePrice();
+    });
+
+    // Add event listeners for width, length, and height
+    document.getElementById('width').addEventListener('input', () => {
+        updateSizePrice();
+        updatePrice();
+    });
+
+    document.getElementById('length').addEventListener('input', () => {
+        updateSizePrice();
+        updatePrice();
+    });
+
+    document.getElementById('height').addEventListener('input', () => {
+        updateSizePrice();
+        updatePrice();
+    });
+
+    document.getElementById('qty').addEventListener('input', updatePrice);
+
+    updatePrice();
+});
+
+</script>
 
 <?php include('includes/footer.php'); ?>
 
