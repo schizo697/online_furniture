@@ -26,6 +26,29 @@ WHERE orders.order_code = '$order_code'";
 <head>
     <?php include('includes/topbar.php');?>
 
+    <style>
+        .rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: left;
+            margin: 10px 0;
+        }
+        .rating input {
+            display: none;
+        }
+        .rating label {
+            font-size: 2em;
+            color: #ccc;
+            cursor: pointer;
+        }
+        .rating input:checked ~ label {
+            color: #f5b301;
+        }
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: #f5b301;
+        }
+    </style>
 </head>
 <body>
 
@@ -78,6 +101,26 @@ WHERE orders.order_code = '$order_code'";
                                 echo "<div class='col-12'><p>No order details found.</p></div>";
                             }
                             ?>
+
+                            <div class = "col-md-6">
+                            <div class="review-form">
+                                <h4>Product Review & Rating</h4>
+                                    <form id="reviewForm" method="POST">
+                                        <textarea id="reviewText" class="form-control" rows="5" placeholder="Write your review here..." required></textarea>
+                                        <br>
+                                        <h6> Select Rating </h6>
+                                        <div class="rating">
+                                            <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+                                            <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+                                            <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+                                            <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+                                            <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+                                        </div>
+                                        <br>
+                                        <button class="btn btn-secondary" type="type">Submit</button>
+                                    </form>
+                            </div>
+                            </div>
                         </div>
                         <div class="form-button-action mt-4">
                             <a href="purchase.php" class="btn btn-secondary">Back to Purchase</a>
