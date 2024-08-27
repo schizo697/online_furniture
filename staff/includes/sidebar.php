@@ -50,18 +50,13 @@
                   </a>
                 </li>
                 <li>
-                  <a href="components/gridsystem.html">
-                    <span class="sub-item">Stock Level</span>
+                  <a href="furniture_type.php">
+                    <span class="sub-item">Furniture Type</span>
                   </a>
                 </li>
                 <li>
                   <a href="inventoryrecord.php">
                     <span class="sub-item">Inventory Record</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="components/notifications.html">
-                    <span class="sub-item">Inventory Report</span>
                   </a>
                 </li>
               </ul>
@@ -87,18 +82,8 @@
                   </a>
                 </li>
                 <li>
-                  <a href="components/gridsystem.html">
-                    <span class="sub-item">Sales Report</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="components/panels.html">
+                  <a href="payment.php">
                     <span class="sub-item">Payment</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="components/notifications.html">
-                    <span class="sub-item">Transaction History</span>
                   </a>
                 </li>
               </ul>
@@ -118,7 +103,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="#">
+            <a href="product_rating.php">
               <i class="fas fa-star"></i>
               <p>Reviews & Rating</p>
             </a>
