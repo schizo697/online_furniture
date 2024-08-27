@@ -607,7 +607,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                         </td>
                                                         <td class="text-center"><?php echo $date_order; ?></td>
                                                         <td class="text-center">
-                                                            <a href="product_view.php?order_code=<?php echo $order_code ?>"
+                                                            <a href="product_rate.php?order_code=<?php echo $order_code ?>"
                                                                 class="btn btn-warning btn-sm">
                                                                 <i class="fas fa-eye"></i> View
                                                             </a>

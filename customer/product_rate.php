@@ -20,6 +20,40 @@ if (isset($_GET['order_code'])) {
     $order_res = mysqli_query($conn, $order_query);
 }
 
+//Submit Review
+if (isset($_POST['submitreview'])) {
+    $rating = $_POST['rating'];
+    $review = $_POST['review'];
+    $uid = $_SESSION['uid'];
+    $order_code = $_GET['order_code'];
+
+    $getpid =  mysqli_query($conn, "SELECT *, furniture.pid FROM orders JOIN furniture ON orders.pid = furniture.pid WHERE orders.order_code = '$order_code'");
+
+    if (mysqli_num_rows($getpid) == TRUE) {
+        $row = mysqli_fetch_assoc($getpid);
+        $_SESSION['pid'] = $row['pid'];
+        $pid = $_SESSION['pid'];
+
+        $sql = "INSERT INTO product_rating (pid, rating, review, uid) VALUES ('$pid', '$rating', '$review', '$uid')";
+                             
+        if(mysqli_query($conn, $sql)) {
+            echo "<script>
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'You have successfully rated this product!',
+                    });
+                    setTimeout(function() {
+                        window.location.href = 'shop.php';
+                    }, 2000);
+                    </script>";
+            exit(); 
+        } else {
+            echo '<script>window.location.href="purchase.php?error=true";</script>';
+            exit();
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -102,10 +136,28 @@ if (isset($_GET['order_code'])) {
                                 echo "<div class='col-12'><p>No order details found.</p></div>";
                             }
                             ?>
+
+                            <div class = "col-md-6">
+                                <div class="review-form">
+                                    <h4>Rate Product</h4>
+                                        <form id="reviewForm" method="POST">
+                                            <div class="rating">
+                                                <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+                                                <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+                                                <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+                                                <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+                                                <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+                                            </div>
+                                            <textarea id="reviewText" name="review" class="form-control" rows="5" placeholder="Write your review here..." required></textarea>
+                                            <br>
+                                            <button class="btn btn-secondary" type="submit" name="submitreview">Submit</button>
+                                        </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-button-action mt-4">
+                        <!-- <div class="form-button-action mt-4">
                             <a href="purchase.php" class="btn btn-secondary">Back to Purchase</a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -135,24 +187,6 @@ if (isset($_GET['order_code'])) {
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-    function showModal(){
-        Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: 'Your review has been submitted successfully!',
-            showConfirmButton: false
-        });
-    }
-
-    function checkExistParam() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('success') && urlParams.get('success') === 'true') {
-            showModal();
-        }
-    }
-<script>
 
 </body>
 </html>
