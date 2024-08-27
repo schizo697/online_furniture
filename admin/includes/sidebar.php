@@ -56,11 +56,11 @@
                     <span class="sub-item">Product</span>
                   </a>
                 </li>
-                <li>
+                <!-- <li>
                   <a href="components/gridsystem.html">
                     <span class="sub-item">Stock Level</span>
                   </a>
-                </li>
+                </li> -->
                 <li>
                   <a href="furniture_type.php">
                     <span class="sub-item">Furniture Type</span>
@@ -110,11 +110,11 @@
                     <span class="sub-item">Payment</span>
                   </a>
                 </li>
-                <li>
+                <!-- <li>
                   <a href="components/notifications.html">
                     <span class="sub-item">Transaction History</span>
                   </a>
-                </li>
+                </li> -->
               </ul>
             </div>
           </li>
@@ -159,7 +159,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#">
+            <a href="product_rating.php">
               <i class="fas fa-star"></i>
               <p>Reviews & Rating</p>
             </a>
