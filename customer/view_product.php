@@ -26,6 +26,8 @@
         $result = $stmt->get_result();
 
         if ($row = $result->fetch_assoc()) {
+            $color = $row['color'];
+            $colors[$color] = $color;
             ?>
             <!-- Main -->
             <!-- Single Product Start -->
@@ -52,21 +54,20 @@
                                     <label for="colorOptions" class="form-label">Color Options:</label>
                                     <select class="form-select" id="colorOptions">
                                         <option selected>Select Color</option>
-                                        <option value="1">Red</option>
-                                        <option value="2">Blue</option>
-                                        <option value="3">Green</option>
-                                        <option value="4">Yellow</option>
+                                        <?php foreach ($colors as $color) : ?>
+                                        <option value="<?php echo $color; ?>"><?php echo $color; ?></option>
+                                        <?php endforeach;?>
                                     </select>
                                 </div>
 
                                 <div class="row mb-4">
                                     <div class="col">
                                         <label for="widthInput" class="form-label">Width (cm):</label>
-                                        <input type="text" class="form-control" id="widthInput" name="width" placeholder="Enter width">
+                                        <input type="text" class="form-control" id="widthInput" name="width" placeholder="<?php echo $row['width'] ?>" readonly>
                                     </div>
                                     <div class="col">
                                         <label for="heightInput" class="form-label">Height (cm):</label>
-                                        <input type="text" class="form-control" id="heightInput" name="height" placeholder="Enter height">
+                                        <input type="text" class="form-control" id="heightInput" name="height" placeholder="<?php echo $row['height'] ?>" readonly>
                                     </div>
                                 </div>
 
@@ -84,6 +85,11 @@
                                     </div>
                                 </div>
 
+                                <a href="customize.php?pid=<?php echo $id; ?>">
+                                    <button type="button" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                        <i class="fa fa-shopping-bag me-2 text-primary"></i> Customize
+                                    </button>
+                                </a>
                                 <button type="button" class="btn border border-secondary rounded-pill px-3 text-primary" onclick="addToCart()">
                                     <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
                                 </button>

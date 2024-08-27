@@ -317,14 +317,14 @@
                 <br>
                 <br>
             </ul>
-            <form action="">
+            <form action="add_to_cart.php" method="POST">
                 <input type="hidden" name="pname" value="<?php echo $pname ?>">
                 <input type="hidden" name="fprice" value="<?php echo $fprice ?>">
-                <input type="hidden" name="materialPrice" value="">
-                <input type="hidden" name="sizePrice" value="">
-                <input type="hidden" name="colorPrice" value="">
-                <input type="hidden" name="footPrice" value="">
-                <input type="hidden" name="totalPrice" value="">
+                <input type="hidden" id="hiddenMaterialPrice" name="materialPrice" value="0.00">
+                <input type="hidden" id="hiddenColorPrice"  name="sizePrice" value="0.00">
+                <input type="hidden" id="hiddenFootPrice"  name="colorPrice" value="0.00">
+                <input type="hidden" id="hiddenSizePrice"  name="footPrice" value="0.00">
+                <input type="hidden" id="hiddenTotalPrice"  name="totalPrice" value="0.00">
                 <div class="actions">
                     <button class="add-cart">Add Cart</button>
                     <button class="place-order">Place Order</button>
@@ -371,6 +371,7 @@
         // Update size display
         document.getElementById('sizeName').innerText = `Height: ${height} inches, Width: ${width} inches, Length: ${length} inches`;
         document.getElementById('sizePrice').innerText = '₱' + sizePrice.toFixed(2);
+        document.getElementById('hiddenSizePrice').value = sizePrice.toFixed(2);
     }
 
     function updatePrice() {
@@ -378,6 +379,11 @@
         const totalPrice = (furniturePrice + materialPrice + colorPrice + footPrice + sizePrice) * quantity;
         console.log('Updating total price to: ₱' + totalPrice.toFixed(2));  // Debugging line
         document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
+        
+        document.getElementById('hiddenMaterialPrice').value = materialPrice.toFixed(2);
+        document.getElementById('hiddenColorPrice').value = colorPrice.toFixed(2);
+        document.getElementById('hiddenFootPrice').value = footPrice.toFixed(2);
+        document.getElementById('hiddenTotaPrice').value = totalPrice.toFixed(2);
     }
 
     document.getElementById('color').addEventListener('change', (event) => {
