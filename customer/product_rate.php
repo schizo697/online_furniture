@@ -185,8 +185,8 @@ if (isset($_POST['submitreview'])) {
 <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
 <!-- Template Javascript -->
-<script src="js/main.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="main/js/main.js"></script>
 
 </body>
 </html>
