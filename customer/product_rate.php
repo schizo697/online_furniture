@@ -34,7 +34,7 @@ if (isset($_POST['submitreview'])) {
         $_SESSION['pid'] = $row['pid'];
         $pid = $_SESSION['pid'];
 
-        $sql = "INSERT INTO product_rating (pid, rating, review, uid) VALUES ('$pid', '$rating', '$review', '$uid')";
+        $sql = "INSERT INTO product_rating (pid, rating, review, uid, order_code) VALUES ('$pid', '$rating', '$review', '$uid', '$order_code')";
                              
         if(mysqli_query($conn, $sql)) {
             echo "<script>
