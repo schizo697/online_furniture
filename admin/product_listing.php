@@ -10,7 +10,7 @@ if (!isset($_SESSION['uid'])) {
 
 
 // Handle Add Product
-if(isset($_POST['addproduct'])) {
+if (isset($_POST['addproduct'])) {
     $pname = $_POST['pname'];
     $price = $_POST['price'];
     $description = $_POST['description'];
@@ -19,18 +19,21 @@ if(isset($_POST['addproduct'])) {
     $height = $_POST['height'];
     $width = $_POST['width'];
     $length = $_POST['length'];
-    $fid = $_POST['fid']; 
+    $material = $_POST['material'];
+    $footpart = $_POST['footpart'];
+    $fid = $_POST['fid'];
 
     if (isset($_FILES['image'])) {
         $img_name = $_FILES['image']['name'];
         $img_size = $_FILES['image']['size'];
         $tmp_name = $_FILES['image']['tmp_name'];
         $error = $_FILES['image']['error'];
-        
+
         if ($error === 0) {
             if ($img_size > 125000000) {
-                $message = "Sorry, your file is too large";
+                $message = "Sorry, your file is too large.";
                 header("Location: product_listing.php?error=$message");
+                exit();
             } else {
                 $img_ex = pathinfo($img_name, PATHINFO_EXTENSION);
                 $img_ex_loc = strtolower($img_ex);
@@ -38,35 +41,42 @@ if(isset($_POST['addproduct'])) {
                 $allowed_ex = array("jpg", "jpeg", "png", "pdf");
 
                 if (in_array($img_ex_loc, $allowed_ex)) {
-                    $new_img_name = uniqid("FR-", true).'.'.$img_ex_loc;
-                    $img_upload_path = 'assets/img/'.$new_img_name;
+                    $new_img_name = uniqid("FR-", true) . '.' . $img_ex_loc;
+                    $img_upload_path = 'assets/img/' . $new_img_name;
                     move_uploaded_file($tmp_name, $img_upload_path);
 
                     // Insert into the database
-                    $sql = "INSERT INTO furniture (pname, price, description, quantity, color, height, width, length, fid, image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')";
+                    $sql = "INSERT INTO furniture (pname, price, description, quantity, color, height, width, length, material, foot_part, fid, image, status) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("ssssssssss", $pname, $price, $description, $quantity, $color, $height, $width, $length, $fid, $new_img_name);
-                    if($stmt->execute()) {
+                    $stmt->bind_param("ssssssssssss", $pname, $price, $description, $quantity, $color, $height, $width, $length, $material, $footpart, $fid, $new_img_name);
+
+                    if ($stmt->execute()) {
                         $url = "product_listing.php?success=true";
-                        echo '<script>window.location.href= "' . $url . '";</script>'; 
+                        echo '<script>window.location.href="' . $url . '";</script>';
+                        exit();
                     } else {
-                        echo "<script>Swal.fire({
-                                icon: 'error',
-                                text: 'Something went wrong!',
+                        echo "<script>
+                                Swal.fire({
+                                    icon: 'error',
+                                    text: 'Something went wrong!',
                                 });
-                            </script>";
+                              </script>";
                     }
                 } else {
-                    $message = "You cannot upload files of this type";
+                    $message = "You cannot upload files of this type.";
                     header("Location: product_listing.php?error=$message");
+                    exit();
                 }
             }
         } else {
-            $message = "Please upload the required images";
+            $message = "Please upload the required images.";
             header("Location: product_listing.php?error=$message");
+            exit();
         }
     }
 }
+
 
 // Handle Remove Product
 if (isset($_POST['remove_product'])) {
@@ -88,7 +98,7 @@ if (isset($_POST['remove_product'])) {
 
 
 // Handle Update Product
-if(isset($_POST['updateproduct'])) {
+if (isset($_POST['updateproduct'])) {
     $pid = $_POST['editPid'];
     $pname = $_POST['editPname'];
     $price = $_POST['editPrice'];
@@ -98,7 +108,9 @@ if(isset($_POST['updateproduct'])) {
     $height = $_POST['editHeight'];
     $width = $_POST['editWidth'];
     $length = $_POST['editLength'];
-    $status = $_POST['editStatus']; // Corrected variable name
+    $material = $_POST['editMaterial'];
+    $footpart = $_POST['editFootPart'];
+    $status = $_POST['editStatus'];
     $fid = $_POST['editFid'];
 
     // Check if a new image is uploaded
@@ -119,35 +131,37 @@ if(isset($_POST['updateproduct'])) {
                 move_uploaded_file($tmp_name, $img_upload_path);
 
                 // Update query including image
-                $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, status=?, color=?, height=?, width=?, length=?, fid=?, image=? WHERE pid=?";
+                $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, status=?, color=?, height=?, width=?, length=?, material=?, foot_part=?, fid=?, image=? WHERE pid=?";
                 $stmt = $conn->prepare($update_query);
-                $stmt->bind_param("sssssssssssi", $pname, $price, $description, $quantity, $status, $color, $height, $width, $length, $fid, $new_img_name, $pid);
+                $stmt->bind_param("sssssssssssssi", $pname, $price, $description, $quantity, $status, $color, $height, $width, $length, $material, $footpart, $fid, $new_img_name, $pid);
             } else {
-                $message = "You cannot upload files of this type";
+                $message = "You cannot upload files of this type.";
                 header("Location: product_listing.php?error=$message");
-                exit(); // Added exit to prevent further execution
+                exit();
             }
         } else {
-            $message = "Sorry, your file is too large";
+            $message = "Sorry, your file is too large.";
             header("Location: product_listing.php?error=$message");
-            exit(); // Added exit to prevent further execution
+            exit();
         }
     } else {
         // Update query without image
-        $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, status=?, color=?, height=?, width=?, length=?, fid=? WHERE pid=?";
+        $update_query = "UPDATE furniture SET pname=?, price=?, description=?, quantity=?, status=?, color=?, height=?, width=?, length=?, material=?, foot_part=?, fid=? WHERE pid=?";
         $stmt = $conn->prepare($update_query);
-        $stmt->bind_param("ssssssssssi", $pname, $price, $description, $quantity, $status, $color, $height, $width, $length, $fid, $pid);
+        $stmt->bind_param("ssssssssssssi", $pname, $price, $description, $quantity, $status, $color, $height, $width, $length, $material, $footpart, $fid, $pid);
     }
 
-    if($stmt->execute()) {
+    if ($stmt->execute()) {
         $url = "product_listing.php?update_success=true";
         echo '<script>window.location.href= "' . $url . '";</script>';
+        exit();
     } else {
-        echo "<script>Swal.fire({
-                icon: 'error',
-                text: 'Something went wrong!',
-            });
-        </script>";
+        echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Something went wrong!',
+                });
+              </script>";
     }
 }
 ?>
@@ -240,25 +254,37 @@ if(isset($_POST['updateproduct'])) {
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Width</label>
-                                                        <input name="width" type="number" class="form-control" placeholder="in cm" />
+                                                        <input name="width" type="number" class="form-control" placeholder="in cm"  required/>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Length</label>
-                                                        <input name="length" type="number" class="form-control" placeholder="in cm" />
+                                                        <input name="length" type="number" class="form-control" placeholder="in cm" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Material</label>
+                                                        <input name="material" type="text" class="form-control" placeholder="" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Foot Part</label>
+                                                        <input name="footpart" type="text" class="form-control" placeholder="" required/>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Color</label>
-                                                        <input name="color" type="text" class="form-control" placeholder="" />
+                                                        <input name="color" type="text" class="form-control" placeholder="" required/>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
                                                         <label>Quantity</label>
-                                                        <input name="quantity" type="number" class="form-control" placeholder="" />
+                                                        <input name="quantity" type="number" class="form-control" placeholder="" required/>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 pe-0">
@@ -346,6 +372,18 @@ if(isset($_POST['updateproduct'])) {
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
+                                                        <label>Material</label>
+                                                        <input name="editMaterial" id="editMaterial" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Foot Part</label>
+                                                        <input name="editFootPart" id="editFootPart" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
                                                         <label>Color</label>
                                                         <input name="editColor" id="editColor" type="text" class="form-control" placeholder="" />
                                                     </div>
@@ -393,6 +431,8 @@ if(isset($_POST['updateproduct'])) {
                                         <th>Height</th>
                                         <th>Width</th>
                                         <th>Length</th>
+                                        <th>Material</th>
+                                        <th>Foot Part</th>
                                         <th>Status</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
@@ -417,6 +457,8 @@ if(isset($_POST['updateproduct'])) {
                                             $height = $row['height'];
                                             $width = $row['width'];
                                             $length = $row['length'];
+                                            $material = $row['material'];
+                                            $footpart = $row['foot_part'];
                                             $status = $row['status'];
                                 ?>
                                     <tr>
@@ -428,6 +470,8 @@ if(isset($_POST['updateproduct'])) {
                                         <td><?php echo $height ?>cm</td>
                                         <td><?php echo $width ?>cm</td>
                                         <td><?php echo $length ?>cm</td>
+                                        <td><?php echo $material ?></td>
+                                        <td><?php echo $footpart ?></td>
                                         <td><?php echo $status ?></td>
                                         <td>
                                         <div class="form-button-action">
@@ -488,7 +532,7 @@ if(isset($_POST['updateproduct'])) {
     }
 
     // Fix in JavaScript function populateEditModal
-    function populateEditModal(pid, fid, pname, price, description, quantity, color, height, width, length, status) {
+    function populateEditModal(pid, fid, pname, price, description, quantity, color, height, width, length, material, footpart, status) {
     document.getElementById('editPid').value = pid;
     document.getElementById('editFid').value = fid;
     document.getElementById('editPname').value = pname;
@@ -499,6 +543,8 @@ if(isset($_POST['updateproduct'])) {
     document.getElementById('editHeight').value = height;
     document.getElementById('editWidth').value = width;
     document.getElementById('editLength').value = length;
+    document.getElementByID('editMaterial').value = material;
+    document.getElementById('editFootPart').value = footpart;
     document.getElementById('editStatus').value = status; 
 }
 

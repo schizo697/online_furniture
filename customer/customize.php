@@ -236,18 +236,23 @@
                     $materials[$material] = $mprice;
                     $foots[$fp] = $mfpprice;
                 }
+            } else {
+                $url = "shop.php";
+                echo '<script>window.location.href= "' . $url . '";</script>';
+                exit();
             }
             ?>
+            <form action="customize_add_to_cart.php" method="POST">
             <div id="Properties" class="tab-content active">
                 <h2>Properties</h2>
                 <h6>Quantity:</span></h6>
                 <input type="text" id="qty" value="1" placeholder="Quantity" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                 <h6>Height:<span style="color: red; font-size: 12px;">(inches)</h6>
-                <input type="text" id="height" placeholder="<?php echo $height ?>" placeholder="Height" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                <input type="text" id="height" placeholder="Height" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                 <h6>Width:<span style="color: red; font-size: 12px;">(inches)</h6>
-                <input type="text" id="width" placeholder="<?php echo $width ?>" placeholder="Width" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                <input type="text" id="width" placeholder="Width" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                 <h6>Length:<span style="color: red; font-size: 12px;">(inches)</h6>
-                <input type="text" id="length" placeholder="<?php echo $length ?>" placeholder="Length" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                <input type="text" id="length" placeholder="Length" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                 <h6>Color:</h6>
                 <select id="color" name="color" required>
                     <option value="" disabled selected>Select a color</option>
@@ -317,14 +322,15 @@
                 <br>
                 <br>
             </ul>
-            <form action="add_to_cart.php" method="POST">
-                <input type="hidden" name="pname" value="<?php echo $pname ?>">
-                <input type="hidden" name="fprice" value="<?php echo $fprice ?>">
-                <input type="hidden" id="hiddenMaterialPrice" name="materialPrice" value="0.00">
-                <input type="hidden" id="hiddenColorPrice"  name="sizePrice" value="0.00">
-                <input type="hidden" id="hiddenFootPrice"  name="colorPrice" value="0.00">
-                <input type="hidden" id="hiddenSizePrice"  name="footPrice" value="0.00">
-                <input type="hidden" id="hiddenTotalPrice"  name="totalPrice" value="0.00">
+       
+                <input type="hidden" name="pid" value="<?php echo $pid ?>">
+                <input type="hidden" id="hiddenMaterial" name="material" value="">
+                <input type="hidden" id="hiddenColor" name="color" value="">
+                <input type="hidden" id="hiddenFoot" name="footPart" value="">
+                <input type="hidden" id="hiddenWidth" name="width" value="">
+                <input type="hidden" id="hiddenLength" name="length" value="">
+                <input type="hidden" id="hiddenHeight" name="height" value="">
+                <input type="hidden" id="hiddenTotalPrice" name="totalPrice" value="0.00">
                 <div class="actions">
                     <button class="add-cart">Add Cart</button>
                     <button class="place-order">Place Order</button>
@@ -337,7 +343,7 @@
 <!-- End Main Content -->
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const furniturePrice = <?php echo $fprice ?>;
     let materialPrice = 0;
     let colorPrice = 0;
@@ -349,13 +355,12 @@
         const length = parseFloat(document.getElementById('length').value) || 0;
         const height = parseFloat(document.getElementById('height').value) || 0;
 
-        // Determine size price based on conditions
         if (width >= 61 && length > 80 && height > 16) {
             sizePrice = 1000;
         } else if (width <= 60 && length < 80 && height <= 16) {
             sizePrice = 500;
         } else {
-            sizePrice = 0; // Default value if none of the conditions are met
+            sizePrice = 0; 
             if (width >= 61 && length === 80) {
                 sizePrice += 1000;
             } else if (width === 60 && length === 80) {
@@ -368,22 +373,25 @@
             }
         }
 
-        // Update size display
         document.getElementById('sizeName').innerText = `Height: ${height} inches, Width: ${width} inches, Length: ${length} inches`;
         document.getElementById('sizePrice').innerText = '₱' + sizePrice.toFixed(2);
-        document.getElementById('hiddenSizePrice').value = sizePrice.toFixed(2);
+
+        document.getElementById('hiddenWidth').value = width.toFixed(2);
+        document.getElementById('hiddenLength').value = length.toFixed(2);
+        document.getElementById('hiddenHeight').value = height.toFixed(2);
     }
 
     function updatePrice() {
         const quantity = parseInt(document.getElementById('qty').value) || 1;
         const totalPrice = (furniturePrice + materialPrice + colorPrice + footPrice + sizePrice) * quantity;
-        console.log('Updating total price to: ₱' + totalPrice.toFixed(2));  // Debugging line
+        console.log('Updating total price to: ₱' + totalPrice.toFixed(2));
+
         document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
-        
-        document.getElementById('hiddenMaterialPrice').value = materialPrice.toFixed(2);
-        document.getElementById('hiddenColorPrice').value = colorPrice.toFixed(2);
-        document.getElementById('hiddenFootPrice').value = footPrice.toFixed(2);
-        document.getElementById('hiddenTotaPrice').value = totalPrice.toFixed(2);
+
+        document.getElementById('hiddenMaterial').value = document.getElementById('mats').value;
+        document.getElementById('hiddenColor').value = document.getElementById('color').value;
+        document.getElementById('hiddenFoot').value = document.getElementById('foot').value;
+        document.getElementById('hiddenTotalPrice').value = totalPrice.toFixed(2);
     }
 
     document.getElementById('color').addEventListener('change', (event) => {
@@ -410,7 +418,6 @@
         updatePrice();
     });
 
-    // Add event listeners for width, length, and height
     document.getElementById('width').addEventListener('input', () => {
         updateSizePrice();
         updatePrice();
@@ -430,7 +437,6 @@
 
     updatePrice();
 });
-
 </script>
 
 <?php include('includes/footer.php'); ?>

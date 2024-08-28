@@ -41,39 +41,44 @@
                                     ?>
                                     <tr>
                                         <td>
-                                            <input type="checkbox" name="selected_item[]" class="form-check-input mt-4 cart-checkbox" data-pid="<?php echo $cartrow['pid']; ?>" value="<?php echo $cartrow['pid']; ?>">
+                                            <input type="checkbox" name="selected_item[]" class="form-check-input mt-4 cart-checkbox" data-cid="<?php echo $cartrow['cid']; ?>" value="<?php echo $cartrow['cid']; ?>">
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <img src="../admin/assets/img/<?php echo $cartrow['image'] ?>" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="<?php echo $cartrow['pname']; ?>">
+                                                <a href="edit_customize.php?cid=<?php echo $cartrow['cid']; ?>" style="color: inherit; text-decoration: none;">
+                                                    <img src="../admin/assets/img/<?php echo $cartrow['image'] ?>" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="<?php echo $cartrow['pname']; ?>">
+                                                </a>
+                                                
                                             </div>
                                         </td>
                                         <td>
-                                            <p class="mb-0 mt-4"><?php echo $cartrow['pname']; ?></p>
+                                            <a href="edit_customize.php?cid=<?php echo $cartrow['cid']; ?>" style="color: inherit; text-decoration: none;">
+                                                <p class="mb-0 mt-4"><?php echo $cartrow['pname']; ?></p>
+                                            </a>
                                         </td>
                                         <td>
-                                            <p class="mb-0 mt-4"><?php echo $cartrow['price']; ?> </p>
+                                            <p class="mb-0 mt-4"><?php echo $cartrow['total_price']; ?> </p>
                                         </td>
                                         <td>
                                             <div class="input-group quantity mt-4" style="width: 100px;">
                                                 <div class="input-group-btn">
-                                                    <button class="btn btn-sm btn-minus rounded-circle bg-light border btn-minus" data-pid="<?php echo $cartrow['pid']; ?>">
+                                                    <button class="btn btn-sm btn-minus rounded-circle bg-light border btn-minus" data-cid="<?php echo $cartrow['cid']; ?>">
                                                         <i class="fa fa-minus"></i>
                                                     </button>
                                                 </div>
                                                 <input type="text" class="form-control form-control-sm text-center border-0 input-value"
                                                 value="<?php echo $cartrow['qty']; ?>"
-                                                data-pid="<?php echo $cartrow['pid']; ?>"
+                                                data-cid="<?php echo $cartrow['cid']; ?>"
                                                 data-qty="<?php echo $cartrow['qty']; ?>">
                                                 <div class="input-group-btn">
-                                                    <button class="btn btn-sm btn-plus rounded-circle bg-light border btn-plus" data-pid="<?php echo $cartrow['pid']; ?>">
+                                                    <button class="btn btn-sm btn-plus rounded-circle bg-light border btn-plus" data-cid="<?php echo $cartrow['cid']; ?>">
                                                         <i class="fa fa-plus"></i>
                                                     </button>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
-                                            <button class="btn btn-md rounded-circle bg-light border mt-4 btn-remove" data-pid="<?php echo $cartrow['pid']; ?>">
+                                            <button class="btn btn-md rounded-circle bg-light border mt-4 btn-remove" data-cid="<?php echo $cartrow['cid']; ?>">
                                                 <i class="fa fa-times text-danger"></i>
                                             </button>
                                         </td>
@@ -119,16 +124,16 @@
                             <div>
                                 <?php
                                 if(isset($_POST['btnCheck'])){
-                                    $selected_pid = explode(',', $_POST['selected_pid']);
-                                    $selected_pid_str = implode(',', $selected_pid);
-                                    $url = "checkout.php?selected_pid=" . $selected_pid_str;
+                                    $selected_cid = explode(',', $_POST['selected_cid']);
+                                    $selected_cid_str = implode(',', $selected_cid);
+                                    $url = "checkout.php?selected_cid=" . $selected_cid_str;
                                     echo "<script>window.location.href='" . $url . "'</script>";
                                     exit();
                                 }
                                 ?>
                                 <br><br>
                                 <form action="" method="POST" id="cart">
-                                    <input type="hidden" name="selected_pid" id="selected-pid" value="">
+                                    <input type="hidden" name="selected_cid" id="selected-cid" value="">
                                     <button class="btn btn-success btn-checkout" name="btnCheck">Check out</button>
                                 </form>
                             </div>
@@ -162,7 +167,7 @@
         var selectedValues = Array.from(checkboxes)
                                  .filter(checkbox => checkbox.checked)
                                  .map(checkbox => checkbox.value);
-        var hiddenInput = document.querySelector("input[name='selected_pid']");
+        var hiddenInput = document.querySelector("input[name='selected_cid']");
         hiddenInput.value = selectedValues.join(',');
     }
 
@@ -172,23 +177,24 @@
 </script>
 
 <script>
-    $(document).ready(function(){
-        $('.cart-checkbox').click(function(){
-            var selectedPids = $('.cart-checkbox:checked').map(function(){
-                return $(this).data('pid');
-            }).get();
+$(document).ready(function(){
+    $('.cart-checkbox').click(function(){
+        var selectedCids = $('.cart-checkbox:checked').map(function(){
+            return $(this).data('cid');
+        }).get();
 
-            // Update hidden input value
-            $('#selected-pid').val(selectedPids.join(','));
+        // Update hidden input value
+        $('#selected-cid').val(selectedCids.join(','));
 
-            // Update table dynamically
-            $.ajax({
-                url: 'cart_price.php',
-                type: 'POST',
-                data: {
-                    selected_pid: selectedPids.join(',')
-                },
-                success: function(response) {
+        // Update table dynamically
+        $.ajax({
+            url: 'cart_price.php',
+            type: 'POST',
+            data: {
+                selected_cid: selectedCids.join(',')
+            },
+            success: function(response) {
+                try {
                     var data = JSON.parse(response);
                     $('#cart-table-body').empty();
                     var subtotal = 0;
@@ -202,22 +208,29 @@
                         subtotal += (item.price * item.qty);
                     });
                     $('#subtotal').text('₱' + subtotal.toFixed(2));
+                } catch (e) {
+                    console.error('Error parsing JSON:', e);
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+            }
         });
     });
+});
+
 </script>
 
 <script>
     $(document).ready(function(){
         $('.btn-minus').click(function(){
-            var pid = $(this).data('pid');
+            var cid = $(this).data('cid');
 
             $.ajax({
                 url: 'btn_minus.php',
                 type: 'POST',
                 data: {
-                    pid: pid,
+                    cid: cid,
                 },
                 success: function() {
                     location.reload();
@@ -230,14 +243,14 @@
 <script>
     $(document).ready(function(){
         $('.input-value').change(function(){
-            var pid = $(this).data('pid');
+            var cid = $(this).data('cid');
             var qty = $(this).val();
 
             $.ajax({
                 url: 'input_value.php',
                 type: 'POST',
                 data: {
-                    pid: pid,
+                    cid: cid,
                     qty: qty
                 },
                 success: function(response) {
@@ -255,13 +268,13 @@
 <script>
     $(document).ready(function(){
         $('.btn-plus').click(function(){
-            var pid = $(this).data('pid');
+            var cid = $(this).data('cid');
 
             $.ajax({
                 url: 'btn_plus.php',
                 type: 'POST',
                 data: {
-                    pid: pid,
+                    cid: cid,
                 },
                 success: function() {
                     location.reload();
@@ -274,13 +287,13 @@
 <script>
     $(document).ready(function(){
         $('.btn-remove').click(function(){
-            var pid = $(this).data('pid');
+            var cid = $(this).data('cid');
 
             $.ajax({
                 url: 'remove_item.php',
                 type: 'POST',
                 data: {
-                    pid: pid
+                    cid: cid
                 },
                 success: function(response) {
                     console.log('Item removed successfully.');

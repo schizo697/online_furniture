@@ -227,16 +227,7 @@
                         }
                     });
                 } else if(result.isDenied) {
-                    $.ajax({
-                        url: 'add_to_cart.php',
-                        type: 'POST',
-                        data: {
-                            pid: pid,
-                        },
-                        success: function(response){
-                            window.location.href="customize.php?pid=" + pid;
-                        }
-                    });
+                    window.location.href="customize.php?pid=" + pid;
                 }
             });
         });

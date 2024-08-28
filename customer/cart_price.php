@@ -4,14 +4,15 @@ include('../conn.php');
 
 if(isset($_SESSION['uid'])){
     $uid = $_SESSION['uid'];
-    $selected_pid = $_POST['selected_pid'];
-    $pid = explode(',', $selected_pid);
-    $pid_str = implode(',', $pid);
+    $selected_cid = $_POST['selected_cid'];
+    $cid_array = explode(',', $selected_cid);
+    $cid_array = array_filter($cid_array, 'is_numeric'); // Ensure all values are numeric
+    $cid_str = implode(',', array_map('intval', $cid_array)); // Convert to integer and concatenate
 
-    // Fetch cart items based on selected PIDs
+    // Fetch cart items based on selected CIDs
     $cart = "SELECT * FROM cart 
              JOIN furniture ON cart.pid = furniture.pid
-             WHERE cart.pid IN ($pid_str) AND cart.uid = '$uid'";
+             WHERE cart.cid IN ($cid_str) AND cart.uid = '$uid'";
     $cartres = mysqli_query($conn, $cart);
 
     $items = [];
@@ -21,7 +22,7 @@ if(isset($_SESSION['uid'])){
         while($cartrow = mysqli_fetch_assoc($cartres)){
             $item_name = $cartrow['pname'];
             $qty = $cartrow['qty'];
-            $price = $cartrow['price'];
+            $price = $cartrow['total_price'];
             $subtotal = $price * $qty; 
 
             $items[] = array(
@@ -43,6 +44,6 @@ if(isset($_SESSION['uid'])){
     echo json_encode($response);
     exit();
 } else {
-    echo "User session not found.";
+    echo json_encode(array("error" => "User session not found."));
 }
 ?>
