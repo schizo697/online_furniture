@@ -2,11 +2,11 @@
 session_start();
 include('../conn.php');
 
-if (isset($_POST['pid']) && isset($_SESSION['uid'])) {
-    $pid = $_POST['pid'];
+if (isset($_POST['cid']) && isset($_SESSION['uid'])) {
+    $cid = $_POST['cid'];
     $uid = $_SESSION['uid'];
 
-    $query = "DELETE FROM cart WHERE pid = '$pid' AND uid = '$uid'";
+    $query = "DELETE FROM cart WHERE cid = '$cid' AND uid = '$uid'";
     $result = mysqli_query($conn, $query);
 
     if ($result) {

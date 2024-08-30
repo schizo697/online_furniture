@@ -35,7 +35,8 @@ if (mysqli_num_rows($cart_check_res) > 0) {
 
     $cart_update_query = "UPDATE cart SET qty = $qty WHERE pid = $pid AND uid = $uid";
     if (mysqli_query($conn, $cart_update_query)) {
-        sendJsonResponse(['success' => 'Product quantity updated']);
+        header("Location: shop.php?update=true");
+        exit();
     } else {
         sendJsonResponse(['error' => 'Failed to update cart']);
     }
@@ -43,13 +44,12 @@ if (mysqli_num_rows($cart_check_res) > 0) {
     $cart_insert_query = "INSERT INTO cart (pid, uid, qty, color, height, width, length, materials, foot_part, total_price) 
         VALUES ($pid, $uid, 1, '$color', $height, $width, $length, '$material', '$footpart', '$totalprice')";
     if (mysqli_query($conn, $cart_insert_query)) {
-         sendJsonResponse(['success' => 'Product added to cart']);
+        header("Location: shop.php?success=true");
+        exit();
     } else {
         sendJsonResponse(['error' => 'Failed to add to cart']);
     }
-
 }
 
 mysqli_close($conn);
-
 ?>

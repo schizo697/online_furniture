@@ -2,12 +2,12 @@
 session_start();
 include('../conn.php');
 
-if(isset($_SESSION['uid']) && isset($_POST['pid']) && isset($_POST['qty'])){
+if(isset($_SESSION['uid']) && isset($_POST['cid']) && isset($_POST['qty'])){
     $uid = $_SESSION['uid'];
-    $pid = $_POST['pid'];
+    $cid = $_POST['cid'];
     $qty = $_POST['qty'];
 
-    $updatecart = "UPDATE cart SET qty = '$qty' WHERE uid = '$uid' AND pid = '$pid'";
+    $updatecart = "UPDATE cart SET qty = '$qty' WHERE uid = '$uid' AND cid = '$cid'";
     $updateres = mysqli_query($conn, $updatecart);
 
     if($updateres){

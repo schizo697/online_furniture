@@ -189,6 +189,28 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function showAlert(type, message) {
+            Swal.fire({
+                icon: type,
+                text: message,
+            });
+        }
+
+        function checkURLParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success') && urlParams.get('success') === 'true') {
+                showAlert('success', 'Order successfully!');
+            } 
+            else if (urlParams.has('update') && urlParams.get('update') === 'true') {
+            showAlert('success', 'Update Successfully!');
+            }
+            else if (urlParams.has('success') && urlParams.get('success') === 'false') {
+                showAlert('error', 'Something went wrong!');
+            }
+        }
+        window.onload = checkURLParams;
+    </script>
+    <script>
     $(document).ready(function(){
         $('.add-to-cart').click(function(){
             var pid = $(this).data('pid');

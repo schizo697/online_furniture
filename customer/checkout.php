@@ -179,7 +179,6 @@ if ($result && $result->num_rows > 0) {
                                             <p>Account Name: <?php echo $accountName; ?></p>
                                             <input type="file" class="form-control" id="gcash-receipt" name="gcash-receipt" accept=".png, .jpg, .jpeg">
                                         </div>
-
                                     </form>
                                 </div>
                             </div>
@@ -187,7 +186,7 @@ if ($result && $result->num_rows > 0) {
                     </ol>
                 </div>
             </div>
-
+                    <form action="place_order.php" method="POST" id="order-summary">
                         <div class="row my-4">
                             <div class="col">
                                 <a href="ecommerce-products.html" class="btn btn-link text-muted">
@@ -195,9 +194,9 @@ if ($result && $result->num_rows > 0) {
                             </div> <!-- end col -->
                             <div class="col">
                                 <div class="text-end mt-2 mt-sm-0">
-                                    <a href="#" class="btn btn-success" id="placeorder">
+                                    <button class="btn btn-success" name="btnPlaceOrder" id="btnPlaceOrder" type="submit">
                                         <i class="mdi mdi-cart-outline me-1"></i> Place Order
-                                    </a>
+                                    </button>  
                                 </div>
                             </div> <!-- end col -->
                         </div> <!-- end row-->
@@ -206,7 +205,17 @@ if ($result && $result->num_rows > 0) {
                         <div class="card checkout-order-summary">
                             <div class="card-body">
                                 <div class="p-3 bg-light mb-3">
-                                    <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2">#MN0124</span></h5>
+                                    <?php
+                                    function generateOrderId() {
+                                        return rand(10000, 99999);
+                                    }
+                                    
+                                    $order_code = generateOrderId();
+                                    ?>
+                                    <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2">#<?php echo $order_code ?></span></h5>
+                                    <?php
+                                    ?>
+                                    
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-centered mb-0 table-nowrap">
@@ -218,81 +227,89 @@ if ($result && $result->num_rows > 0) {
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php 
-                            if(isset($_GET['selected_pid']) && isset($_SESSION['uid'])){
-                                $uid = $_SESSION['uid'];
-                                $pid = $_GET['selected_pid'];
+                                <?php 
+                                if (isset($_GET['selected_cid']) && isset($_SESSION['uid'])) {
+                                    $uid = $_SESSION['uid'];
+                                    $cid = $_GET['selected_cid'];
 
-                                // Ensure $pid is a valid comma-separated list
-                                $pid_list = implode(',', array_map('intval', explode(',', $pid)));
+                                    // Ensure $cid is a valid comma-separated list
+                                    $cid_list = implode(',', array_map('intval', explode(',', $cid)));
 
-                                // selected pid = 0
-                                if(empty($pid_list)){
-                                    $url = "cart.php";
-                                    echo "<script>window.location.href= '$url'</script>";
-                                    exit();
-                                } else {
-                                    $order = "SELECT * FROM cart 
-                                            JOIN furniture ON cart.pid = furniture.pid 
-                                            WHERE cart.pid IN ($pid_list) AND cart.uid = '$uid'";
-                                    $order_res = mysqli_query($conn, $order);
+                                    // selected cid = 0
+                                    if (empty($cid_list)) {
+                                        $url = "cart.php";
+                                        echo "<script>window.location.href= '$url'</script>";
+                                        exit();
+                                    } else {
+                                        $order = "SELECT furniture.pid, furniture.pname, furniture.image, cart.qty, cart.total_price FROM cart 
+                                                JOIN furniture ON cart.pid = furniture.pid 
+                                                WHERE cart.cid IN ($cid_list) AND cart.uid = '$uid'";
+                                        $order_res = mysqli_query($conn, $order);
 
-                                    $subtotal = 0; 
+                                        $subtotal = 0; 
+                                        $pidArray = []; // Array to hold pids
 
-                                    if($order_res && mysqli_num_rows($order_res) > 0){
-                                        while($order_row = mysqli_fetch_assoc($order_res)){
-                                            $pname = $order_row['pname'];
-                                            $img = $order_row['image'];
-                                            $qty = $order_row['qty'];
-                                            $price = $order_row['price'];
-                                            $total = $price * $qty;
-                                            $subtotal += $total;
-                                            ?>
-                                            <tr>
-                                                <th scope="row"><img src="../admin/assets/img/<?php echo $img; ?>" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
-                                                <td>
-                                                    <h5 class="font-size-16 text-truncate"><a href="#" class="text-dark"><?php echo $pname; ?></a></h5>
-                                            
-                                                    <p class="text-muted mb-0 mt-1">₱<?php echo $price . ' * ' . $qty;?></p>
-                                                </td>
-                                                <td>₱<?php echo $total; ?></td>
-                                            </tr>
-                                            <?php
+                                        if ($order_res && mysqli_num_rows($order_res) > 0) {
+                                            while ($order_row = mysqli_fetch_assoc($order_res)) {
+                                                $pid = $order_row['pid'];
+                                                $pname = $order_row['pname'];
+                                                $img = $order_row['image'];
+                                                $qty = $order_row['qty'];
+                                                $price = $order_row['total_price'];
+                                                $total = $price * $qty;
+                                                $subtotal += $total;
+
+                                                // Add pid to array
+                                                $pidArray[] = $pid;
+                                                ?>
+                                                <tr>
+                                                    <th scope="row"><img src="../admin/assets/img/<?php echo $img; ?>" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
+                                                    <td>
+                                                        <h5 class="font-size-16 text-truncate"><a href="#" class="text-dark"><?php echo $pname; ?></a></h5>
+                                                    
+                                                        <p class="text-muted mb-0 mt-1">₱<?php echo $price . ' * ' . $qty;?></p>
+                                                    </td>
+                                                    <td>₱<?php echo $total; ?></td>
+                                                </tr>
+                                                <?php
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            ?>
-                            <tr>
-                                <td colspan="2">
-                                    <h5 class="font-size-14 m-0">Sub Total :</h5>
-                                </td>
-                                <td>
-                                    ₱<?php echo $subtotal; ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <h5 class="font-size-14 m-0">Shipping Charge :</h5>
-                                </td>
-                                <td>
-                                    ₱<span id="shipping-charge">0</span>
-                                </td>
-                            </tr>
-                            <tr class="bg-light">
-                                <td colspan="2">
-                                    <h5 class="font-size-14 m-0">Total:</h5>
-                                </td>
-                                <td>
-                                    ₱<span id="total"><?php echo $subtotal; ?></span>
-                                </td>
-                            </tr>
-                            <form action="" method="POST" id="order-summary">
-                                <input type="hidden" id="pid" name="pid" value="<?php echo $pid; ?>">
+                                ?>
+                                <tr>
+                                    <td colspan="2">
+                                        <h5 class="font-size-14 m-0">Sub Total :</h5>
+                                    </td>
+                                    <td>
+                                        ₱<?php echo $subtotal; ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <h5 class="font-size-14 m-0">Shipping Charge :</h5>
+                                    </td>
+                                    <td>
+                                        ₱<span id="shipping-charge">0</span>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td colspan="2">
+                                        <h5 class="font-size-14 m-0">Total:</h5>
+                                    </td>
+                                    <td>
+                                        ₱<span id="total"><?php echo $subtotal; ?></span>
+                                    </td>
+                                </tr>
+                                <input type="hidden" id="orderCode" name="orderCode" value="<?php echo $order_code; ?>">
+                                <input type="hidden" id="pidArray" name="pidArray" value='<?php echo implode(',', $pidArray); ?>'>
+                                <input type="hidden" id="cid" name="cid" value="<?php echo $cid; ?>">
                                 <input type="hidden" id="uid" name="uid" value="<?php echo $uid; ?>">
                                 <input type="hidden" id="qty" name="qty" value="<?php echo $qty; ?>">
-                                <input type="hidden" id="totalorder" name="total" value="<?php echo $subtotal; ?>">
-                            </form>
+                                <input type="hidden" id="payMethod" name="payMethod" value="">
+                                <input type="hidden" id="gcashRec" name="gcashRec" value="">
+                                <input type="hidden" id="totalorder" name="totalorder" value="<?php echo $subtotal; ?>">
+                                </form>
                             </tbody>
                         </table>
                     </div>
@@ -323,44 +340,65 @@ if ($result && $result->num_rows > 0) {
 <script src="js/main.js"></script>
 
 <script>
-    document.getElementById('gcash').addEventListener('change', function() {
-        document.getElementById('gcash-upload').style.display = 'block';
-    });
+document.addEventListener('DOMContentLoaded', function() {
+    const gcashRadio = document.getElementById('gcash');
+    const codRadio = document.getElementById('cod');
+    const gcashUpload = document.getElementById('gcash-upload');
+    const btnPlaceOrder = document.getElementById('btnPlaceOrder');
+    const orderSummaryForm = document.getElementById('order-summary');
+    const payMethodInput = document.getElementById('payMethod');
+    const gcashRecInput = document.getElementById('gcashRec');
+    const gcashReceiptInput = document.getElementById('gcash-receipt');
 
-    document.getElementById('cod').addEventListener('change', function() {
-        document.getElementById('gcash-upload').style.display = 'none';
-    });
+    function toggleUploadSection() {
+        if (gcashRadio.checked) {
+            gcashUpload.style.display = 'block';
+        } else {
+            gcashUpload.style.display = 'none';
+        }
+    }
 
-    document.getElementById('placeorder').addEventListener('click', function(event) {
-        event.preventDefault();
+    gcashRadio.addEventListener('change', toggleUploadSection);
+    codRadio.addEventListener('change', toggleUploadSection);
 
-        var pid = document.getElementById('pid').value;
-        var uid = document.getElementById('uid').value;
-        var qty = document.getElementById('qty').value;
-        var totalorder = document.getElementById('totalorder').value;
-        var payMethod = document.querySelector('input[name="pay-method"]:checked').value;
-        var gcashrec = document.getElementById('gcash-receipt').files[0];
+    // Initial check
+    toggleUploadSection();
 
-        var formData = new FormData();
-        formData.append('pid', pid);
-        formData.append('uid', uid);
-        formData.append('qty', qty);
-        formData.append('totalorder', totalorder);
-        formData.append('payMethod', payMethod);
-        formData.append('gcashrec', gcashrec);
+    btnPlaceOrder.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission to handle logic first
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'place_order.php', true);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                window.location.href = 'purchase.php';
+        // Get the selected payment method
+        const selectedPaymentMethod = document.querySelector('input[name="pay-method"]:checked').value;
+
+        // Set the value of the hidden input field with the selected payment method
+        payMethodInput.value = selectedPaymentMethod;
+
+        // Check if the payment method is Gcash and update the hidden input with the receipt file name
+        if (selectedPaymentMethod === 'gcash') {
+            const gcashReceiptFile = gcashReceiptInput.files[0];
+            if (gcashReceiptFile) {
+                gcashRecInput.value = gcashReceiptFile.name;
             } else {
-                alert('An error occurred!');
+                gcashRecInput.value = ''; // Clear the hidden input if no file is selected
             }
-        };
-        xhr.send(formData);
+        } else {
+            gcashRecInput.value = ''; // Clear the hidden input if not using Gcash
+        }
+
+        // Optionally, submit the form if you want to proceed after setting the values
+        orderSummaryForm.submit();
     });
+
+    // Use this script to work with the comma-separated pids if needed
+    const pidString = document.getElementById('pidArray').value;
+    const pidArray = pidString ? pidString.split(',') : [];
+    console.log(pidArray); // For debugging purposes
+});
 </script>
+
+
+
+
 
 <script>
     $(document).ready(function() {

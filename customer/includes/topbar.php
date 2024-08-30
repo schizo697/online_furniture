@@ -75,19 +75,22 @@ include '../conn.php';
                         <a href="purchase.php" class="nav-item nav-link">My Purchase</a>
                     </div>
                     <div class="d-flex m-3 me-0">
-                       <?php
-                       if (isset($_SESSION['uid'])) {
-                           $stmt = $conn->prepare("SELECT COUNT(DISTINCT pid) AS product_count FROM cart WHERE uid = ?");
-                           $stmt->bind_param("i", $_SESSION['uid']);
-                           $stmt->execute();
-                           $stmt->bind_result($product_count);
-                           $stmt->fetch();
-                           $stmt->close();
-                       }
-                       ?>
+                        <?php
+                        if (isset($_SESSION['uid'])) {
+                            $uid = $_SESSION['uid'];
+                            $sql = "SELECT COUNT(DISTINCT pid) AS product_count FROM cart WHERE uid = $uid AND qty > 0";
+                            $result = mysqli_query($conn, $sql);
+
+                            if ($result) {
+                                $row = mysqli_fetch_assoc($result);
+                                $product_count = $row['product_count'];
+                                mysqli_free_result($result);
+                            }
+                        }
+                        ?>
                         <a href="cart.php" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
-                            <?php if (isset($product_count)) { ?>
+                            <?php if (isset($product_count) && $product_count > 0) { ?>
                             <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" 
                             style="top: -5px; left: 15px; height: 20px; min-width: 20px;"><?php echo $product_count; ?></span>
                             <?php } ?>
@@ -96,7 +99,7 @@ include '../conn.php';
                             <i class="fas fa-user fa-2x"></i>
                         </a>
                         <?php 
-                        if(!isset($_SESSION['uid'])){
+                        if (!isset($_SESSION['uid'])) {
                             ?> 
                             <a href="../login.php" class="btn btn-outline-primary me-4">Login</a>
                             <?php

@@ -653,7 +653,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
         function checkURLParams() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('success') && urlParams.get('success') === 'true') {
-                showAlert('success', 'Order return successfully!');
+                showAlert('success', 'Order successfully!');
             } else if (urlParams.has('success') && urlParams.get('success') === 'false') {
                 showAlert('error', 'Something went wrong!');
             }
