@@ -88,6 +88,11 @@ include '../conn.php';
                             }
                         }
                         ?>
+                        <a href="notifications.php" class="position-relative me-4 my-auto">
+                            <i class="fas fa-bell fa-2x"></i>
+                            <span class="position-absolute bg-danger rounded-circle d-flex align-items-center justify-content-center text-white px-1" 
+                            style="top: -5px; left: 15px; height: 20px; min-width: 20px;">5</span> <!-- Replace '5' with your dynamic count -->
+                        </a>
                         <a href="cart.php" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
                             <?php if (isset($product_count) && $product_count > 0) { ?>
