@@ -61,8 +61,8 @@ if (isset($_POST['remove_product'])) {
                     
                     <div class="card-body">
                         <!-- Add Product Modal -->
-                         <?php 
-                         if(isset($_POST['btnAdd'])){
+                        <?php 
+                        if(isset($_POST['btnAdd'])){
                             $fid = $_POST['fid'];
                             $material = $_POST['mats'];
                             $materialprice = $_POST['matsprice'];
@@ -70,6 +70,12 @@ if (isset($_POST['remove_product'])) {
                             $colorprice = $_POST['colorprice'];
                             $fp = $_POST['fp'];
                             $fpprice = $_POST['fpprice'];
+                            $sp = $_POST['spring'];
+                            $spprice = $_POST['springprice'];
+                            $foam = $_POST['foam'];
+                            $foamprice = $_POST['foamprice'];
+                            $fabric = $_POST['fabric'];
+                            $fabricprice = $_POST['fabricprice'];
 
                             $icolor = "INSERT INTO mats_color (color, price) VALUES ('$color', '$colorprice')";
                             $icolorres = mysqli_query($conn, $icolor);
@@ -80,18 +86,48 @@ if (isset($_POST['remove_product'])) {
                                 $ifpres = mysqli_query($conn, $ifp);
 
                                 if($ifpres){
-                                    $mfpid = $conn->insert_id; //last insert id
-                                    $imats = "INSERT INTO mats (ftype, material, price, mcid, mfpid) VALUES ('$fid', '$material', '$materialprice', '$mcid', '$mfpid')";
-                                    $imatsres = mysqli_query($conn, $imats);
+                                    $mfpid = $conn->insert_id;
+                                    $isp = "INSERT INTO mats_spring (spring, price) VALUES ('$sp', '$spprice')";
+                                    $ispres = mysqli_query($conn, $isp);
 
-                                    if($imatsres){
-                                        $url = "materials.php?success=true";
-                                        echo '<script>window.location.href= "' . $url . '";</script>';
+                                    if($ispres){
+                                        $msid = $conn->insert_id;
+                                        $ifb = "INSERT INTO mats_fabric (fabric, price) VALUES ('$fabric', '$fabricprice')";
+                                        $ifbres = mysqli_query($conn, $ifb);
+
+                                        if($ifbres){
+                                            $mfid = $conn->insert_id;
+                                            $ifm = "INSERT INTO mats_foam (foam, price) VALUES ('$foam', '$foamprice')";
+                                            $ifmres = mysqli_query($conn, $ifm);
+
+                                            if($ifmres){
+                                                $mfmid = $conn->insert_id; 
+                                                $imats = "INSERT INTO mats (ftype, material, price, mcid, mfpid, mfid, mfmid, msid) VALUES ('$fid', '$material', '$materialprice', '$mcid', '$mfpid', '$mfid', '$mfmid', '$msid')";
+                                                $imatsres = mysqli_query($conn, $imats);
+
+                                                if($imatsres){
+                                                    $url = "materials.php?success=true";
+                                                    echo '<script>window.location.href= "' . $url . '";</script>';
+                                                } else {
+                                                    echo "Error inserting into mats table.";
+                                                }
+                                            } else {
+                                                echo "Error inserting into mats_foam table.";
+                                            }
+                                        } else {
+                                            echo "Error inserting into mats_fabric table.";
+                                        }
+                                    } else {
+                                        echo "Error inserting into mats_spring table.";
                                     }
+                                } else {
+                                    echo "Error inserting into mats_fp table.";
                                 }
+                            } else {
+                                echo "Error inserting into mats_color table.";
                             }
-                         }
-                         ?>
+                        }
+                        ?>
                         <form action="" method="POST" enctype="multipart/form-data">
                             <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
@@ -147,14 +183,50 @@ if (isset($_POST['remove_product'])) {
                                                 </div>
                                                 <div class="col-md-6 pe-0">
                                                     <div class="form-group form-group-default">
-                                                        <label>Foor Part</label>
+                                                        <label>Foot Part</label>
                                                         <input name="fp" id="fp" type="text" class="form-control" placeholder="" />                                 
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group form-group-default">
-                                                        <label>Foor Part Price</label>
+                                                        <label>Foot Part Price</label>
                                                         <input name="fpprice" id="fpprice" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Fabric</label>
+                                                        <input name="fabric" id="fabric" type="text" class="form-control" placeholder="" />                                 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Fabric Price</label>
+                                                        <input name="fabricprice" id="fabricprice" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Foam</label>
+                                                        <input name="foam" id="foam" type="text" class="form-control" placeholder="" />                                 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Foam Price</label>
+                                                        <input name="foamprice" id="foamprice" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Spring</label>
+                                                        <input name="spring" id="spring" type="text" class="form-control" placeholder="" />                                 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Spring Price</label>
+                                                        <input name="springprice" id="springprice" type="text" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -181,6 +253,12 @@ if (isset($_POST['remove_product'])) {
                             $colorprice = $_POST['editMcprice'];
                             $fp = $_POST['editFootPart'];
                             $fpprice = $_POST['editMfpprice'];
+                            $sp = $_POST['editspring'];
+                            $spprice = $_POST['editspringprice'];
+                            $foam = $_POST['editfoam'];
+                            $foamprice = $_POST['editfoamprice'];
+                            $fabric = $_POST['editfabric'];
+                            $fabricprice = $_POST['editfabricprice'];
 
                             $updateColor = "UPDATE mats_color SET color = '$color', price = '$colorprice' WHERE mcid = '$mcid'";
                             $updateColorRes = mysqli_query($conn, $updateColor);
@@ -190,14 +268,41 @@ if (isset($_POST['remove_product'])) {
                                 $updateFpRes = mysqli_query($conn, $updateFp);
 
                                 if($updateFpRes){
-                                    $updateMats = "UPDATE mats SET ftype = '$fid', material = '$material', price = '$materialprice' WHERE mid = '$mid'";
-                                    $updateMatsRes = mysqli_query($conn, $updateMats);
+                                    $updateSpring = "UPDATE mats_spring SET spring = '$sp', price = '$spprice' WHERE msid = (SELECT msid FROM mats WHERE mid = '$mid')";
+                                    $updateSpringRes = mysqli_query($conn, $updateSpring);
 
-                                    if($updateMatsRes){
-                                        $url = "materials.php?update=true";
-                                        echo '<script>window.location.href= "' . $url . '";</script>';
+                                    if($updateSpringRes){
+                                        $updateFabric = "UPDATE mats_fabric SET fabric = '$fabric', price = '$fabricprice' WHERE mfid = (SELECT mfid FROM mats WHERE mid = '$mid')";
+                                        $updateFabricRes = mysqli_query($conn, $updateFabric);
+
+                                        if($updateFabricRes){
+                                            $updateFoam = "UPDATE mats_foam SET foam = '$foam', price = '$foamprice' WHERE mfmid = (SELECT mfmid FROM mats WHERE mid = '$mid')";
+                                            $updateFoamRes = mysqli_query($conn, $updateFoam);
+
+                                            if($updateFoamRes){
+                                                $updateMats = "UPDATE mats SET ftype = '$fid', material = '$material', price = '$materialprice' WHERE mid = '$mid'";
+                                                $updateMatsRes = mysqli_query($conn, $updateMats);
+
+                                                if($updateMatsRes){
+                                                    $url = "materials.php?update=true";
+                                                    echo '<script>window.location.href= "' . $url . '";</script>';
+                                                } else {
+                                                    echo "Error updating mats table.";
+                                                }
+                                            } else {
+                                                echo "Error updating mats_foam table.";
+                                            }
+                                        } else {
+                                            echo "Error updating mats_fabric table.";
+                                        }
+                                    } else {
+                                        echo "Error updating mats_spring table.";
                                     }
+                                } else {
+                                    echo "Error updating mats_fp table.";
                                 }
+                            } else {
+                                echo "Error updating mats_color table.";
                             }
                         }
                         ?>
@@ -267,6 +372,42 @@ if (isset($_POST['remove_product'])) {
                                                         <input name="editMfpprice" id="editMfpprice" type="text" class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Fabric</label>
+                                                        <input name="editfabric" id="editfabric" type="text" class="form-control" placeholder="" />                                 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Fabric Price</label>
+                                                        <input name="editfabricprice" id="editfabricprice" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Foam</label>
+                                                        <input name="editfoam" id="editfoam" type="text" class="form-control" placeholder="" />                                 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Foam Price</label>
+                                                        <input name="editfoamprice" id="editfoamprice" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pe-0">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Spring</label>
+                                                        <input name="editspring" id="editspring" type="text" class="form-control" placeholder="" />                                 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-group-default">
+                                                        <label>Spring Price</label>
+                                                        <input name="editspringprice" id="editspringprice" type="text" class="form-control" placeholder="" />
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">
@@ -287,15 +428,21 @@ if (isset($_POST['remove_product'])) {
                                         <th>Furniture Type</th>
                                         <th>Material/Price</th>
                                         <th>Color/Price</th>
+                                        <th>Spring</th>
+                                        <th>Foam</th>
+                                        <th>Fabric</th>
                                         <th>Foot Part/Price</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php 
-                                    $sql = "SELECT furniture_type.type,mats.mid, mats.material, mats.price AS mprice,mats_color.mcid, mats_color.color, mats_color.price AS mcprice,mats_fp.mfpid, mats_fp.fp, mats_fp.price AS mfpprice FROM mats 
+                                    $sql = "SELECT furniture_type.type,mats.mid, mats.material, mats.price AS mprice,mats_color.mcid, mats_color.color, mats_color.price AS mcprice,mats_fp.mfpid, mats_fp.fp, mats_fp.price AS mfpprice, mats_spring.spring, mats_spring.price AS springprice, mats_foam.foam, mats_foam.price AS foamprice, mats_fabric.fabric, mats_fabric.price AS fabricprice FROM mats 
                                     JOIN mats_color ON mats.mcid = mats_color.mcid
                                     JOIN mats_fp ON mats.mfpid = mats_fp.mfpid
+                                    JOIN mats_spring ON mats.msid = mats_spring.msid
+                                    JOIN mats_fabric ON mats.mfid = mats_fabric.mfid
+                                    JOIN mats_foam ON mats.mfmid = mats_foam.mfmid
                                     JOIN furniture_type ON mats.ftype = furniture_type.fid";
                                     $result = mysqli_query($conn, $sql);
 
@@ -307,15 +454,20 @@ if (isset($_POST['remove_product'])) {
                                         <td><?php echo $row['material']  . ', ₱' . $row['mprice']; ?></td>
                                         <td><?php echo $row['color']  . ', ₱' . $row['mcprice']; ?></td>
                                         <td><?php echo $row['fp']  . ', ₱' . $row['mfpprice']; ?></td>
+                                        <td><?php echo $row['spring']  . ', ₱' . $row['springprice']; ?></td>
+                                        <td><?php echo $row['foam']  . ', ₱' . $row['foamprice']; ?></td>
+                                        <td><?php echo $row['fabric']  . ', ₱' . $row['fabricprice']; ?></td>
                                         <td>
                                             <div class="form-button-action">
                                             <button type="button" class="btn btn-link btn-primary btn-lg btn-edit" data-bs-toggle="modal" data-bs-target="#editProductModal" 
                                                 data-mid="<?php echo $row['mid']; ?>" data-mcid="<?php echo $row['mcid']; ?>" data-mfpid="<?php echo $row['mfpid']; ?>"
                                                 data-mprice="<?php echo $row['mprice']; ?>" data-mcprice="<?php echo $row['mcprice']; ?>" data-mfpprice="<?php echo $row['mfpprice']; ?>"
-                                                data-ftype="<?php echo $row['type']; ?>" data-material="<?php echo $row['material']; ?>" data-color="<?php echo $row['color']; ?>" data-fpart="<?php echo $row['fp']; ?>">
+                                                data-ftype="<?php echo $row['type']; ?>" data-material="<?php echo $row['material']; ?>" data-color="<?php echo $row['color']; ?>" 
+                                                data-fpart="<?php echo $row['fp']; ?>" data-fabric="<?php echo $row['fabric']; ?>" data-fabricprice="<?php echo $row['fabricprice']; ?>"
+                                                data-foam="<?php echo $row['foam']; ?>" data-foamprice="<?php echo $row['foamprice']; ?>" data-spring="<?php echo $row['spring']; ?>"
+                                                data-springprice="<?php echo $row['springprice']; ?>">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-
                                                 <form action="" method="POST" style="display: inline;">
                                                     <input type="hidden" name="remove_pid" value="<?php echo $pid; ?>">
                                                     <button type="submit" name="remove_product" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger">
@@ -354,6 +506,12 @@ if (isset($_POST['remove_product'])) {
                 const mcprice = this.getAttribute('data-mcprice');
                 const fpart = this.getAttribute('data-fpart');
                 const mfpprice = this.getAttribute('data-mfpprice');
+                const fabric = this.getAttribute('data-fabric');
+                const fabricprice = this.getAttribute('data-fabricprice');
+                const foam = this.getAttribute('data-foam');
+                const foamprice = this.getAttribute('data-foamprice');
+                const spring = this.getAttribute('data-spring');
+                const springprice = this.getAttribute('data-springprice');
 
                 document.getElementById('editMid').value = mid;
                 document.getElementById('editMcid').value = mcid;
@@ -365,6 +523,12 @@ if (isset($_POST['remove_product'])) {
                 document.getElementById('editMcprice').value = mcprice;
                 document.getElementById('editFootPart').value = fpart;
                 document.getElementById('editMfpprice').value = mfpprice;
+                document.getElementById('editfabric').value = fabric;
+                document.getElementById('editfabricprice').value = fabricprice;
+                document.getElementById('editfoam').value = foam;
+                document.getElementById('editfoamprice').value = foamprice;
+                document.getElementById('editspring').value = spring;
+                document.getElementById('editspringprice').value = springprice;
 
                 const editPid = this.getAttribute('data-pid');
                 if (editPid) {
@@ -374,8 +538,6 @@ if (isset($_POST['remove_product'])) {
         });
     });
     </script>
-
-
 
     <!-- Footer -->
     <?php include('includes/footer.php'); ?> 
