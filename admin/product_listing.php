@@ -8,7 +8,6 @@ if (!isset($_SESSION['uid'])) {
     exit();
 }
 
-
 // Handle Add Product
 if (isset($_POST['addproduct'])) {
     $pname = $_POST['pname'];
@@ -22,6 +21,9 @@ if (isset($_POST['addproduct'])) {
     $material = $_POST['material'];
     $footpart = $_POST['footpart'];
     $fid = $_POST['fid'];
+
+    // Determine the status based on quantity
+    $status = ($quantity <= 0) ? 'Not Available' : 'Active';
 
     if (isset($_FILES['image'])) {
         $img_name = $_FILES['image']['name'];
@@ -45,11 +47,11 @@ if (isset($_POST['addproduct'])) {
                     $img_upload_path = 'assets/img/' . $new_img_name;
                     move_uploaded_file($tmp_name, $img_upload_path);
 
-                    // Insert into the database
+                    // Insert into the database with the correct status
                     $sql = "INSERT INTO furniture (pname, price, description, quantity, color, height, width, length, material, foot_part, fid, image, status) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')";
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("ssssssssssss", $pname, $price, $description, $quantity, $color, $height, $width, $length, $material, $footpart, $fid, $new_img_name);
+                    $stmt->bind_param("sssssssssssss", $pname, $price, $description, $quantity, $color, $height, $width, $length, $material, $footpart, $fid, $new_img_name, $status);
 
                     if ($stmt->execute()) {
                         $url = "product_listing.php?success=true";
@@ -77,7 +79,6 @@ if (isset($_POST['addproduct'])) {
     }
 }
 
-
 // Handle Remove Product
 if (isset($_POST['remove_product'])) {
     $remove_pid = $_POST['remove_pid'];
@@ -96,7 +97,6 @@ if (isset($_POST['remove_product'])) {
     }
 }
 
-
 // Handle Update Product
 if (isset($_POST['updateproduct'])) {
     $pid = $_POST['editPid'];
@@ -110,10 +110,11 @@ if (isset($_POST['updateproduct'])) {
     $length = $_POST['editLength'];
     $material = $_POST['editMaterial'];
     $footpart = $_POST['editFootPart'];
-    $status = $_POST['editStatus'];
     $fid = $_POST['editFid'];
 
-    // Check if a new image is uploaded
+    // Determine the status based on quantity
+    $status = ($quantity <= 0) ? 'Not Available' : 'Active';
+
     if (isset($_FILES['editImage']) && $_FILES['editImage']['error'] === 0) {
         $img_name = $_FILES['editImage']['name'];
         $img_size = $_FILES['editImage']['size'];
@@ -165,6 +166,7 @@ if (isset($_POST['updateproduct'])) {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
