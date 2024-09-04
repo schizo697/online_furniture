@@ -2,6 +2,7 @@
 session_start();
 include('../conn.php'); // Include database connection
 
+// Check if user is logged in
 if (!isset($_SESSION['uid'])) {
     header("Location: ../login.php");
     exit();
@@ -16,8 +17,8 @@ if (!isset($_SESSION['uid'])) {
     <!-- Add other head elements here -->
 </head>
 <body>
-      <!-- Page Header -->
-      <div class="container-fluid page-header py-5">
+    <!-- Page Header -->
+    <div class="container-fluid page-header py-5">
         <h1 class="text-center text-white display-6">Return/Refund</h1>
     </div>
     <!-- End Page Header -->
@@ -36,6 +37,13 @@ if (!isset($_SESSION['uid'])) {
                                       JOIN furniture ON orders.pid = furniture.pid
                                       WHERE orders.order_id = ? AND orders.uid = ?";
                             $stmt = $conn->prepare($query);
+                            
+                            // Check if the preparation is successful
+                            if ($stmt === false) {
+                                echo '<div class="alert alert-danger">There was a problem with the database query.</div>';
+                                exit();
+                            }
+
                             $stmt->bind_param("ii", $order_id, $_SESSION['uid']);
                             $stmt->execute();
                             $result = $stmt->get_result();
@@ -47,16 +55,16 @@ if (!isset($_SESSION['uid'])) {
                             <div class="col-md-8">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <img src="../admin/assets/img/<?php echo $order['image']; ?>" class="img-fluid" alt="Product Image">
+                                        <img src="../admin/assets/img/<?php echo htmlspecialchars($order['image']); ?>" class="img-fluid" alt="Product Image">
                                     </div>
                                     <div class="col-md-6">
-                                        <h3><?php echo $order['pname']; ?></h3>
-                                        <p>Price: ₱<?php echo $order['price']; ?></p>
-                                        <p>Quantity: <?php echo $order['qty']; ?></p>
+                                        <h3><?php echo htmlspecialchars($order['pname']); ?></h3>
+                                        <p>Price: ₱<?php echo htmlspecialchars($order['price']); ?></p>
+                                        <p>Quantity: <?php echo htmlspecialchars($order['qty']); ?></p>
                                     </div>
                                 </div>
                                 <form action="submit_return.php" method="post" enctype="multipart/form-data" class="mt-4">
-                                    <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
+                                    <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($order_id); ?>">
                                     <div class="mb-2">
                                         <label for="reason" class="form-label">Reason for Return</label>
                                         <select class="form-control" id="reason" name="reason" required>
@@ -73,9 +81,9 @@ if (!isset($_SESSION['uid'])) {
                                         <input type="file" class="form-control" id="image" name="image">
                                     </div>
                                     <div class="mb-3">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                                </div>
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                    </div>
                                     <button type="submit" name="btnSubmit" class="btn btn-success">Submit Return Request</button>
                                 </form>
                             </div>
@@ -110,23 +118,7 @@ if (!isset($_SESSION['uid'])) {
         <!-- end row -->
     </div>
     <!-- End Main Content -->
-    <!-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const Selectedres = document.getElementById("reason");
-            const descriptionDiv = document.getElementById("descriptionDiv");
-
-            Selectedres.addEventListener("change", function() {
-                if (Selectedres.value === "other") {
-                    descriptionDiv.style.display = "block";
-                } else {
-                    descriptionDiv.style.display = "none";
-                }
-            });
-
-            descriptionDiv.style.display = "none";
-        });
-    </script> -->
-<br><br>
+    <br><br>
     <?php include('includes/footer.php'); ?>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -151,7 +143,7 @@ if (!isset($_SESSION['uid'])) {
             });
         });
     });
-</script>
+    </script>
 
     <!-- Back to Top Button -->
     <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>

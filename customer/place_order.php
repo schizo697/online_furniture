@@ -52,6 +52,11 @@ foreach ($cid as $prodid) {
                     
                     $notif = mysqli_query($conn, $insert_notification_query);
 
+                    if (!$update_furnitureres) {
+                        echo 'Error updating furniture qty';
+                        exit();
+                    }
+                }
             } elseif ($payMethod == 'gcash') {
                 $receipt = "INSERT INTO gcash_rec (order_code, receipt) VALUES ('$order_code', '$gcashrec')";
                 $receiptres = mysqli_query($conn, $receipt);
@@ -69,7 +74,6 @@ foreach ($cid as $prodid) {
                             echo 'Error updating furniture qty';
                             exit();
                         }
-
                         $notification_message = "New order placed. Order ID: $order_code";
                         $notification_status = "unread"; // Set the initial status as unread
                         
@@ -79,6 +83,7 @@ foreach ($cid as $prodid) {
                         
                         $notif = mysqli_query($conn, $insert_notification_query);
                         }
+                    
                     }
                 } else {
                     echo 'Error inserting GCash receipt';
@@ -87,7 +92,7 @@ foreach ($cid as $prodid) {
             }
         }
     }
-}
+
 
 foreach ($cid as $prodid) {
     $qtyupdate = "UPDATE cart SET qty = 0 WHERE cid = '$prodid' AND uid = '$uid'";

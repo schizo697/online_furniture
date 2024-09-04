@@ -136,7 +136,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                         <td class="text-center">
                                                             <!-- You can add action buttons here, e.g., view or cancel order -->
                                                             <a href="product_view.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-info">View</a>
-                                                            <a href="cancel_order.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel</a>
+                                                            
+                                                          <button type="button" class="btn btn-danger btn-sm cancel_btn"
+                                                        data-bs-toggle="modal" data-order-code="<?php echo $order_code; ?>">
+                                                    Cancel
+                                                </button>
                                                         </td>
                                                     </tr>
                                                     <?php
@@ -202,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                         <td class="text-center">
                                                             <!-- You can add action buttons here, e.g., view or cancel order -->
                                                             <a href="product_view.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-info">View</a>
-                                                            <a href="cancel_order.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel</a>
+                                                            <!-- <a href="cancel_order.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel</a> -->
                                                         </td>
                                                     </tr>
                                                     <?php
@@ -219,8 +223,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                     </div>
 
 
-                    <!-- To Received Tab -->
-                    <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
+                <!-- Received Orders Tab -->
+                <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
                         <div class="card">
                             <div class="card-header">
                                 <h2>To Received</h2>
@@ -235,61 +239,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                 <th class="text-right">Product Price</th>
                                                 <th class="text-center">Quantity</th>
                                                 <th class="text-right">Total Price</th>
-
+                                              
                                                 <th class="text-right">Status</th>
                                                 <th class="text-center">Action</th>
                                             </tr>
                                         </thead>
-                                        <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">Order Code</th>
-                                                <th class="text-center">Product Name & Details</th>
-                                                <th class="text-right">Product Price</th>
-                                                <th class="text-center">Quantity</th>
-                                                <th class="text-center">Date Order</th>
-                                                <th class="text-center">Action</th>
-                                            </tr>
-                                        </thead>
                                         <tbody>
-                                            <?php
-                                            $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,
-                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
-                                            FROM orders
-                                            JOIN furniture ON orders.pid = furniture.pid
-                                            JOIN order_status ON orders.osid = order_status.osid
-                                            JOIN cart ON orders.cid = cart.cid 
-                                            WHERE orders.uid = '$uid' AND orders.osid = 2";
-                                            
-                                            $ordersres = mysqli_query($conn, $orders);
+                                        <?php
+                                            $orders_query = "SELECT *, shipping.shipping_status, shipping.expected_date FROM shipping 
+                                                JOIN orders ON orders.order_code = shipping.order_code
+                                                JOIN furniture ON furniture.pid = orders.pid 
+                                                WHERE orders.uid = ? AND orders.osid = 7";
+                                            $stmt = $conn->prepare($orders_query);
+                                            $stmt->bind_param("i", $_SESSION['uid']);
+                                            $stmt->execute();
+                                            $order_res = $stmt->get_result();
 
-                                            if($ordersres && mysqli_num_rows($ordersres) > 0){
-                                                while($orderrow = mysqli_fetch_assoc($ordersres)){
-                                                    ?>
-                                                    <tr>
-                                                        <td class="text-center"><?php echo $orderrow['order_code']; ?></td>
-                                                        <td class="text-center">
-                                                            <?php 
-                                                                echo $orderrow['pname']; 
-                                                                echo "<br><small>Color: " . $orderrow['color'] . "</small>";
-                                                                echo "<br><small>Dimensions: " . $orderrow['width'] . " x " . $orderrow['length'] . " x " . $orderrow['height'] . "</small>";
-                                                                echo "<br><small>Material: " . $orderrow['materials'] . ', ' . $orderrow['foam'] . ', ' . $orderrow['fabric'] . ', ' . $orderrow['spring'] . "</small>";
-                                                                echo "<br><small>Foot Part: " . $orderrow['foot_part'] . "</small>";
-                                                            ?>
-                                                        </td>
-                                                        <td class="text-right"><?php echo number_format($orderrow['productPrice'], 2); ?></td>
-                                                        <td class="text-center"><?php echo $orderrow['qty']; ?></td>
-                                                        <td class="text-center"><?php echo date('Y-m-d', strtotime($orderrow['date'])); ?></td>
-                                                        <td class="text-center">
-                                                            <!-- You can add action buttons here, e.g., view or cancel order -->
-                                                            <a href="product_view.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-info">View</a>
-                                                            <a href="cancel_order.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel</a>
-                                                        </td>
-                                                    </tr>
-                                                    <?php
+                                            if ($order_res && $order_res->num_rows > 0) {
+                                                $orders = [];
+                                                while ($order_row = $order_res->fetch_assoc()) {
+                                                    $order_code = $order_row['order_code'];
+                                                    if (!isset($orders[$order_code])) {
+                                                        $orders[$order_code] = [
+                                                            'product_details' => [],
+                                                            'total' => 0,
+                                                            'shipping_status' => $order_row['shipping_status'], // Added shipping_status
+                                        'expected_date' => $order_row['expected_date'] // Added expected_date
+                                                            
+                                                        ];
+                                                    }
+                                                    $orders[$order_code]['product_details'][] = [
+                                                        'pname' => $order_row['pname'],
+                                                        'price' => $order_row['price'],
+                                                        'qty' => $order_row['qty'],
+                                                       
+                                                    ];
+                                                    $orders[$order_code]['total'] += $order_row['price'] * $order_row['qty'];
+                                                }
+
+                                                foreach ($orders as $order_code => $order) {
+                                                    $product_details_str = '';
+                                                    $total_price_str = '';
+                                                    $qty_str = '';
+                                                    foreach ($order['product_details'] as $product) {
+                                                        $product_details_str .= $product['pname'] . '<br>';
+                                                        $total_price_str .= $product['price'] . '<br>';
+                                                        $qty_str .= $product['qty'] . '<br>';
+                                                    }
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $order_code; ?></td>
+                                                <td><?php echo $product_details_str; ?></td>
+                                                <td><?php echo $total_price_str; ?></td>
+                                                <td><?php echo $qty_str; ?></td>
+                                                <td><?php echo $order['total']; ?></td>
+                                                <!-- <td class="text-center"><?php echo htmlspecialchars($order['date']); ?></td> -->
+                                                <td class="text-center"><?php echo htmlspecialchars($order['shipping_status']); ?>, <?php echo htmlspecialchars($order['expected_date']); ?></td>
+
+                                                
+                                                <td class="text-center">
+                                                    <a href="product_view.php?order_code=<?php echo urlencode($order_code); ?>"
+                                                        class="btn btn-sm btn-info">
+                                                        View
+                                                    </a>
+                                                    <button type="button" class="btn btn-success btn-sm received_btn" data-order-id="<?php echo htmlspecialchars($order_code); ?>">
+                                                        <i class="fas fa-check"></i> Received
+                                                    </button>
+                                                </td>
+                                            
+                                            </tr>
+                                            <?php
                                                 }
                                             } else {
-                                                echo "<tr><td colspan='7' class='text-center'>No orders found.</td></tr>";
+                                                echo '<tr><td colspan="7" class="text-center">No pending orders found.</td></tr>';
                                             }
                                             ?>
                                         </tbody>
@@ -433,72 +455,81 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                             </div>
                         </div>
                     </div>
-                    <!-- Completed Orders Tab -->
-                    <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2>Shopping Cart - Completed</h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">Order Code</th>
-                                                <th class="text-center">Product Name & Details</th>
-                                                <th class="text-right">Product Price</th>
-                                                <th class="text-center">Quantity</th>
-                                                <th class="text-center">Date Order</th>
-                                                <th class="text-center">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,
-                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
-                                            FROM orders
-                                            JOIN furniture ON orders.pid = furniture.pid
-                                            JOIN order_status ON orders.osid = order_status.osid
-                                            JOIN cart ON orders.cid = cart.cid 
-                                            WHERE orders.uid = '$uid' AND orders.osid = 3";
-                                            
-                                            $ordersres = mysqli_query($conn, $orders);
+                   <!-- Completed Orders Tab -->
+                        <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>Shopping Cart - Completed</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Order Code</th>
+                                                    <th class="text-center">Product Name & Details</th>
+                                                    <th class="text-right">Product Price</th>
+                                                    <th class="text-center">Quantity</th>
+                                                    <th class="text-right">Total Price</th>
+                                                    <th class="text-center">Date Order</th>
+                                                    <th class="text-center">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
 
-                                            if($ordersres && mysqli_num_rows($ordersres) > 0){
-                                                while($orderrow = mysqli_fetch_assoc($ordersres)){
-                                                    ?>
-                                                    <tr>
-                                                        <td class="text-center"><?php echo $orderrow['order_code']; ?></td>
-                                                        <td class="text-center">
-                                                            <?php 
-                                                                echo $orderrow['pname']; 
-                                                                echo "<br><small>Color: " . $orderrow['color'] . "</small>";
-                                                                echo "<br><small>Dimensions: " . $orderrow['width'] . " x " . $orderrow['length'] . " x " . $orderrow['height'] . "</small>";
-                                                                echo "<br><small>Material: " . $orderrow['materials'] . ', ' . $orderrow['foam'] . ', ' . $orderrow['fabric'] . ', ' . $orderrow['spring'] . "</small>";
-                                                                echo "<br><small>Foot Part: " . $orderrow['foot_part'] . "</small>";
-                                                            ?>
-                                                        </td>
-                                                        <td class="text-right"><?php echo number_format($orderrow['productPrice'], 2); ?></td>
-                                                        <td class="text-center"><?php echo $orderrow['qty']; ?></td>
-                                                        <td class="text-center"><?php echo date('Y-m-d', strtotime($orderrow['date'])); ?></td>
-                                                        <td class="text-center">
-                                                            <!-- You can add action buttons here, e.g., view or cancel order -->
-                                                            <a href="product_view.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-info">View</a>
-                                                            <a href="cancel_order.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel</a>
-                                                        </td>
-                                                    </tr>
-                                                    <?php
-                                                }
-                                            } else {
-                                                echo "<tr><td colspan='7' class='text-center'>No orders found.</td></tr>";
-                                            }
+                                            <?php
+                                                $orders_query = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,orders.order_id, furniture.price,
+                                                    cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
+                                                    FROM orders
+                                                    JOIN furniture ON orders.pid = furniture.pid
+                                                    JOIN order_status ON orders.osid = order_status.osid
+                                                    JOIN cart ON orders.cid = cart.cid 
+                                                    WHERE orders.uid = ? AND orders.osid = 3";
+                                                $stmt = $conn->prepare($orders_query);
+                                                $stmt->bind_param("i", $_SESSION['uid']);
+                                                $stmt->execute();
+                                                $order_res = $stmt->get_result();
+
+                                                if ($order_res && $order_res->num_rows > 0) {
+                                                    while ($order_row = $order_res->fetch_assoc()) {
+                                                        $order_id = $order_row['order_id']; // Assuming 'order_id' is the primary key column in the 'orders' table
+                                                        $order_code = $order_row['order_code'];
+                                                        $product_name = $order_row['pname'];
+                                                        $product_price = $order_row['price'];
+                                                        $quantity = $order_row['qty'];
+                                                        $total_price = $product_price * $quantity;
+                                                        $date_order = $order_row['date'];
                                             ?>
-                                        </tbody>
-                                    </table>
+                                            <tr>
+                                                <td class="text-center"><?php echo $order_code; ?></td>
+                                                <td class="text-center"><?php echo $product_name; ?></td>
+                                                <td class="text-right"><?php echo number_format($product_price, 2); ?></td>
+                                                <td class="text-center"><?php echo $quantity; ?></td>
+                                                <td class="text-right"><?php echo number_format($total_price, 2); ?></td>
+                                                <td class="text-center"><?php echo $date_order; ?></td>
+                                                <td class="text-center">
+                                                    <a href="product_rate.php?order_code=<?php echo $order_code ?>" class="btn btn-sm btn-info">
+                                                        <!-- <i class="fas fa-eye"></i>  -->
+                                                        View
+                                                    </a>
+                                                    
+                                                    <a href="return.php?order_id=<?php echo $order_id ?>" class="btn btn-warning btn-sm">
+                                                        <i class="fas fa-box"></i> Return
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                                    }
+                                                } else {
+                                                    echo '<tr><td colspan="7" class="text-center">No orders completed found.</td></tr>';
+                                                }
+                                            ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     <!-- End Tabs -->
                 </div>
             </div>

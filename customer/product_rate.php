@@ -15,10 +15,12 @@ if (isset($_GET['order_code'])) {
     $order_code = $_GET['order_code'];
 
     // Fetch order details
-    $order_query = "SELECT furniture.image, furniture.pname, furniture.price, orders.qty, orders.total
-                    FROM orders 
-                    JOIN furniture ON orders.pid = furniture.pid
-                    WHERE orders.order_code = '$order_code'";
+    $order_query = "SELECT furniture.image, furniture.pname, cart.total_price AS price, orders.qty, orders.total, cart.color, cart.width, cart.height, 
+                    cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, orders.osid
+                        FROM orders 
+                        JOIN cart ON orders.cid = cart.cid
+                        JOIN furniture ON orders.pid = furniture.pid
+                        WHERE orders.order_code = '$order_code'";
     $order_res = mysqli_query($conn, $order_query);
 
     // Check if the user has already reviewed this product
@@ -133,15 +135,23 @@ if (isset($_POST['submitreview']) && !$review_exists) {
                                 $quantity = $order_row['qty'];
                                 $price = $order_row['price'];
                                 $total = $order_row['total'];
+                             
+                                $color = $order_row['color'];
+                                $size = $order_row['width'] . " x " . $order_row['length'] . " x " . $order_row['height'];
+                                $material = $order_row['materials'] . ','. $order_row['foam'] . ','. $order_row['fabric']. ',' . $order_row['spring'];
+                                $foot = $order_row['foot_part'];
                         ?>
                         <div class="col-md-4">
                             <div class="card">
                                 <img src="../admin/assets/img/<?php echo htmlspecialchars($image); ?>" class="card-img-top" alt="Product Image" style="max-width: 100%; height: auto;">
                                 <div class="card-body">
-                                    <h5 class="card-title"><?php echo htmlspecialchars($product_name); ?></h5>
-                                    <p class="card-text">Quantity: <?php echo htmlspecialchars($quantity); ?></p>
-                                    <p class="card-text">Price: <?php echo htmlspecialchars($price); ?></p>
-                                    <p class="card-text">Total: <?php echo htmlspecialchars($total); ?></p>
+                                <h5 class="card-title"><?php echo htmlspecialchars($product_name); ?></h5>
+                                                <p class="card-text">Quantity: <?php echo htmlspecialchars($quantity); ?></p>
+                                                <p class="card-text">Color: <?php echo htmlspecialchars($color); ?></p>
+                                                <p class="card-text">Size: <?php echo htmlspecialchars($size); ?> Inches</p>
+                                                <p class="card-text">Material: <?php echo htmlspecialchars($material); ?></p>
+                                                <p class="card-text">Foot Part: <?php echo htmlspecialchars($foot); ?></p>
+                                                <p class="card-text">Price: <?php echo htmlspecialchars($price); ?></p>
                                 </div>
                             </div>
                         </div>
