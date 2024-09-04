@@ -151,7 +151,7 @@ if(isset($_POST['submit'])) {
             </div>
         </li>
         <li>
-            <a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i></a>
+            <a class="see-all" href="notifications.php">See all notifications<i class="fa fa-angle-right"></i></a>
         </li>
     </ul>
 </li>
