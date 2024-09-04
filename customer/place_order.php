@@ -76,13 +76,14 @@ foreach ($cid as $prodid) {
 }
 
 foreach ($cid as $prodid) {
-    $qtydelete = "DELETE FROM cart WHERE cid = '$prodid' AND uid = '$uid'";
-    $qtydeleteres = mysqli_query($conn, $qtydelete);
-    if (!$qtydeleteres) {
-        echo "Error deleting qty";
+    $qtyupdate = "UPDATE cart SET qty = 0 WHERE cid = '$prodid' AND uid = '$uid'";
+    $qtyupdateres = mysqli_query($conn, $qtyupdate);
+    if (!$qtyupdateres) {
+        echo "Error updating qty";
         exit();
     }
 }
+
 
 $url = "purchase.php?success=true";
 echo "<script>window.location.href = '$url'; </script>";

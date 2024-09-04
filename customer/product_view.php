@@ -13,8 +13,9 @@ if (isset($_GET['order_code'])) {
     $order_code = $_GET['order_code'];
 
     // Fetch order details
-    $order_query = "SELECT furniture.image, furniture.pname, furniture.price, orders.qty, orders.total
+    $order_query = "SELECT furniture.image, furniture.pname, cart.total_price AS price, orders.qty, orders.total
                         FROM orders 
+                        JOIN cart ON orders.cid = cart.cid
                         JOIN furniture ON orders.pid = furniture.pid
                         WHERE orders.order_code = '$order_code'";
     $order_res = mysqli_query($conn, $order_query);
@@ -83,7 +84,6 @@ if (isset($_GET['order_code'])) {
                                     $product_name = $order_row['pname'];
                                     $quantity = $order_row['qty'];
                                     $price = $order_row['price'];
-                                    $total = $order_row['total'];
                             ?>
                             <div class="col-md-4">
                                 <div class="card">
@@ -92,7 +92,6 @@ if (isset($_GET['order_code'])) {
                                         <h5 class="card-title"><?php echo htmlspecialchars($product_name); ?></h5>
                                         <p class="card-text">Quantity: <?php echo htmlspecialchars($quantity); ?></p>
                                         <p class="card-text">Price: <?php echo htmlspecialchars($price); ?></p>
-                                        <p class="card-text">Total: <?php echo htmlspecialchars($total); ?></p>
                                     </div>
                                 </div>
                             </div>

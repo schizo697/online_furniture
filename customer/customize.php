@@ -207,9 +207,12 @@
             // Note: Use prepared statements for security reasons in a real application
             $pid = $_GET['pid'];
             $furniture = "SELECT furniture_type.type, furniture.pname, furniture.image, furniture.price AS fprice, furniture.height, furniture.width, furniture.length, mats.mid, 
-            mats.material, mats.price AS mprice,mats_color.mcid, mats_color.color, mats_color.price AS mcprice,mats_fp.mfpid, mats_fp.fp, mats_fp.price AS mfpprice FROM mats 
+            mats.material, mats.price AS mprice,mats_color.mcid, mats_color.color, mats_color.price AS mcprice,mats_fp.mfpid, mats_fp.fp, mats_fp.price AS mfpprice, mats_spring.msid, mats_spring.spring, mats_spring.price AS springprice, mats_foam.mfmid, mats_foam.foam, mats_foam.price AS foamprice, mats_fabric.mfid, mats_fabric.fabric, mats_fabric.price AS fabricprice FROM mats 
             JOIN mats_color ON mats.mcid = mats_color.mcid
             JOIN mats_fp ON mats.mfpid = mats_fp.mfpid
+            JOIN mats_spring ON mats.msid = mats_spring.msid
+            JOIN mats_foam ON mats.mfmid = mats_foam.mfmid
+            JOIN mats_fabric ON mats.mfid = mats_fabric.mfid
             JOIN furniture_type ON mats.ftype = furniture_type.fid
             JOIN furniture ON furniture_type.fid = furniture.fid 
             WHERE furniture.pid = '$pid'";
@@ -231,10 +234,19 @@
                     $mcprice = $furniturerow['mcprice'];
                     $fp = $furniturerow['fp'];
                     $mfpprice = $furniturerow['mfpprice'];
+                    $cotton = $furniturerow['foam'];
+                    $cprice = $furniturerow['foamprice'];
+                    $fabric = $furniturerow['fabric'];
+                    $fbprice = $furniturerow['fabricprice'];
+                    $spring = $furniturerow['spring'];
+                    $spprice = $furniturerow['springprice'];
 
                     $colors[$color] = $mcprice;
                     $materials[$material] = $mprice;
                     $foots[$fp] = $mfpprice;
+                    $cottons[$cotton] = $cprice;
+                    $fabrics[$fabric] = $fbprice;
+                    $springs[$spring] = $spprice;
                 }
             } else {
                 $url = "shop.php";
@@ -270,6 +282,27 @@
                     <option value="<?php echo $material ?>" data-price="<?php echo $mprice ?>"><?php echo $material ?></option>
                     <?php endforeach ?>
                 </select>
+                <h6>Foam:</h6>
+                <select id="foam" name="foam" required>
+                    <option value="" disabled selected>Select cotton</option>
+                    <?php foreach ($cottons as $cotton => $cprice) : ?>       
+                    <option value="<?php echo $cotton ?>" data-price="<?php echo $cprice ?>"><?php echo $cotton ?></option>
+                    <?php endforeach ?>
+                </select>
+                <h6>Fabric:</h6>
+                <select id="fabric" name="fabric" required>
+                    <option value="" disabled selected>Select fabric</option>
+                    <?php foreach ($fabrics as $fabric => $fbprice) : ?>       
+                    <option value="<?php echo $fabric ?>" data-price="<?php echo $fbprice ?>"><?php echo $fabric ?></option>
+                    <?php endforeach ?>
+                </select>
+                <h6>Spring:</h6>
+                <select id="spring" name="spring" required>
+                    <option value="" disabled selected>Select spring</option>
+                    <?php foreach ($springs as $spring => $spprice) : ?>       
+                    <option value="<?php echo $spring ?>" data-price="<?php echo $spprice ?>"><?php echo $spring ?></option>
+                    <?php endforeach ?>
+                </select>
             </div>
             <div id="FootPart" class="tab-content">
                 <h2>Foot Part</h2>
@@ -301,6 +334,18 @@
                     <span id="materialName"></span>
                     <span id="materialPrice"></span>
                 </li>
+                <li style="display: flex; justify-content: space-between;">
+                    <span id="foamName"></span>
+                    <span id="foamPrice"></span>
+                </li>
+                <li style="display: flex; justify-content: space-between;">
+                    <span id="fabricName"></span>
+                    <span id="fabricPrice"></span>
+                </li>
+                <li style="display: flex; justify-content: space-between;">
+                    <span id="springName"></span>
+                    <span id="springPrice"></span>
+                </li>
                 <span><strong>Size</strong></span>
                 <li style="display: flex; justify-content: space-between;">
                     <span id="sizeName"></span>
@@ -327,6 +372,9 @@
                 <input type="hidden" id="hiddenMaterial" name="material" value="">
                 <input type="hidden" id="hiddenColor" name="color" value="">
                 <input type="hidden" id="hiddenFoot" name="footPart" value="">
+                <input type="hidden" id="hiddenFoam" name="foam" value="">
+                <input type="hidden" id="hiddenFabric" name="fabric" value="">
+                <input type="hidden" id="hiddenSpring" name="spring" value="">
                 <input type="hidden" id="hiddenWidth" name="width" value="">
                 <input type="hidden" id="hiddenLength" name="length" value="">
                 <input type="hidden" id="hiddenHeight" name="height" value="">
@@ -349,6 +397,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let colorPrice = 0;
     let footPrice = 0;
     let sizePrice = 0;
+    let foamPrice = 0;
+    let fabricPrice = 0;
+    let springPrice = 0;
 
     function updateSizePrice() {
         const width = parseFloat(document.getElementById('width').value) || 0;
@@ -383,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updatePrice() {
         const quantity = parseInt(document.getElementById('qty').value) || 1;
-        const totalPrice = (furniturePrice + materialPrice + colorPrice + footPrice + sizePrice) * quantity;
+        const totalPrice = (furniturePrice + materialPrice + foamPrice + fabricPrice + springPrice + colorPrice + footPrice + sizePrice) * quantity;
         console.log('Updating total price to: ₱' + totalPrice.toFixed(2));
 
         document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
@@ -391,6 +442,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('hiddenMaterial').value = document.getElementById('mats').value;
         document.getElementById('hiddenColor').value = document.getElementById('color').value;
         document.getElementById('hiddenFoot').value = document.getElementById('foot').value;
+        document.getElementById('hiddenFoam').value = document.getElementById('foam').value;
+        document.getElementById('hiddenFabric').value = document.getElementById('fabric').value;
+        document.getElementById('hiddenSpring').value = document.getElementById('spring').value;
         document.getElementById('hiddenTotalPrice').value = totalPrice.toFixed(2);
     }
 
@@ -407,6 +461,30 @@ document.addEventListener('DOMContentLoaded', () => {
         materialPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
         document.getElementById('materialName').innerText = event.target.value;
         document.getElementById('materialPrice').innerText = '₱' + materialPrice.toFixed(2);
+        updatePrice();
+    });
+
+    document.getElementById('foam').addEventListener('change', (event) => {
+        const selectedOption = event.target.options[event.target.selectedIndex];
+        foamPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+        document.getElementById('foamName').innerText = event.target.value;
+        document.getElementById('foamPrice').innerText = '₱' + foamPrice.toFixed(2);
+        updatePrice();
+    });
+
+    document.getElementById('fabric').addEventListener('change', (event) => {
+        const selectedOption = event.target.options[event.target.selectedIndex];
+        fabricPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+        document.getElementById('fabricName').innerText = event.target.value;
+        document.getElementById('fabricPrice').innerText = '₱' + fabricPrice.toFixed(2);
+        updatePrice();
+    });
+
+    document.getElementById('spring').addEventListener('change', (event) => {
+        const selectedOption = event.target.options[event.target.selectedIndex];
+        springPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+        document.getElementById('springName').innerText = event.target.value;
+        document.getElementById('springPrice').innerText = '₱' + springPrice.toFixed(2);
         updatePrice();
     });
 
