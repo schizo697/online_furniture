@@ -53,6 +53,15 @@ if (isset($_POST['submitreview']) && !$review_exists) {
                     window.location.href = 'shop.php';
                   </script>";
             exit(); 
+
+            $notification_message = "A product has been rated. See reviews and rating";
+            $notification_status = "unread"; // Set the initial status as unread
+                    
+            // Insert the notification into the database
+            $insert_notification_query = "INSERT INTO notification (uid, message, status, timestamp) 
+                                                VALUES ('$uid', '$notification_message', '$notification_status', NOW())";
+                    
+            $notif = mysqli_query($conn, $insert_notification_query);
         } else {
             echo '<script>window.location.href="purchase.php?error=true";</script>';
             exit();

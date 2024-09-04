@@ -56,6 +56,16 @@ if (isset($_SESSION['uid'])) {
                             <?php
                             exit;
                         }
+
+                        $notification_message = "A product return has been requested. See details";
+                        $notification_status = "unread"; // Set the initial status as unread
+                        
+                        // Insert the notification into the database
+                        $insert_notification_query = "INSERT INTO notification (uid, message, status, timestamp) 
+                                                    VALUES ('$uid', '$notification_message', '$notification_status', NOW())";
+                        
+                        $notif = mysqli_query($conn, $insert_notification_query);
+
                     } else {
                         $stmt->close();
                         ?>
