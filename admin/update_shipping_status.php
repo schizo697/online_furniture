@@ -23,9 +23,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result) {
             echo json_encode(['success' => true, 'message' => 'Shipping status updated successfully']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Update failed: ' . mysqli_error($conn)]);
-        }
+
+            // Get customer id
+            $customer = "SELECT * FROM orders WHERE order_code = '$orderCode'";
+            $fetch = mysqli_query($conn, $customer);
+            if ($fetch && mysqli_num_rows($fetch) > 0) {
+                $row = mysqli_fetch_assoc($fetch);
+                $uid = $row['uid'];
+
+                $notification_message = "Order Code: $order_code has been shipped successfully!";
+                $notification_status = "unread"; // Set the initial status as unread
+                    
+                // Insert the notification into the database
+                $insert_notification_query = "INSERT INTO notification (uid, message, status, timestamp) 
+                                                VALUES ('$uid', '$notification_message', '$notification_status', NOW())";
+                    
+                $notif = mysqli_query($conn, $insert_notification_query);
+            }
     } else {
         // Record does not exist, insert it
         $insert_query = "INSERT INTO shipping (order_code, expected_date, shipping_status) VALUES ('$orderCode', '$expectedDate', '$shippingStatus')";
@@ -33,9 +47,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result) {
             echo json_encode(['success' => true, 'message' => 'Shipping status inserted successfully']);
+
+            // Get customer id
+            $customer = "SELECT * FROM orders WHERE order_code = '$orderCode'";
+            $fetch = mysqli_query($conn, $customer);
+            if ($fetch && mysqli_num_rows($fetch) > 0) {
+                $row = mysqli_fetch_assoc($fetch);
+                $uid = $row['uid'];
+
+                $notification_message = "Order Code: $order_code has been shipped successfully!";
+                $notification_status = "unread"; // Set the initial status as unread
+                    
+                // Insert the notification into the database
+                $insert_notification_query = "INSERT INTO notification (uid, message, status, timestamp) 
+                                                VALUES ('$uid', '$notification_message', '$notification_status', NOW())";
+                    
+                $notif = mysqli_query($conn, $insert_notification_query);
+            }
         } else {
             echo json_encode(['success' => false, 'message' => 'Insert failed: ' . mysqli_error($conn)]);
         }
     }
+}
 }
 ?>

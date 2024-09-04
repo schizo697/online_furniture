@@ -22,6 +22,23 @@ if (isset($_POST['decline'])) {
     } else {
         // Update order status to declined (osid = 0)
         $update_query = "UPDATE orders SET osid = '0' WHERE order_code = '$order_code'";
+
+        // Get customer id
+        $customer = "SELECT * FROM orders WHERE order_code = '$order_code'";
+        $fetch = mysqli_query($conn, $customer);
+        if ($fetch && mysqli_num_rows($fetch) > 0) {
+            $row = mysqli_fetch_assoc($fetch);
+            $uid = $row['uid'];
+
+            $notification_message = "Order Code: $order_code has been declined!";
+            $notification_status = "unread"; // Set the initial status as unread
+                
+            // Insert the notification into the database
+            $insert_notification_query = "INSERT INTO notification (uid, message, status, timestamp) 
+                                            VALUES ('$uid', '$notification_message', '$notification_status', NOW())";
+                
+            $notif = mysqli_query($conn, $insert_notification_query);
+        }
         if (!mysqli_query($conn, $update_query)) {
             echo "Error updating record: " . mysqli_error($conn);
         }
@@ -34,6 +51,23 @@ if (isset($_POST['confirm'])) {
     
     // Update order status to confirmed (osid = 2)
     $update_query = "UPDATE orders SET osid = '7' WHERE order_code = '$order_code'";
+
+    // Get customer id
+    $customer = "SELECT * FROM orders WHERE order_code = '$order_code'";
+    $fetch = mysqli_query($conn, $customer);
+    if ($fetch && mysqli_num_rows($fetch) > 0) {
+        $row = mysqli_fetch_assoc($fetch);
+        $uid = $row['uid'];
+
+        $notification_message = "Order Code: $order_code is being prepared to ship!";
+        $notification_status = "unread"; // Set the initial status as unread
+            
+        // Insert the notification into the database
+        $insert_notification_query = "INSERT INTO notification (uid, message, status, timestamp) 
+                                        VALUES ('$uid', '$notification_message', '$notification_status', NOW())";
+            
+        $notif = mysqli_query($conn, $insert_notification_query);
+    }
     if (!mysqli_query($conn, $update_query)) {
         echo "Error updating record: " . mysqli_error($conn);
     }
