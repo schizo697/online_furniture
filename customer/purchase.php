@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <tbody>
                                             <?php
                                             $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,
-                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.total_price AS productPrice , orders.osid
+                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
                                             FROM orders
                                             JOIN furniture ON orders.pid = furniture.pid
                                             JOIN order_status ON orders.osid = order_status.osid
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                                 echo $orderrow['pname']; 
                                                                 echo "<br><small>Color: " . $orderrow['color'] . "</small>";
                                                                 echo "<br><small>Dimensions: " . $orderrow['width'] . " x " . $orderrow['length'] . " x " . $orderrow['height'] . "</small>";
-                                                                echo "<br><small>Material: " . $orderrow['materials'] . "</small>";
+                                                                echo "<br><small>Material: " . $orderrow['materials'] . ', ' . $orderrow['foam'] . ', ' . $orderrow['fabric'] . ', ' . $orderrow['spring'] . "</small>";
                                                                 echo "<br><small>Foot Part: " . $orderrow['foot_part'] . "</small>";
                                                             ?>
                                                         </td>
@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <tbody>
                                             <?php
                                             $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,
-                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.total_price AS productPrice , orders.osid
+                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
                                             FROM orders
                                             JOIN furniture ON orders.pid = furniture.pid
                                             JOIN order_status ON orders.osid = order_status.osid
@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                                 echo $orderrow['pname']; 
                                                                 echo "<br><small>Color: " . $orderrow['color'] . "</small>";
                                                                 echo "<br><small>Dimensions: " . $orderrow['width'] . " x " . $orderrow['length'] . " x " . $orderrow['height'] . "</small>";
-                                                                echo "<br><small>Material: " . $orderrow['materials'] . "</small>";
+                                                                echo "<br><small>Material: " . $orderrow['materials'] . ', ' . $orderrow['foam'] . ', ' . $orderrow['fabric'] . ', ' . $orderrow['spring'] . "</small>";
                                                                 echo "<br><small>Foot Part: " . $orderrow['foot_part'] . "</small>";
                                                             ?>
                                                         </td>
@@ -254,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <tbody>
                                             <?php
                                             $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,
-                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.total_price AS productPrice , orders.osid
+                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
                                             FROM orders
                                             JOIN furniture ON orders.pid = furniture.pid
                                             JOIN order_status ON orders.osid = order_status.osid
@@ -273,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                                 echo $orderrow['pname']; 
                                                                 echo "<br><small>Color: " . $orderrow['color'] . "</small>";
                                                                 echo "<br><small>Dimensions: " . $orderrow['width'] . " x " . $orderrow['length'] . " x " . $orderrow['height'] . "</small>";
-                                                                echo "<br><small>Material: " . $orderrow['materials'] . "</small>";
+                                                                echo "<br><small>Material: " . $orderrow['materials'] . ', ' . $orderrow['foam'] . ', ' . $orderrow['fabric'] . ', ' . $orderrow['spring'] . "</small>";
                                                                 echo "<br><small>Foot Part: " . $orderrow['foot_part'] . "</small>";
                                                             ?>
                                                         </td>
@@ -321,7 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <tbody>
                                             <?php
                                             $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,
-                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.total_price AS productPrice , orders.osid
+                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
                                             FROM orders
                                             JOIN furniture ON orders.pid = furniture.pid
                                             JOIN order_status ON orders.osid = order_status.osid
@@ -340,7 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                                 echo $orderrow['pname']; 
                                                                 echo "<br><small>Color: " . $orderrow['color'] . "</small>";
                                                                 echo "<br><small>Dimensions: " . $orderrow['width'] . " x " . $orderrow['length'] . " x " . $orderrow['height'] . "</small>";
-                                                                echo "<br><small>Material: " . $orderrow['materials'] . "</small>";
+                                                                echo "<br><small>Material: " . $orderrow['materials'] . ', ' . $orderrow['foam'] . ', ' . $orderrow['fabric'] . ', ' . $orderrow['spring'] . "</small>";
                                                                 echo "<br><small>Foot Part: " . $orderrow['foot_part'] . "</small>";
                                                             ?>
                                                         </td>
@@ -389,7 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <tbody>
                                             <?php
                                             $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,
-                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.total_price AS productPrice , orders.osid
+                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
                                             FROM orders
                                             JOIN furniture ON orders.pid = furniture.pid
                                             JOIN order_status ON orders.osid = order_status.osid
@@ -408,7 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                                 echo $orderrow['pname']; 
                                                                 echo "<br><small>Color: " . $orderrow['color'] . "</small>";
                                                                 echo "<br><small>Dimensions: " . $orderrow['width'] . " x " . $orderrow['length'] . " x " . $orderrow['height'] . "</small>";
-                                                                echo "<br><small>Material: " . $orderrow['materials'] . "</small>";
+                                                                echo "<br><small>Material: " . $orderrow['materials'] . ', ' . $orderrow['foam'] . ', ' . $orderrow['fabric'] . ', ' . $orderrow['spring'] . "</small>";
                                                                 echo "<br><small>Foot Part: " . $orderrow['foot_part'] . "</small>";
                                                             ?>
                                                         </td>
@@ -455,7 +455,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                         <tbody>
                                             <?php
                                             $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,
-                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.total_price AS productPrice , orders.osid
+                                            cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
                                             FROM orders
                                             JOIN furniture ON orders.pid = furniture.pid
                                             JOIN order_status ON orders.osid = order_status.osid
@@ -474,7 +474,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                                 echo $orderrow['pname']; 
                                                                 echo "<br><small>Color: " . $orderrow['color'] . "</small>";
                                                                 echo "<br><small>Dimensions: " . $orderrow['width'] . " x " . $orderrow['length'] . " x " . $orderrow['height'] . "</small>";
-                                                                echo "<br><small>Material: " . $orderrow['materials'] . "</small>";
+                                                                echo "<br><small>Material: " . $orderrow['materials'] . ', ' . $orderrow['foam'] . ', ' . $orderrow['fabric'] . ', ' . $orderrow['spring'] . "</small>";
                                                                 echo "<br><small>Foot Part: " . $orderrow['foot_part'] . "</small>";
                                                             ?>
                                                         </td>
