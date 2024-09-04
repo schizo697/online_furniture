@@ -126,7 +126,7 @@ if(isset($_POST['submit'])) {
                         while ($notification = mysqli_fetch_assoc($notifications_result)) {
                             $notificationId = $notification['id'];
                     ?>
-                            <form action="update_notification_status.php" method="post" style="display: inline;">
+                            <form action="" method="post" style="display: inline;">
                                 <input type="hidden" name="id" value="<?php echo $notificationId; ?>">
                                 <button type="submit" class="dropdown-item" name="submit">
                                     <div class="notif-icon notif-primary">

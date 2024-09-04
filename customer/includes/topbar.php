@@ -2,6 +2,16 @@
 <?php
 session_start();
 include '../conn.php';
+
+if (isset($_SESSION['uid'])) {
+    $user_id = $_SESSION['uid'];
+}
+
+$uid = $_SESSION['uid'];
+
+$unread_notifications_query = "SELECT COUNT(*) AS unread_count FROM notification WHERE uid = $uid AND status = 'unread'";
+$unread_notifications_result = mysqli_query($conn, $unread_notifications_query);
+$unread_count = mysqli_fetch_assoc($unread_notifications_result)['unread_count'];
 ?>
 
 <!DOCTYPE html>
@@ -88,11 +98,14 @@ include '../conn.php';
                             }
                         }
                         ?>
-                        <a href="notifications.php" class="position-relative me-4 my-auto">
-                            <i class="fas fa-bell fa-2x"></i>
-                            <span class="position-absolute bg-danger rounded-circle d-flex align-items-center justify-content-center text-white px-1" 
-                            style="top: -5px; left: 15px; height: 20px; min-width: 20px;">5</span> <!-- Replace '5' with your dynamic count -->
-                        </a>
+                           <form action="update_notification_status.php" method="post" id="notification-form">
+                                <input type="hidden" name="uid" value="<?php echo $_SESSION['uid']; ?>">
+                                <a href="notifications.php" class="position-relative me-4 my-auto" id="notification-link">
+                                    <i class="fas fa-bell fa-2x"></i>
+                                    <span class="position-absolute bg-danger rounded-circle d-flex align-items-center justify-content-center text-white px-1" 
+                                    style="top: -5px; left: 15px; height: 20px; min-width: 20px;"><?php echo $unread_count; ?></span> <!-- Replace '5' with your dynamic count -->
+                                </a>
+                            </form>
                         <a href="cart.php" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
                             <?php if (isset($product_count) && $product_count > 0) { ?>
@@ -144,6 +157,13 @@ include '../conn.php';
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
+    <script>
+       document.getElementById('notification-link').addEventListener('click', function(event) {
+           event.preventDefault(); // Prevent default link behavior
+           document.getElementById('notification-form').submit();
+       });
+   </script>
 </body>
 
 </html>
