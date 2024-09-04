@@ -43,11 +43,15 @@ foreach ($cid as $prodid) {
                     $update_furniture = "UPDATE furniture SET quantity = quantity - $quantity WHERE pid = '$pid'";
                     $update_furnitureres = mysqli_query($conn, $update_furniture);
 
-                    if (!$update_furnitureres) {
-                        echo 'Error updating furniture qty';
-                        exit();
-                    }
-                }
+                    $notification_message = "New order placed. Order ID: $order_code";
+                    $notification_status = "unread"; // Set the initial status as unread
+                    
+                    // Insert the notification into the database
+                    $insert_notification_query = "INSERT INTO notification (uid, message, status, timestamp) 
+                                                VALUES ('$uid', '$notification_message', '$notification_status', NOW())";
+                    
+                    $notif = mysqli_query($conn, $insert_notification_query);
+
             } elseif ($payMethod == 'gcash') {
                 $receipt = "INSERT INTO gcash_rec (order_code, receipt) VALUES ('$order_code', '$gcashrec')";
                 $receiptres = mysqli_query($conn, $receipt);
@@ -64,6 +68,16 @@ foreach ($cid as $prodid) {
                         if (!$update_furnitureres) {
                             echo 'Error updating furniture qty';
                             exit();
+                        }
+
+                        $notification_message = "New order placed. Order ID: $order_code";
+                        $notification_status = "unread"; // Set the initial status as unread
+                        
+                        // Insert the notification into the database
+                        $insert_notification_query = "INSERT INTO notification (uid, message, status, timestamp) 
+                                                    VALUES ('$uid', '$notification_message', '$notification_status', NOW())";
+                        
+                        $notif = mysqli_query($conn, $insert_notification_query);
                         }
                     }
                 } else {

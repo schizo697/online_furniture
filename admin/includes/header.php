@@ -24,6 +24,22 @@ if (isset($_SESSION['uid'])) {
     // Handle case where session uid is not set (should ideally not reach here if your session management is correct)
     $username = "Guest";
 }
+
+$unread_notifications_query = "SELECT COUNT(*) AS unread_count FROM notification WHERE status = 'unread'";
+$unread_notifications_result = mysqli_query($conn, $unread_notifications_query);
+$unread_count = mysqli_fetch_assoc($unread_notifications_result)['unread_count'];
+
+
+if(isset($_POST['submit'])) {
+    $notificationId = $_POST['id'];
+    
+    $update_query = "UPDATE notification SET status = 'read' WHERE id = $notificationId";
+    if(mysqli_query($conn, $update_query)) {
+        
+    } else {
+        
+    }
+}
 ?> 
     
     <div class="main-panel">
@@ -87,82 +103,58 @@ if (isset($_SESSION['uid'])) {
                   </ul>
                 </li>
                 <li class="nav-item topbar-icon dropdown hidden-caret">
-                  <a
-                    class="nav-link dropdown-toggle"
-                    href="#"
-                    id="notifDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    <i class="fa fa-bell"></i>
-                    <span class="notification">4</span>
-                  </a>
-                  <ul
-                    class="dropdown-menu notif-box animated fadeIn"
-                    aria-labelledby="notifDropdown"
-                  >
-                    <li>
-                      <div class="dropdown-title">
-                        You have 4 new notification
-                      </div>
-                    </li>
-                    <li>
-                      <div class="notif-scroll scrollbar-outer">
-                        <div class="notif-center">
-                          <a href="#">
-                            <div class="notif-icon notif-primary">
-                              <i class="fa fa-user-plus"></i>
-                            </div>
-                            <div class="notif-content">
-                              <span class="block"> New user registered </span>
-                              <span class="time">5 minutes ago</span>
-                            </div>
-                          </a>
-                          <a href="#">
-                            <div class="notif-icon notif-success">
-                              <i class="fa fa-comment"></i>
-                            </div>
-                            <div class="notif-content">
-                              <span class="block">
-                                Jungkook commented on Admin
-                              </span>
-                              <span class="time">12 minutes ago</span>
-                            </div>
-                          </a>
-                          <a href="#">
-                            <div class="notif-img">
-                              <img
-                                src="assets/img/v.jpg"
-                                alt="Img Profile"
-                              />
-                            </div>
-                            <div class="notif-content">
-                              <span class="block">
-                                V send messages to you
-                              </span>
-                              <span class="time">12 minutes ago</span>
-                            </div>
-                          </a>
-                          <a href="#">
-                            <div class="notif-icon notif-danger">
-                              <i class="fa fa-heart"></i>
-                            </div>
-                            <div class="notif-content">
-                              <span class="block"> Farrah liked Admin </span>
-                              <span class="time">17 minutes ago</span>
-                            </div>
-                          </a>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <a class="see-all" href="javascript:void(0);"
-                        >See all notifications<i class="fa fa-angle-right"></i>
-                      </a>
-                    </li>
-                  </ul>
+    <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-bell"></i>
+        <span class="notification"><?php echo $unread_count; ?></span>
+    </a>
+    <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
+        <li>
+            <div class="dropdown-title">
+                You have <?php echo $unread_count; ?> new notifications
+            </div>
+        </li>
+        <li>
+            <div class="notif-scroll scrollbar-outer">
+                <div class="notif-center">
+                    <?php
+                    // Query to get the latest notifications for the farmer
+                    $notifications_query = "SELECT id, message, timestamp FROM notification ORDER BY timestamp DESC LIMIT 5";
+                    $notifications_result = mysqli_query($conn, $notifications_query);
+
+                    // Check if there are notifications
+                    if(mysqli_num_rows($notifications_result) > 0) {
+                        while ($notification = mysqli_fetch_assoc($notifications_result)) {
+                            $notificationId = $notification['id'];
+                    ?>
+                            <form action="update_notification_status.php" method="post" style="display: inline;">
+                                <input type="hidden" name="id" value="<?php echo $notificationId; ?>">
+                                <button type="submit" class="dropdown-item" name="submit">
+                                    <div class="notif-icon notif-primary">
+                                        <i class="fa fa-envelope"></i>
+                                    </div>
+                                    <div class="notif-content">
+                                        <span class="block"><?php echo $notification['message']; ?></span>
+                                        <span class="float-right text-muted text-sm time"><?php echo $notification['timestamp']; ?></span>
+                                    </div>
+                                </button>
+                            </form>
+                    <?php
+                        }
+                    } else {
+                        // Display a message when there are no notifications
+                    ?>
+                        <div class="dropdown-item text-muted">No notifications</div>
+                    <?php
+                    }
+                    ?>
+                </div>
+            </div>
+        </li>
+        <li>
+            <a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i></a>
+        </li>
+    </ul>
+</li>
                 <li class="nav-item topbar-user dropdown hidden-caret">
                   <a
                     class="dropdown-toggle profile-pic"
