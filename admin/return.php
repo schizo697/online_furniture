@@ -22,15 +22,15 @@ if (isset($_POST['decline'])) {
                               SET furniture.quantity = furniture.quantity + orders.qty
                               WHERE orders.order_id = ?";
         $stmt = $conn->prepare($restore_qty_query);
-        $stmt->bind_param("s", $order_id);
+        $stmt->bind_param("i", $order_id); // Assuming order_id is an integer
         if (!$stmt->execute()) {
-            throw new Exception("Error updating record: " . $stmt->error);
+            throw new Exception("Error updating product quantities: " . $stmt->error);
         }
 
         // Update order status to declined (osid = 5)
         $update_order_query = "UPDATE orders SET osid = '5' WHERE order_id = ?";
         $stmt = $conn->prepare($update_order_query);
-        $stmt->bind_param("s", $order_id);
+        $stmt->bind_param("i", $order_id);
         if (!$stmt->execute()) {
             throw new Exception("Error updating order status: " . $stmt->error);
         }
@@ -38,7 +38,7 @@ if (isset($_POST['decline'])) {
         // Update return status to Not Approve and save admin response
         $update_return_query = "UPDATE order_return SET return_status = 'Not Approve', admin_response = ? WHERE order_id = ?";
         $stmt = $conn->prepare($update_return_query);
-        $stmt->bind_param("ss", $admin_response, $order_id);
+        $stmt->bind_param("si", $admin_response, $order_id);
         if (!$stmt->execute()) {
             throw new Exception("Error updating return status: " . $stmt->error);
         }
@@ -48,7 +48,7 @@ if (isset($_POST['decline'])) {
 
     } catch (Exception $e) {
         $conn->rollback(); // Rollback transaction
-        echo $e->getMessage();
+        echo "Error: " . $e->getMessage();
     }
 
     $stmt->close();
@@ -65,14 +65,15 @@ if (isset($_POST['confirm'])) {
         // Update order status to confirmed (osid = 6)
         $update_order_query = "UPDATE orders SET osid = '6' WHERE order_id = ?";
         $stmt = $conn->prepare($update_order_query);
-        $stmt->bind_param("s", $order_id);
+        $stmt->bind_param("i", $order_id);
         if (!$stmt->execute()) {
             throw new Exception("Error updating order status: " . $stmt->error);
         }
 
         // Update return status to Approved and save admin response
         $update_return_query = "UPDATE order_return SET return_status = 'Approved', admin_response = ? WHERE order_id = ?";
-        $stmt->bind_param("ss", $admin_response, $order_id);
+        $stmt = $conn->prepare($update_return_query);
+        $stmt->bind_param("si", $admin_response, $order_id);
         if (!$stmt->execute()) {
             throw new Exception("Error updating return status: " . $stmt->error);
         }
@@ -82,7 +83,7 @@ if (isset($_POST['confirm'])) {
 
     } catch (Exception $e) {
         $conn->rollback(); // Rollback transaction
-        echo $e->getMessage();
+        echo "Error: " . $e->getMessage();
     }
 
     $stmt->close();

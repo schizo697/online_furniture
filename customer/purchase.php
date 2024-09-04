@@ -137,10 +137,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                             <!-- You can add action buttons here, e.g., view or cancel order -->
                                                             <a href="product_view.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-info">View</a>
                                                             
-                                                          <button type="button" class="btn btn-danger btn-sm cancel_btn"
-                                                        data-bs-toggle="modal" data-order-code="<?php echo $order_code; ?>">
-                                                    Cancel
-                                                </button>
+                                                            <button type="button" class="btn btn-danger btn-sm cancel_btn"
+    data-order-code="<?php echo $orderrow['order_code']; ?>">
+    Cancel
+</button>
                                                         </td>
                                                     </tr>
                                                     <?php
@@ -332,23 +332,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                 <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th class="text-center">Order Code</th>
-                                                <th class="text-center">Product Name & Details</th>
-                                                <th class="text-right">Product Price</th>
-                                                <th class="text-center">Quantity</th>
-                                                <th class="text-center">Date Order</th>
-                                                <th class="text-center">Action</th>
+                                                    <th class="text-right">Order ID</th>
+                                                    <th class="text-center">Product Name & Details</th>
+                                                    <th class="text-right">Product Price</th>
+                                                    <th class="text-center">Quantity</th>
+                                                    <th class="text-right">Total Price</th>
+                                                    <th class="text-center">Date Order</th>
+                                                    <th class="text-center">Status</th>
+                                                    <th class="text-center">Response</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,
+                                            $orders = "SELECT orders.order_code, orders.uid, orders.total AS totalPrice, orders.qty, orders.date, furniture.pname,orders.total,order_return.return_status, order_return.admin_response,
                                             cart.color, cart.width, cart.height, cart.length, cart.materials, cart.foot_part, cart.foam, cart.fabric, cart.spring, cart.total_price AS productPrice , orders.osid
                                             FROM orders
                                             JOIN furniture ON orders.pid = furniture.pid
+                                            JOIN order_return ON orders.order_id = order_return.order_id
                                             JOIN order_status ON orders.osid = order_status.osid
                                             JOIN cart ON orders.cid = cart.cid 
-                                            WHERE orders.uid = '$uid' AND orders.osid = 4";
+                                            WHERE orders.uid = '6' AND orders.osid IN (4, 5, 6)";
                                             
                                             $ordersres = mysqli_query($conn, $orders);
 
@@ -368,12 +371,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                         </td>
                                                         <td class="text-right"><?php echo number_format($orderrow['productPrice'], 2); ?></td>
                                                         <td class="text-center"><?php echo $orderrow['qty']; ?></td>
+                                                        <td class="text-center"><?php echo $orderrow['total']; ?></td>
                                                         <td class="text-center"><?php echo date('Y-m-d', strtotime($orderrow['date'])); ?></td>
-                                                        <td class="text-center">
-                                                            <!-- You can add action buttons here, e.g., view or cancel order -->
-                                                            <a href="product_view.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-info">View</a>
-                                                            <a href="cancel_order.php?order_code=<?php echo $orderrow['order_code']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel</a>
-                                                        </td>
+                                                        <td class="text-center"><?php echo $orderrow['return_status']; ?></td>
+                                                        <td class="text-center"><?php echo $orderrow['admin_response']; ?></td>
                                                     </tr>
                                                     <?php
                                                 }
