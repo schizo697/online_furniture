@@ -405,24 +405,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const width = parseFloat(document.getElementById('width').value) || 0;
         const length = parseFloat(document.getElementById('length').value) || 0;
         const height = parseFloat(document.getElementById('height').value) || 0;
-
-        if (width >= 61 && length > 80 && height > 16) {
-            sizePrice = 1000;
-        } else if (width <= 60 && length < 80 && height <= 16) {
-            sizePrice = 500;
-        } else {
-            sizePrice = 0; 
-            if (width >= 61 && length === 80) {
-                sizePrice += 1000;
-            } else if (width === 60 && length === 80) {
-                sizePrice += 500;
-            }
-            if (height >= 25) {
-                sizePrice += 500;
-            } else if (height <= 24) {
-                sizePrice += 250;
-            }
-        }
+        
+        const dimension = width + length + height;
+        sizePrice = dimension * 50;
 
         document.getElementById('sizeName').innerText = `Height: ${height} inches, Width: ${width} inches, Length: ${length} inches`;
         document.getElementById('sizePrice').innerText = '₱' + sizePrice.toFixed(2);
