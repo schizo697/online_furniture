@@ -340,7 +340,7 @@ if (!isset($_SESSION['uid'])) {
                                 </thead>
                                 <tbody>
                                 <?php 
-                                    $sql = "SELECT uid, username, email, firstname, lastname, gender, contact, address, levelid, status
+                                    $sql = "SELECT uid, username, email, firstname, lastname, gender, contact, address,city, levelid, status
                                     FROM useraccount 
                                     JOIN userinfo ON useraccount.infoid = userinfo.infoid 
                                     WHERE useraccount.status = 1 AND useraccount.levelid IN (1, 2)";
@@ -357,6 +357,8 @@ if (!isset($_SESSION['uid'])) {
                                             $gender = $row['gender'];
                                             $contact = $row['contact'];
                                             $address = $row['address'];
+                                            $city = $row['city'];
+                                            $address1 = $address . ' ' . $city;
                                             $level = $row['levelid'];
                                             $type = '';
                                             switch ($level) {
@@ -374,7 +376,7 @@ if (!isset($_SESSION['uid'])) {
                                         ?> 
                                     <tr>                                     
                                         <td><?php echo $name ?></td>
-                                        <td><?php echo $address ?></td>                              
+                                        <td><?php echo $address1 ?></td>                              
                                         <td><?php echo $contact ?></td>
                                         <td><?php echo $type ?></td>
                                         <td>

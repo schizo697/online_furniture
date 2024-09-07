@@ -109,6 +109,7 @@ if (isset($_POST['confirm'])) {
                                         <th>Order Code</th>
                                         <th>Customer Name</th>
                                         <th>Product Names</th>
+                                        <th>Address</th>
                                         <th>Total Quantity</th>
                                         <th>Total</th>
                                         <th>Mode of Payment</th>
@@ -122,6 +123,7 @@ if (isset($_POST['confirm'])) {
                                     $uid = mysqli_real_escape_string($conn, $_SESSION['uid']);
                                     $orders_query = "SELECT orders.order_code, 
                                                             CONCAT(userinfo.firstname, ' ', userinfo.lastname) AS customer_name, 
+                                                            CONCAT(userinfo.address, ' ', userinfo.city) AS address_name,
                                                             GROUP_CONCAT(furniture.pname SEPARATOR ', ') AS product_names,
                                                             SUM(orders.qty) AS total_quantity, 
                                                             SUM(orders.total) AS total_amount, 
@@ -141,6 +143,7 @@ if (isset($_POST['confirm'])) {
                                             while ($order_row = mysqli_fetch_assoc($order_res)) {
                                                 $order_code = htmlspecialchars($order_row['order_code']);
                                                 $customer_name = htmlspecialchars($order_row['customer_name']);
+                                                $address_name = htmlspecialchars($order_row['address_name']);
                                                 $product_names = htmlspecialchars($order_row['product_names']);
                                                 $total_quantity = htmlspecialchars($order_row['total_quantity']);
                                                 $total_amount = htmlspecialchars($order_row['total_amount']);
@@ -152,6 +155,7 @@ if (isset($_POST['confirm'])) {
                                         <td><?php echo $order_code; ?></td>
                                         <td><?php echo $customer_name; ?></td>
                                         <td><?php echo $product_names; ?></td>
+                                        <td><?php echo $address_name; ?></td>
                                         <td><?php echo $total_quantity; ?></td>
                                         <td><?php echo $total_amount; ?></td>
                                         <td><?php echo $mop; ?></td>

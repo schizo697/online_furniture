@@ -138,11 +138,11 @@
                     <span class="sub-item">Customize Options</span>
                   </a>
                 </li>
-                <li>
+                <!-- <li>
                   <a href="estimation.php">
                     <span class="sub-item">Cost Estimation</span>
                   </a>
-                </li>
+                </li> -->
               </ul>
             </div>
           </li>

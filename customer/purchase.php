@@ -351,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                             JOIN order_return ON orders.order_id = order_return.order_id
                                             JOIN order_status ON orders.osid = order_status.osid
                                             JOIN cart ON orders.cid = cart.cid 
-                                            WHERE orders.uid = '6' AND orders.osid IN (4, 5, 6)";
+                                            WHERE orders.uid = '$uid' AND orders.osid IN (4, 5, 6)";
                                             
                                             $ordersres = mysqli_query($conn, $orders);
 
