@@ -168,7 +168,7 @@ if(isset($_POST['updateproduct'])) {
         <div class="page-inner">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
-                    <h3 class="fw-bold mb-3">Customize</h3>
+                    <h3 class="fw-bold mb-3">Product Management</h3>
                 </div>
                 <div class="ms-md-auto py-2 py-md-0"></div>
             </div>
@@ -176,9 +176,9 @@ if(isset($_POST['updateproduct'])) {
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <h4 class="card-title">List of Customize Product</h4>
+                            <h4 class="card-title">List of Product</h4>
                             <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
-                                <i class="fa fa-plus"></i> Add Product Customize
+                                <i class="fa fa-plus"></i> Add Product 
                             </button>
                         </div>
                     </div>
