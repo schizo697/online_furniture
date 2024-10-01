@@ -8,41 +8,60 @@ if (!isset($_SESSION['uid'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Use prepared statements for better security
+    // Validate inputs
+    if (empty($_POST['orderCode']) || empty($_POST['expectedDate']) || empty($_POST['shippingStatus']) || empty($_POST['riderName']) || empty($_POST['riderNumber'])) {
+        echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
+        exit();
+    }
+
     $orderCode = $_POST['orderCode'];
     $expectedDate = $_POST['expectedDate'];
     $shippingStatus = $_POST['shippingStatus'];
+    $riderName = $_POST['riderName'];
+    $riderNumber = $_POST['riderNumber'];
 
-    // Check if a record with the given order_code exists
-    $check_query = $conn->prepare("SELECT shipping_id FROM shipping WHERE order_code = ?");
-    $check_query->bind_param("s", $orderCode);
-    $check_query->execute();
-    $check_result = $check_query->get_result();
+    // Start transaction to ensure atomicity
+    $conn->begin_transaction();
 
-    if ($check_result->num_rows > 0) {
-        // Record exists, update it
-        $update_query = $conn->prepare("UPDATE shipping SET expected_date = ?, shipping_status = ? WHERE order_code = ?");
-        $update_query->bind_param("sss", $expectedDate, $shippingStatus, $orderCode);
-        if ($update_query->execute()) {
-            sendNotification($conn, $orderCode);
-            echo json_encode(['success' => true, 'message' => 'Shipping status updated successfully']);
+    try {
+        // Check if a record with the given order_code exists
+        $check_query = $conn->prepare("SELECT shipping_id FROM shipping WHERE order_code = ?");
+        $check_query->bind_param("s", $orderCode);
+        $check_query->execute();
+        $check_result = $check_query->get_result();
+
+        if ($check_result->num_rows > 0) {
+            // Record exists, update it
+            $update_query = $conn->prepare("UPDATE shipping SET expected_date = ?, shipping_status = ?, rider_name = ?, rider_number = ? WHERE order_code = ?");
+            $update_query->bind_param("sssss", $expectedDate, $shippingStatus, $riderName, $riderNumber, $orderCode);
+            if ($update_query->execute()) {
+                sendNotification($conn, $orderCode);
+                echo json_encode(['success' => true, 'message' => 'Shipping status updated successfully']);
+            } else {
+                throw new Exception('Update failed: ' . $conn->error);
+            }
         } else {
-            echo json_encode(['success' => false, 'message' => 'Update failed: ' . $conn->error]);
+            // Record does not exist, insert it
+            $insert_query = $conn->prepare("INSERT INTO shipping (order_code, expected_date, shipping_status, rider_name, rider_number) VALUES (?, ?, ?, ?, ?)");
+            $insert_query->bind_param("sssss", $orderCode, $expectedDate, $shippingStatus, $riderName, $riderNumber);
+            if ($insert_query->execute()) {
+                sendNotification($conn, $orderCode);
+                echo json_encode(['success' => true, 'message' => 'Shipping status inserted successfully']);
+            } else {
+                throw new Exception('Insert failed: ' . $conn->error);
+            }
         }
-    } else {
-        // Record does not exist, insert it
-        $insert_query = $conn->prepare("INSERT INTO shipping (order_code, expected_date, shipping_status) VALUES (?, ?, ?)");
-        $insert_query->bind_param("sss", $orderCode, $expectedDate, $shippingStatus);
-        if ($insert_query->execute()) {
-            sendNotification($conn, $orderCode);
-            echo json_encode(['success' => true, 'message' => 'Shipping status inserted successfully']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Insert failed: ' . $conn->error]);
-        }
+
+        // Commit the transaction
+        $conn->commit();
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
 }
 
-// Function to send notification
+// Function to send notification (if needed)
 function sendNotification($conn, $orderCode) {
     // Fetch the customer id
     $customer_query = $conn->prepare("SELECT uid FROM orders WHERE order_code = ?");

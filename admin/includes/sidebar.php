@@ -206,6 +206,16 @@
                   </a>
                 </li>
                 <li>
+                  <a href="delivery_report.php">
+                    <span class="sub-item">Delivery Report</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="return_report.php">
+                    <span class="sub-item">Return/Refund Report</span>
+                  </a>
+                </li>
+                <li>
                   <a href="inventory_report.php">
                     <span class="sub-item">Inventory Report</span>
                   </a>

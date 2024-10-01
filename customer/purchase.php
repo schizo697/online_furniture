@@ -238,18 +238,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                 <th class="text-center">Product Name & Details</th>
                                                 <th class="text-right">Product Price</th>
                                                 <th class="text-center">Quantity</th>
-                                                <th class="text-right">Total Price</th>
-                                              
+                                                <th class="text-right">Total Price</th>                                              
                                                 <th class="text-right">Status</th>
+                                                <th class="text-right">Rider Name and Number</th>
                                                 <th class="text-center">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                         <?php
-                                            $orders_query = "SELECT *, shipping.shipping_status, shipping.expected_date FROM shipping 
-                                                JOIN orders ON orders.order_code = shipping.order_code
-                                                JOIN furniture ON furniture.pid = orders.pid 
-                                                WHERE orders.uid = ? AND orders.osid = 7";
+                                            $orders_query = "SELECT *, shipping.shipping_status, shipping.expected_date, shipping.rider_name, shipping.rider_number 
+                                                                FROM shipping 
+                                                                JOIN orders ON orders.order_code = shipping.order_code
+                                                                JOIN furniture ON furniture.pid = orders.pid 
+                                                                WHERE orders.uid = ? AND orders.osid = 7";
+
                                             $stmt = $conn->prepare($orders_query);
                                             $stmt->bind_param("i", $_SESSION['uid']);
                                             $stmt->execute();
@@ -263,8 +265,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                         $orders[$order_code] = [
                                                             'product_details' => [],
                                                             'total' => 0,
-                                                            'shipping_status' => $order_row['shipping_status'], // Added shipping_status
-                                        'expected_date' => $order_row['expected_date'] // Added expected_date
+                                                            'shipping_status' => $order_row['shipping_status'], 
+                                                            'expected_date' => $order_row['expected_date'], 
+                                                            'rider_name' => $order_row['rider_name'], 
+                                                            'rider_number' => $order_row['rider_number'] 
                                                             
                                                         ];
                                                     }
@@ -295,8 +299,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                                                 <td><?php echo $order['total']; ?></td>
                                                 <!-- <td class="text-center"><?php echo htmlspecialchars($order['date']); ?></td> -->
                                                 <td class="text-center"><?php echo htmlspecialchars($order['shipping_status']); ?>, <?php echo htmlspecialchars($order['expected_date']); ?></td>
-
-                                                
+                                                <td class="text-center">
+                                                    <?php echo htmlspecialchars($order['rider_name']); ?><br>
+                                                    <?php echo htmlspecialchars($order['rider_number']); ?>
+                                                </td>
+                                                                    
                                                 <td class="text-center">
                                                     <a href="product_view.php?order_code=<?php echo urlencode($order_code); ?>"
                                                         class="btn btn-sm btn-info">

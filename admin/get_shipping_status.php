@@ -10,7 +10,7 @@ if (!isset($_SESSION['uid'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $orderCode = mysqli_real_escape_string($conn, $_POST['orderCode']);
     
-    $query = "SELECT expected_date, shipping_status FROM shipping WHERE order_code = '$orderCode'";
+    $query = "SELECT order_code, expected_date, shipping_status, rider_name, rider_number FROM shipping WHERE order_code = '$orderCode'";
     $result = mysqli_query($conn, $query);
 
     if ($result && mysqli_num_rows($result) > 0) {

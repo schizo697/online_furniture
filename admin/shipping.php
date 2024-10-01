@@ -49,6 +49,7 @@ if (!isset($_SESSION['uid'])) {
                                         <th>Mode of Payment</th>
                                         <th>GCash Receipt</th>
                                         <th>Date of Order</th>
+                                        <th>Rider</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -56,19 +57,22 @@ if (!isset($_SESSION['uid'])) {
                                     <?php
                                     $uid = mysqli_real_escape_string($conn, $_SESSION['uid']);
                                     $orders_query = "SELECT orders.order_code, 
-                                                            CONCAT(userinfo.firstname, ' ', userinfo.lastname) AS customer_name, 
-                                                            GROUP_CONCAT(furniture.pname SEPARATOR ', ') AS product_names,
-                                                            SUM(orders.qty) AS total_quantity, 
-                                                            SUM(orders.total) AS total_amount, 
-                                                            orders.mop, 
-                                                            orders.date AS order_date,
-                                                            gcash_rec.receipt AS gcash_receipt -- Include GCash receipt path
+                                                        CONCAT(userinfo.firstname, ' ', userinfo.lastname) AS customer_name, 
+                                                        GROUP_CONCAT(furniture.pname SEPARATOR ', ') AS product_names,
+                                                        SUM(orders.qty) AS total_quantity, 
+                                                        SUM(orders.total) AS total_amount, 
+                                                        orders.mop, 
+                                                        orders.date AS order_date,
+                                                        gcash_rec.receipt AS gcash_receipt, -- Include GCash receipt path
+                                                        shipping.rider_name, 
+                                                        shipping.rider_number 
                                                     FROM orders 
                                                     LEFT JOIN gcash_rec ON orders.order_code = gcash_rec.order_code 
                                                     LEFT JOIN userinfo ON orders.uid = userinfo.infoid 
                                                     LEFT JOIN furniture ON orders.pid = furniture.pid 
+                                                    LEFT JOIN shipping ON orders.order_code = shipping.order_code 
                                                     WHERE orders.osid = 7 
-                                                    GROUP BY orders.order_code";
+                                                    GROUP BY orders.order_code, shipping.rider_name, shipping.rider_number ";
                                     $order_res = mysqli_query($conn, $orders_query);
 
                                     if ($order_res) {
@@ -81,6 +85,7 @@ if (!isset($_SESSION['uid'])) {
                                                 $total_amount = htmlspecialchars($order_row['total_amount']);
                                                 $mop = htmlspecialchars($order_row['mop']);
                                                 $date = htmlspecialchars($order_row['order_date']);
+                                                $rider_name = htmlspecialchars($order_row['rider_name']);
                                                 $gcash_receipt = isset($order_row['gcash_receipt']) ? htmlspecialchars($order_row['gcash_receipt']) : '';
                                                 ?>
                                                 <tr>
@@ -97,16 +102,17 @@ if (!isset($_SESSION['uid'])) {
                                                         <?php endif; ?>
                                                     </td>
                                                     <td><?php echo $date; ?></td>
+                                                    <td><?php echo $rider_name;?></td>
                                                     <td>
                                                         <button type="button" class="btn btn-link btn-primary btn-view"
                                                             data-order-code="<?php echo $order_code; ?>">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <button type="button" class="btn btn-link btn-primary btn-edit"
+                                                        <!-- <button type="button" class="btn btn-link btn-primary btn-edit"
                                                             data-order-code="<?php echo $order_code; ?>"
                                                             data-current-date="<?php echo $date; ?>">
                                                             <i class="fas fa-pen"></i>
-                                                        </button>
+                                                        </button> -->
                                                         <button class="btn btn-primary btn-edit"
                                                             data-order-code="<?php echo $order_code; ?>"
                                                             data-current-date="<?php echo $date; ?>">Put Status</button>
@@ -143,7 +149,10 @@ if (!isset($_SESSION['uid'])) {
                 <div class="modal-body">
                     <p><strong>Order Code:</strong> <span id="viewOrderCode"></span></p>
                     <p><strong>Expected Date:</strong> <span id="viewExpectedDate"></span></p>
+                    <p><strong>Rider Name:</strong> <span id="viewRider"></span></p>
+                    <p><strong>Rider Number:</strong> <span id="viewRiderNumber"></span></p>
                     <p><strong>Shipping Status:</strong> <span id="viewShippingStatus"></span></p>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -152,13 +161,13 @@ if (!isset($_SESSION['uid'])) {
         </div>
     </div>
 
-    <!-- Edit Shipping Status Modal -->
+    <!-- Put Shipping Status Modal -->
     <div class="modal fade" id="editShippingModal" tabindex="-1" role="dialog" aria-labelledby="editShippingModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editShippingModalLabel">Edit Shipping Status</h5>
+                    <h5 class="modal-title" id="editShippingModalLabel">Put Shipping Status</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -176,6 +185,14 @@ if (!isset($_SESSION['uid'])) {
                                 <option value="shipped">Shipped</option>
                                 <option value="delivered">Delivered</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="riderName">Rider Name</label>
+                            <input type="text" class="form-control" id="riderName" name="riderName">
+                        </div>
+                        <div class="form-group">
+                            <label for="riderNumber">Rider Number</label>
+                            <input type="number" class="form-control" id="riderNumber" name="riderNumber">
                         </div>
                         <input type="hidden" id="orderCode" name="orderCode">
                     </form>
@@ -295,6 +312,8 @@ if (!isset($_SESSION['uid'])) {
                             // Populate the view modal fields
                             $('#viewOrderCode').text(result.data.order_code);
                             $('#viewExpectedDate').text(result.data.expected_date);
+                            $('#viewRider').text(result.data.rider_name);
+                            $('#viewRiderNumber').text(result.data.rider_number);
                             $('#viewShippingStatus').text(result.data.shipping_status);
 
                             // Show the view modal

@@ -27,7 +27,7 @@ if (!isset($_SESSION['uid'])) {
         <div class="page-inner">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
-                    <h3 class="fw-bold mb-3">Inventory Report</h3>
+                    <h3 class="fw-bold mb-3">Delivery Report</h3>
                 </div>
                 <div class="ms-md-auto py-2 py-md-0"></div>
             </div>
@@ -65,8 +65,7 @@ if (!isset($_SESSION['uid'])) {
                                         <th>Type</th>
                                         <th>Image</th>
                                         <th>Product Name</th>
-                                        <th>Available</th>
-                                        <th>Sold</th>
+                                        <th>Successful Delivery</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -78,8 +77,8 @@ if (!isset($_SESSION['uid'])) {
                                     $sql = "SELECT furniture_type.type, furniture.image, furniture.pname, furniture.quantity, SUM(orders.qty) AS total_sold
                                             FROM furniture 
                                             JOIN furniture_type ON furniture.fid = furniture_type.fid 
-                                            LEFT JOIN orders ON orders.pid = furniture.pid AND orders.osid = 3
-                                            WHERE furniture.status = 'Active'";
+                                            LEFT JOIN orders ON orders.pid = furniture.pid 
+                                            WHERE furniture.status = 'Active' AND orders.osid = 3";
 
                                     // Apply filter if a furniture type is selected
                                     if (!empty($furnitureType)) {
@@ -96,14 +95,13 @@ if (!isset($_SESSION['uid'])) {
                                             $type = $row['type'];
                                             $image = $row['image'];
                                             $pname = $row['pname'];
-                                            $quantity = $row['quantity'];
                                             $total_sold = isset($row['total_sold']) ? $row['total_sold'] : 0;
                                             ?>
                                             <tr>
                                                 <td><?php echo $type ?></td>
                                                 <td><img src="assets/img/<?php echo $image; ?>" alt="Product Image" style="max-width: 100px;"></td>
                                                 <td><?php echo $pname ?></td>
-                                                <td><?php echo $quantity ?></td>
+
                                                 <td><?php echo $total_sold ?></td>
                                             </tr>
                                             <?php
